@@ -15,6 +15,12 @@
 		DD0C07FE19083B6B00E7D6B2 /* MVKAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C07FD19083B6B00E7D6B2 /* MVKAppDelegate.m */; };
 		DD0C080719083B6B00E7D6B2 /* MVKViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C080619083B6B00E7D6B2 /* MVKViewController.m */; };
 		DDAFEE091908413000580F22 /* libllmr-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE081908413000580F22 /* libllmr-ios.a */; };
+		DDAFEE0E1908439500580F22 /* MBXSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDAFEE0B1908439500580F22 /* MBXSettings.mm */; };
+		DDAFEE0F1908439500580F22 /* MBXViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDAFEE0D1908439500580F22 /* MBXViewController.mm */; };
+		DDAFEE12190846E900580F22 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE11190846E900580F22 /* libpng.a */; };
+		DDAFEE141908470F00580F22 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE131908470F00580F22 /* libz.dylib */; };
+		DDAFEE17190847F800580F22 /* foundation_request.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDAFEE16190847F800580F22 /* foundation_request.mm */; };
+		DDAFEE191908481900580F22 /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE181908481900580F22 /* libuv.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +37,15 @@
 		DD0C080519083B6B00E7D6B2 /* MVKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVKViewController.h; sourceTree = "<group>"; };
 		DD0C080619083B6B00E7D6B2 /* MVKViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVKViewController.m; sourceTree = "<group>"; };
 		DDAFEE081908413000580F22 /* libllmr-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libllmr-ios.a"; path = "../llmr.native/build/Debug-iphoneos/libllmr-ios.a"; sourceTree = "<group>"; };
+		DDAFEE0A1908439500580F22 /* MBXSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBXSettings.h; path = ../llmr.native/ios/MBXSettings.h; sourceTree = "<group>"; };
+		DDAFEE0B1908439500580F22 /* MBXSettings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MBXSettings.mm; path = ../llmr.native/ios/MBXSettings.mm; sourceTree = "<group>"; };
+		DDAFEE0C1908439500580F22 /* MBXViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBXViewController.h; path = ../llmr.native/ios/MBXViewController.h; sourceTree = "<group>"; };
+		DDAFEE0D1908439500580F22 /* MBXViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MBXViewController.mm; path = ../llmr.native/ios/MBXViewController.mm; sourceTree = "<group>"; };
+		DDAFEE11190846E900580F22 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = "../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/libpng.a"; sourceTree = "<group>"; };
+		DDAFEE131908470F00580F22 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		DDAFEE15190847F800580F22 /* foundation_request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = foundation_request.h; path = ../llmr.native/common/foundation_request.h; sourceTree = "<group>"; };
+		DDAFEE16190847F800580F22 /* foundation_request.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = foundation_request.mm; path = ../llmr.native/common/foundation_request.mm; sourceTree = "<group>"; };
+		DDAFEE181908481900580F22 /* libuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuv.a; path = "../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/libuv.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +57,9 @@
 				DD0C07EE19083B6A00E7D6B2 /* Foundation.framework in Frameworks */,
 				DD0C07F219083B6B00E7D6B2 /* UIKit.framework in Frameworks */,
 				DDAFEE091908413000580F22 /* libllmr-ios.a in Frameworks */,
+				DDAFEE12190846E900580F22 /* libpng.a in Frameworks */,
+				DDAFEE191908481900580F22 /* libuv.a in Frameworks */,
+				DDAFEE141908470F00580F22 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +86,9 @@
 		DD0C07EC19083B6A00E7D6B2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DDAFEE181908481900580F22 /* libuv.a */,
+				DDAFEE131908470F00580F22 /* libz.dylib */,
+				DDAFEE11190846E900580F22 /* libpng.a */,
 				DD0C07EF19083B6A00E7D6B2 /* CoreGraphics.framework */,
 				DD0C07ED19083B6A00E7D6B2 /* Foundation.framework */,
 				DD0C07F119083B6B00E7D6B2 /* UIKit.framework */,
@@ -83,6 +104,7 @@
 				DD0C07FD19083B6B00E7D6B2 /* MVKAppDelegate.m */,
 				DD0C080519083B6B00E7D6B2 /* MVKViewController.h */,
 				DD0C080619083B6B00E7D6B2 /* MVKViewController.m */,
+				DDAFEE10190843A000580F22 /* LLMR */,
 				DD0C07F419083B6B00E7D6B2 /* Supporting Files */,
 			);
 			path = VectorKit;
@@ -97,6 +119,20 @@
 				DD0C07FB19083B6B00E7D6B2 /* VectorKit-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DDAFEE10190843A000580F22 /* LLMR */ = {
+			isa = PBXGroup;
+			children = (
+				DDAFEE0A1908439500580F22 /* MBXSettings.h */,
+				DDAFEE0B1908439500580F22 /* MBXSettings.mm */,
+				DDAFEE0C1908439500580F22 /* MBXViewController.h */,
+				DDAFEE0D1908439500580F22 /* MBXViewController.mm */,
+				DDAFEE15190847F800580F22 /* foundation_request.h */,
+				DDAFEE16190847F800580F22 /* foundation_request.mm */,
+			);
+			name = LLMR;
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,7 +200,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD0C080719083B6B00E7D6B2 /* MVKViewController.m in Sources */,
+				DDAFEE0F1908439500580F22 /* MBXViewController.mm in Sources */,
+				DDAFEE17190847F800580F22 /* foundation_request.mm in Sources */,
 				DD0C07FA19083B6B00E7D6B2 /* main.m in Sources */,
+				DDAFEE0E1908439500580F22 /* MBXSettings.mm in Sources */,
 				DD0C07FE19083B6B00E7D6B2 /* MVKAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -262,10 +301,17 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VectorKit/VectorKit-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../llmr.native/include,
+					"../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include",
+				);
 				INFOPLIST_FILE = "VectorKit/VectorKit-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/incanus/Documents/Projects/Mapbox/vector/llmr.native/build/Debug-iphoneos",
+					"/Users/incanus/Documents/Projects/Mapbox/vector/llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -279,10 +325,17 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VectorKit/VectorKit-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					../llmr.native/include,
+					"../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include",
+				);
 				INFOPLIST_FILE = "VectorKit/VectorKit-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/incanus/Documents/Projects/Mapbox/vector/llmr.native/build/Debug-iphoneos",
+					"/Users/incanus/Documents/Projects/Mapbox/vector/llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

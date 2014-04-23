@@ -8,11 +8,22 @@
 
 #import "MVKViewController.h"
 
+#import "MBXViewController.h"
+
 @implementation MVKViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    self.view.backgroundColor = [UIColor orangeColor];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    [self presentViewController:[MBXViewController new] animated:NO completion:nil];
 }
 
 @end
