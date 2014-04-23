@@ -14,6 +14,7 @@
 		DD0C07FA19083B6B00E7D6B2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C07F919083B6B00E7D6B2 /* main.m */; };
 		DD0C07FE19083B6B00E7D6B2 /* MVKAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C07FD19083B6B00E7D6B2 /* MVKAppDelegate.m */; };
 		DD0C080719083B6B00E7D6B2 /* MVKViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C080619083B6B00E7D6B2 /* MVKViewController.m */; };
+		DDAFEE091908413000580F22 /* libllmr-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE081908413000580F22 /* libllmr-ios.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		DD0C07FD19083B6B00E7D6B2 /* MVKAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVKAppDelegate.m; sourceTree = "<group>"; };
 		DD0C080519083B6B00E7D6B2 /* MVKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVKViewController.h; sourceTree = "<group>"; };
 		DD0C080619083B6B00E7D6B2 /* MVKViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVKViewController.m; sourceTree = "<group>"; };
+		DDAFEE081908413000580F22 /* libllmr-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libllmr-ios.a"; path = "../llmr.native/build/Debug-iphoneos/libllmr-ios.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,8 +39,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD0C07F019083B6A00E7D6B2 /* CoreGraphics.framework in Frameworks */,
-				DD0C07F219083B6B00E7D6B2 /* UIKit.framework in Frameworks */,
 				DD0C07EE19083B6A00E7D6B2 /* Foundation.framework in Frameworks */,
+				DD0C07F219083B6B00E7D6B2 /* UIKit.framework in Frameworks */,
+				DDAFEE091908413000580F22 /* libllmr-ios.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,9 +68,10 @@
 		DD0C07EC19083B6A00E7D6B2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DD0C07ED19083B6A00E7D6B2 /* Foundation.framework */,
 				DD0C07EF19083B6A00E7D6B2 /* CoreGraphics.framework */,
+				DD0C07ED19083B6A00E7D6B2 /* Foundation.framework */,
 				DD0C07F119083B6B00E7D6B2 /* UIKit.framework */,
+				DDAFEE081908413000580F22 /* libllmr-ios.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -259,6 +263,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VectorKit/VectorKit-Prefix.pch";
 				INFOPLIST_FILE = "VectorKit/VectorKit-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/incanus/Documents/Projects/Mapbox/vector/llmr.native/build/Debug-iphoneos",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -272,6 +280,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VectorKit/VectorKit-Prefix.pch";
 				INFOPLIST_FILE = "VectorKit/VectorKit-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/incanus/Documents/Projects/Mapbox/vector/llmr.native/build/Debug-iphoneos",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -296,6 +308,7 @@
 				DD0C082119083B6B00E7D6B2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
