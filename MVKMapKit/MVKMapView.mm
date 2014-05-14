@@ -47,6 +47,7 @@ LLMRView *llmrView = nullptr;
         // create GL view
         //
         self.mapView = [[GLKView alloc] initWithFrame:self.bounds context:self.context];
+        self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.mapView.enableSetNeedsDisplay = NO;
         self.mapView.drawableStencilFormat = GLKViewDrawableStencilFormat8;
         self.mapView.drawableDepthFormat = GLKViewDrawableDepthFormat16;
