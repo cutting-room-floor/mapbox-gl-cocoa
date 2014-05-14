@@ -170,6 +170,8 @@ LLMRView *llmrView = nullptr;
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)pan
 {
+    if ( ! self.isScrollEnabled) return;
+
     [self cancelPreviousActions];
 
     if (pan.state == UIGestureRecognizerStateBegan)
@@ -203,6 +205,8 @@ LLMRView *llmrView = nullptr;
 
 - (void)handlePinchGesture:(UIPinchGestureRecognizer *)pinch
 {
+    if ( ! self.isZoomEnabled) return;
+
     [self cancelPreviousActions];
 
     if (pinch.state == UIGestureRecognizerStateBegan)
@@ -255,6 +259,8 @@ LLMRView *llmrView = nullptr;
 
 - (void)handleRotateGesture:(UIRotationGestureRecognizer *)rotate
 {
+    if ( ! self.isRotateEnabled) return;
+
     [self cancelPreviousActions];
 
     if (rotate.state == UIGestureRecognizerStateBegan)
@@ -275,6 +281,8 @@ LLMRView *llmrView = nullptr;
 
 - (void)handleDoubleTapGesture:(UITapGestureRecognizer *)doubleTap
 {
+    if ( ! self.isZoomEnabled) return;
+
     [self cancelPreviousActions];
 
     if (doubleTap.state == UIGestureRecognizerStateEnded)
@@ -285,6 +293,8 @@ LLMRView *llmrView = nullptr;
 
 - (void)handleTwoFingerTapGesture:(UITapGestureRecognizer *)twoFingerTap
 {
+    if ( ! self.isZoomEnabled) return;
+
     [self cancelPreviousActions];
 
     if (twoFingerTap.state == UIGestureRecognizerStateEnded)
@@ -295,6 +305,8 @@ LLMRView *llmrView = nullptr;
 
 - (void)handleQuickZoomGesture:(UILongPressGestureRecognizer *)quickZoom
 {
+    if ( ! self.isZoomEnabled) return;
+
     [self cancelPreviousActions];
 
     if (quickZoom.state == UIGestureRecognizerStateBegan)

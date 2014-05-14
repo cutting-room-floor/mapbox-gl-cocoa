@@ -13,6 +13,10 @@
 
 // regular API
 //
+@property(nonatomic, getter=isZoomEnabled) BOOL zoomEnabled;
+@property(nonatomic, getter=isScrollEnabled) BOOL scrollEnabled;
+@property(nonatomic, getter=isRotateEnabled) BOOL rotateEnabled;
+
 @property (nonatomic) CLLocationCoordinate2D centerCoordinate;
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated;
 
