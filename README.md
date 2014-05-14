@@ -6,6 +6,12 @@ This is a Cocoa API wrapper for [`llmr-native`](https://github.com/mapbox/llmr-n
 
 ## API Overview
 
-## 
+## Related Projects
+
+ * https://github.com/mapbox/vector-tile-spec
+ * https://github.com/mapbox/llmr-native
+ * https://github.com/mapbox/llmr (if public)
+
+##
 
 *Project name subject to change.*
