@@ -23,7 +23,7 @@
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
     {
-        [mapView setCenterCoordinate:CLLocationCoordinate2DMake(-122, 45) animated:YES];
+        [mapView setCenterCoordinate:CLLocationCoordinate2DMake(45, -122) animated:YES];
     });
 }
 
