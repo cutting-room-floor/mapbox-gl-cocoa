@@ -295,6 +295,21 @@ LLMRView *llmrView = nullptr;
     return ([validSimultaneousGestures containsObject:[gestureRecognizer class]] && [validSimultaneousGestures containsObject:[otherGestureRecognizer class]]);
 }
 
+- (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
+{
+    double duration = (animated ? 0.3 : 0);
+
+    llmrMap->setLonLat(coordinate.longitude, coordinate.latitude, duration);
+}
+
+- (CLLocationCoordinate2D)centerCoordinate
+{
+    double lon, lat;
+    llmrMap->getLonLat(lon, lat);
+
+    return CLLocationCoordinate2DMake(lat, lon);
+}
+
 - (void)swap
 {
     if (llmrMap->needsSwap())
