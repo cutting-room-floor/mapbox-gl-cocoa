@@ -11,7 +11,7 @@
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *mapView;
-@property (nonatomic) CGPoint center;
+@property (nonatomic) CGPoint centerPoint;
 @property (nonatomic) CGFloat scale;
 @property (nonatomic) CGFloat angle;
 @property (nonatomic) CGFloat quickZoomStart;
@@ -149,16 +149,16 @@ LLMRView *llmrView = nullptr;
 
     if (pan.state == UIGestureRecognizerStateBegan)
     {
-        self.center = CGPointMake(0, 0);
+        self.centerPoint = CGPointMake(0, 0);
     }
     else if (pan.state == UIGestureRecognizerStateChanged)
     {
-        CGPoint delta = CGPointMake([pan translationInView:pan.view].x - self.center.x,
-                                    [pan translationInView:pan.view].y - self.center.y);
+        CGPoint delta = CGPointMake([pan translationInView:pan.view].x - self.centerPoint.x,
+                                    [pan translationInView:pan.view].y - self.centerPoint.y);
 
         llmrMap->moveBy(delta.x, delta.y);
 
-        self.center = CGPointMake(self.center.x + delta.x, self.center.y + delta.y);
+        self.centerPoint = CGPointMake(self.centerPoint.x + delta.x, self.centerPoint.y + delta.y);
     }
     else if (pan.state == UIGestureRecognizerStateEnded)
     {
@@ -167,12 +167,12 @@ LLMRView *llmrView = nullptr;
             return;
         }
 
-        CGPoint finalCenter = CGPointMake(self.center.x + (0.1 * [pan velocityInView:pan.view].x),
-                                          self.center.y + (0.1 * [pan velocityInView:pan.view].y));
+        CGPoint finalCenter = CGPointMake(self.centerPoint.x + (0.1 * [pan velocityInView:pan.view].x),
+                                          self.centerPoint.y + (0.1 * [pan velocityInView:pan.view].y));
 
         CGFloat duration = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad ? 0.3 : 0.5);
 
-        llmrMap->moveBy(finalCenter.x - self.center.x, finalCenter.y - self.center.y, duration);
+        llmrMap->moveBy(finalCenter.x - self.centerPoint.x, finalCenter.y - self.centerPoint.y, duration);
     }
 }
 
