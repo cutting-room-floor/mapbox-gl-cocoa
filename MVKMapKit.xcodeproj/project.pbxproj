@@ -15,14 +15,12 @@
 		DD0C07FE19083B6B00E7D6B2 /* MVKAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C07FD19083B6B00E7D6B2 /* MVKAppDelegate.m */; };
 		DD0C080719083B6B00E7D6B2 /* MVKViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C080619083B6B00E7D6B2 /* MVKViewController.m */; };
 		DDAFEE091908413000580F22 /* libllmr-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE081908413000580F22 /* libllmr-ios.a */; };
-		DDAFEE0F1908439500580F22 /* MBXViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDAFEE0D1908439500580F22 /* MBXViewController.mm */; };
 		DDAFEE12190846E900580F22 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE11190846E900580F22 /* libpng.a */; };
 		DDAFEE141908470F00580F22 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE131908470F00580F22 /* libz.dylib */; };
 		DDAFEE17190847F800580F22 /* foundation_request.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDAFEE16190847F800580F22 /* foundation_request.mm */; };
 		DDAFEE191908481900580F22 /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE181908481900580F22 /* libuv.a */; };
 		DDC61B6E1922DCC3008248FE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDC61B6D1922DCC3008248FE /* CoreLocation.framework */; };
 		DDC61B701922DCF2008248FE /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDC61B6F1922DCF2008248FE /* GLKit.framework */; };
-		DDC61B731922DD7E008248FE /* settings_nsuserdefaults.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDC61B721922DD7E008248FE /* settings_nsuserdefaults.mm */; };
 		DDC61B781922E6BA008248FE /* MVKMapView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDC61B771922E6BA008248FE /* MVKMapView.mm */; };
 /* End PBXBuildFile section */
 
@@ -40,8 +38,6 @@
 		DD0C080519083B6B00E7D6B2 /* MVKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVKViewController.h; sourceTree = "<group>"; };
 		DD0C080619083B6B00E7D6B2 /* MVKViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVKViewController.m; sourceTree = "<group>"; };
 		DDAFEE081908413000580F22 /* libllmr-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libllmr-ios.a"; path = "../llmr.native/build/Debug-iphoneos/libllmr-ios.a"; sourceTree = "<group>"; };
-		DDAFEE0C1908439500580F22 /* MBXViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBXViewController.h; path = ../llmr.native/ios/MBXViewController.h; sourceTree = "<group>"; };
-		DDAFEE0D1908439500580F22 /* MBXViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MBXViewController.mm; path = ../llmr.native/ios/MBXViewController.mm; sourceTree = "<group>"; };
 		DDAFEE11190846E900580F22 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = "../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/libpng.a"; sourceTree = "<group>"; };
 		DDAFEE131908470F00580F22 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		DDAFEE15190847F800580F22 /* foundation_request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = foundation_request.h; path = ../llmr.native/common/foundation_request.h; sourceTree = "<group>"; };
@@ -49,8 +45,6 @@
 		DDAFEE181908481900580F22 /* libuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuv.a; path = "../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/libuv.a"; sourceTree = "<group>"; };
 		DDC61B6D1922DCC3008248FE /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DDC61B6F1922DCF2008248FE /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
-		DDC61B711922DD7E008248FE /* settings_nsuserdefaults.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = settings_nsuserdefaults.hpp; path = ../llmr.native/common/settings_nsuserdefaults.hpp; sourceTree = "<group>"; };
-		DDC61B721922DD7E008248FE /* settings_nsuserdefaults.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = settings_nsuserdefaults.mm; path = ../llmr.native/common/settings_nsuserdefaults.mm; sourceTree = "<group>"; };
 		DDC61B761922E6BA008248FE /* MVKMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVKMapView.h; path = MVKMapKit/MVKMapView.h; sourceTree = "<group>"; };
 		DDC61B771922E6BA008248FE /* MVKMapView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MVKMapView.mm; path = MVKMapKit/MVKMapView.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -135,14 +129,10 @@
 		DDAFEE10190843A000580F22 /* LLMR */ = {
 			isa = PBXGroup;
 			children = (
-				DDAFEE0C1908439500580F22 /* MBXViewController.h */,
-				DDAFEE0D1908439500580F22 /* MBXViewController.mm */,
 				DDC61B761922E6BA008248FE /* MVKMapView.h */,
 				DDC61B771922E6BA008248FE /* MVKMapView.mm */,
 				DDAFEE15190847F800580F22 /* foundation_request.h */,
 				DDAFEE16190847F800580F22 /* foundation_request.mm */,
-				DDC61B711922DD7E008248FE /* settings_nsuserdefaults.hpp */,
-				DDC61B721922DD7E008248FE /* settings_nsuserdefaults.mm */,
 			);
 			name = LLMR;
 			path = ..;
@@ -213,11 +203,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD0C080719083B6B00E7D6B2 /* MVKViewController.m in Sources */,
-				DDAFEE0F1908439500580F22 /* MBXViewController.mm in Sources */,
 				DDAFEE17190847F800580F22 /* foundation_request.mm in Sources */,
 				DDC61B781922E6BA008248FE /* MVKMapView.mm in Sources */,
 				DD0C07FA19083B6B00E7D6B2 /* main.m in Sources */,
-				DDC61B731922DD7E008248FE /* settings_nsuserdefaults.mm in Sources */,
 				DD0C07FE19083B6B00E7D6B2 /* MVKAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
