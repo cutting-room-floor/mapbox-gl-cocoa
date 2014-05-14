@@ -325,7 +325,7 @@ LLMRView *llmrView = nullptr;
     llmrMap->setDebug(debugActive);
 }
 
-- (BOOL)debugActive
+- (BOOL)isDebugActive
 {
     return llmrMap->getDebug();
 }
