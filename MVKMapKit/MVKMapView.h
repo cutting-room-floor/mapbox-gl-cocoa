@@ -3,6 +3,16 @@
 
 @interface MVKMapView : UIView
 
+// debug API that will go away
+//
+@property (nonatomic, getter=isDebugActive) BOOL debugActive;
+- (void)resetNorth;
+- (void)resetPosition;
+- (void)toggleDebug;
+- (void)toggleRaster;
+
+// regular API
+//
 @property (nonatomic) CLLocationCoordinate2D centerCoordinate;
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated;
 

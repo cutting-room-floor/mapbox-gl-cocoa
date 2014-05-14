@@ -20,6 +20,8 @@
 
 @implementation MVKMapView
 
+@dynamic debugActive;
+
 class LLMRView;
 
 llmr::Map *llmrMap = nullptr;
@@ -293,6 +295,36 @@ LLMRView *llmrView = nullptr;
     NSArray *validSimultaneousGestures = @[ [UIPanGestureRecognizer class], [UIPinchGestureRecognizer class], [UIRotationGestureRecognizer class] ];
 
     return ([validSimultaneousGestures containsObject:[gestureRecognizer class]] && [validSimultaneousGestures containsObject:[otherGestureRecognizer class]]);
+}
+
+- (void)setDebugActive:(BOOL)debugActive
+{
+    llmrMap->setDebug(debugActive);
+}
+
+- (BOOL)debugActive
+{
+    return llmrMap->getDebug();
+}
+
+- (void)resetNorth
+{
+    llmrMap->resetNorth();
+}
+
+- (void)resetPosition
+{
+    llmrMap->resetPosition();
+}
+
+- (void)toggleDebug
+{
+    llmrMap->toggleDebug();
+}
+
+- (void)toggleRaster
+{
+    llmrMap->toggleRaster();
 }
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
