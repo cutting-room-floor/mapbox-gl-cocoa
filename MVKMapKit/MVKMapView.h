@@ -11,4 +11,7 @@
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(double)zoomLevel animated:(BOOL)animated;
 
+@property (nonatomic) CLLocationDirection direction;
+- (void)setDirection:(CLLocationDirection)direction animated:(BOOL)animated;
+
 @end

@@ -339,6 +339,28 @@ LLMRView *llmrView = nullptr;
     [self setZoomLevel:zoomLevel animated:NO];
 }
 
+- (CLLocationDirection)direction
+{
+    double direction = llmrMap->getAngle();
+
+    while (direction > 360) direction -= 360;
+    while (direction < 0) direction += 360;
+
+    return direction;
+}
+
+- (void)setDirection:(CLLocationDirection)direction animated:(BOOL)animated
+{
+    double duration = (animated ? 0.3 : 0);
+
+    llmrMap->setAngle(direction, duration);
+}
+
+- (void)setDirection:(CLLocationDirection)direction
+{
+    [self setDirection:direction animated:NO];
+}
+
 - (void)swap
 {
     if (llmrMap->needsSwap())
