@@ -90,6 +90,11 @@ LLMRView *llmrView = nullptr;
             [self addGestureRecognizer:quickZoom];
         }
 
+        // observe app activity
+        //
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+
         // start it up
         //
         llmrMap->start();
@@ -100,6 +105,8 @@ LLMRView *llmrView = nullptr;
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     if (llmrMap)
     {
         delete llmrMap;
@@ -140,6 +147,21 @@ LLMRView *llmrView = nullptr;
         llmrMap->resize(rect.size.width, rect.size.height, self.mapView.contentScaleFactor, self.mapView.drawableWidth, self.mapView.drawableHeight);
     }
 }
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
+- (void)appDidBackground:(NSNotification *)notification
+{
+    [self.mapView deleteDrawable];
+}
+
+- (void)appWillForeground:(NSNotification *)notification
+{
+    [self.mapView bindDrawable];
+}
+
+#pragma clang diagnostic pop
 
 - (void)cancelPreviousActions
 {
