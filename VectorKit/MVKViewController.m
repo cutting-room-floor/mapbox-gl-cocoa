@@ -8,7 +8,7 @@
 
 #import "MVKViewController.h"
 
-#import "MBXViewController.h"
+#import "MVKMapView.h"
 
 @implementation MVKViewController
 
@@ -17,13 +17,8 @@
     [super viewDidLoad];
 
     self.view.backgroundColor = [UIColor orangeColor];
-}
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-
-    [self presentViewController:[MBXViewController new] animated:NO completion:nil];
+    [self.view addSubview:[[MVKMapView alloc] initWithFrame:CGRectMake(50, 50, 512, 512)]];
 }
 
 @end
