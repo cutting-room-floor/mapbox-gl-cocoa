@@ -31,74 +31,87 @@ LLMRView *llmrView = nullptr;
 {
     self = [super initWithFrame:frame];
 
-    if (self)
+    if (self) return [self commonInit];
+
+    return nil;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    self = [super initWithCoder:decoder];
+
+    if (self) return [self commonInit];
+
+    return nil;
+}
+
+- (id)commonInit
+{
+    // create context
+    //
+    self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+
+    if ( ! self.context)
     {
-        // create context
-        //
-        self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+        NSLog(@"Failed to create OpenGL ES context");
 
-        if ( ! self.context)
-        {
-            NSLog(@"Failed to create OpenGL ES context");
-
-            return nil;
-        }
-
-        // create GL view
-        //
-        self.mapView = [[GLKView alloc] initWithFrame:self.bounds context:self.context];
-        self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        self.mapView.enableSetNeedsDisplay = NO;
-        self.mapView.drawableStencilFormat = GLKViewDrawableStencilFormat8;
-        self.mapView.drawableDepthFormat = GLKViewDrawableDepthFormat16;
-        [self.mapView bindDrawable];
-        [self addSubview:self.mapView];
-
-        // setup llmr map
-        //
-        llmrView = new LLMRView(self);
-        llmrMap = new llmr::Map(*llmrView);
-        [self setNeedsLayout];
-
-        // setup interaction
-        //
-        UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
-        pan.delegate = self;
-        [self addGestureRecognizer:pan];
-
-        UIPinchGestureRecognizer *pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
-        pinch.delegate = self;
-        [self addGestureRecognizer:pinch];
-
-        UIRotationGestureRecognizer *rotate = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotateGesture:)];
-        rotate.delegate = self;
-        [self addGestureRecognizer:rotate];
-
-        UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTapGesture:)];
-        doubleTap.numberOfTapsRequired = 2;
-        [self addGestureRecognizer:doubleTap];
-
-        UITapGestureRecognizer *twoFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerTapGesture:)];
-        twoFingerTap.numberOfTouchesRequired = 2;
-        [self addGestureRecognizer:twoFingerTap];
-
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
-        {
-            UILongPressGestureRecognizer *quickZoom = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleQuickZoomGesture:)];
-            quickZoom.numberOfTapsRequired = 1;
-            quickZoom.minimumPressDuration = 0.25;
-            [self addGestureRecognizer:quickZoom];
-        }
-
-        // observe app activity
-        //
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
-
-        // start it up
-        //
-        llmrMap->start();
+        return nil;
     }
+
+    // create GL view
+    //
+    self.mapView = [[GLKView alloc] initWithFrame:self.bounds context:self.context];
+    self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.mapView.enableSetNeedsDisplay = NO;
+    self.mapView.drawableStencilFormat = GLKViewDrawableStencilFormat8;
+    self.mapView.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+    [self.mapView bindDrawable];
+    [self addSubview:self.mapView];
+
+    // setup llmr map
+    //
+    llmrView = new LLMRView(self);
+    llmrMap = new llmr::Map(*llmrView);
+    [self setNeedsLayout];
+
+    // setup interaction
+    //
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
+    pan.delegate = self;
+    [self addGestureRecognizer:pan];
+
+    UIPinchGestureRecognizer *pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
+    pinch.delegate = self;
+    [self addGestureRecognizer:pinch];
+
+    UIRotationGestureRecognizer *rotate = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotateGesture:)];
+    rotate.delegate = self;
+    [self addGestureRecognizer:rotate];
+
+    UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTapGesture:)];
+    doubleTap.numberOfTapsRequired = 2;
+    [self addGestureRecognizer:doubleTap];
+
+    UITapGestureRecognizer *twoFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerTapGesture:)];
+    twoFingerTap.numberOfTouchesRequired = 2;
+    [self addGestureRecognizer:twoFingerTap];
+
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
+    {
+        UILongPressGestureRecognizer *quickZoom = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleQuickZoomGesture:)];
+        quickZoom.numberOfTapsRequired = 1;
+        quickZoom.minimumPressDuration = 0.25;
+        [self addGestureRecognizer:quickZoom];
+    }
+
+    // observe app activity
+    //
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+
+    // start it up
+    //
+    llmrMap->start();
 
     return self;
 }
