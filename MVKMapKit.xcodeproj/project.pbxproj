@@ -27,14 +27,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		DD0C07EA19083B6A00E7D6B2 /* VectorKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VectorKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD0C07EA19083B6A00E7D6B2 /* MVKMapKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MVKMapKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD0C07ED19083B6A00E7D6B2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		DD0C07EF19083B6A00E7D6B2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		DD0C07F119083B6B00E7D6B2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		DD0C07F519083B6B00E7D6B2 /* VectorKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "VectorKit-Info.plist"; sourceTree = "<group>"; };
+		DD0C07F519083B6B00E7D6B2 /* MVKMapKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MVKMapKit-Info.plist"; sourceTree = "<group>"; };
 		DD0C07F719083B6B00E7D6B2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DD0C07F919083B6B00E7D6B2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		DD0C07FB19083B6B00E7D6B2 /* VectorKit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VectorKit-Prefix.pch"; sourceTree = "<group>"; };
+		DD0C07FB19083B6B00E7D6B2 /* MVKMapKit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MVKMapKit-Prefix.pch"; sourceTree = "<group>"; };
 		DD0C07FC19083B6B00E7D6B2 /* MVKAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVKAppDelegate.h; sourceTree = "<group>"; };
 		DD0C07FD19083B6B00E7D6B2 /* MVKAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVKAppDelegate.m; sourceTree = "<group>"; };
 		DD0C080519083B6B00E7D6B2 /* MVKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVKViewController.h; sourceTree = "<group>"; };
@@ -51,8 +51,8 @@
 		DDC61B6F1922DCF2008248FE /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		DDC61B711922DD7E008248FE /* settings_nsuserdefaults.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = settings_nsuserdefaults.hpp; path = ../llmr.native/common/settings_nsuserdefaults.hpp; sourceTree = "<group>"; };
 		DDC61B721922DD7E008248FE /* settings_nsuserdefaults.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = settings_nsuserdefaults.mm; path = ../llmr.native/common/settings_nsuserdefaults.mm; sourceTree = "<group>"; };
-		DDC61B761922E6BA008248FE /* MVKMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVKMapView.h; path = VectorKit/MVKMapView.h; sourceTree = "<group>"; };
-		DDC61B771922E6BA008248FE /* MVKMapView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MVKMapView.mm; path = VectorKit/MVKMapView.mm; sourceTree = "<group>"; };
+		DDC61B761922E6BA008248FE /* MVKMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVKMapView.h; path = MVKMapKit/MVKMapView.h; sourceTree = "<group>"; };
+		DDC61B771922E6BA008248FE /* MVKMapView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MVKMapView.mm; path = MVKMapKit/MVKMapView.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,7 +78,7 @@
 		DD0C07E119083B6A00E7D6B2 = {
 			isa = PBXGroup;
 			children = (
-				DD0C07F319083B6B00E7D6B2 /* VectorKit */,
+				DD0C07F319083B6B00E7D6B2 /* MVKMapKit */,
 				DD0C07EC19083B6A00E7D6B2 /* Frameworks */,
 				DD0C07EB19083B6A00E7D6B2 /* Products */,
 			);
@@ -87,7 +87,7 @@
 		DD0C07EB19083B6A00E7D6B2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DD0C07EA19083B6A00E7D6B2 /* VectorKit.app */,
+				DD0C07EA19083B6A00E7D6B2 /* MVKMapKit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,7 +108,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		DD0C07F319083B6B00E7D6B2 /* VectorKit */ = {
+		DD0C07F319083B6B00E7D6B2 /* MVKMapKit */ = {
 			isa = PBXGroup;
 			children = (
 				DD0C07FC19083B6B00E7D6B2 /* MVKAppDelegate.h */,
@@ -118,16 +118,16 @@
 				DDAFEE10190843A000580F22 /* LLMR */,
 				DD0C07F419083B6B00E7D6B2 /* Supporting Files */,
 			);
-			path = VectorKit;
+			path = MVKMapKit;
 			sourceTree = "<group>";
 		};
 		DD0C07F419083B6B00E7D6B2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				DD0C07F519083B6B00E7D6B2 /* VectorKit-Info.plist */,
+				DD0C07F519083B6B00E7D6B2 /* MVKMapKit-Info.plist */,
 				DD0C07F619083B6B00E7D6B2 /* InfoPlist.strings */,
 				DD0C07F919083B6B00E7D6B2 /* main.m */,
-				DD0C07FB19083B6B00E7D6B2 /* VectorKit-Prefix.pch */,
+				DD0C07FB19083B6B00E7D6B2 /* MVKMapKit-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -151,9 +151,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DD0C07E919083B6A00E7D6B2 /* VectorKit */ = {
+		DD0C07E919083B6A00E7D6B2 /* MVKMapKit */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DD0C081F19083B6B00E7D6B2 /* Build configuration list for PBXNativeTarget "VectorKit" */;
+			buildConfigurationList = DD0C081F19083B6B00E7D6B2 /* Build configuration list for PBXNativeTarget "MVKMapKit" */;
 			buildPhases = (
 				DD0C07E619083B6A00E7D6B2 /* Sources */,
 				DD0C07E719083B6A00E7D6B2 /* Frameworks */,
@@ -163,9 +163,9 @@
 			);
 			dependencies = (
 			);
-			name = VectorKit;
-			productName = VectorKit;
-			productReference = DD0C07EA19083B6A00E7D6B2 /* VectorKit.app */;
+			name = MVKMapKit;
+			productName = MVKMapKit;
+			productReference = DD0C07EA19083B6A00E7D6B2 /* MVKMapKit.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -178,7 +178,7 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = Mapbox;
 			};
-			buildConfigurationList = DD0C07E519083B6A00E7D6B2 /* Build configuration list for PBXProject "VectorKit" */;
+			buildConfigurationList = DD0C07E519083B6A00E7D6B2 /* Build configuration list for PBXProject "MVKMapKit" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -191,7 +191,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DD0C07E919083B6A00E7D6B2 /* VectorKit */,
+				DD0C07E919083B6A00E7D6B2 /* MVKMapKit */,
 			);
 		};
 /* End PBXProject section */
@@ -314,14 +314,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "VectorKit/VectorKit-Prefix.pch";
+				GCC_PREFIX_HEADER = "MVKMapKit/MVKMapKit-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../llmr.native/include,
 					"../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include",
 				);
-				INFOPLIST_FILE = "VectorKit/VectorKit-Info.plist";
+				INFOPLIST_FILE = "MVKMapKit/MVKMapKit-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/incanus/Documents/Projects/Mapbox/vector/llmr.native/build/Debug-iphoneos",
@@ -338,14 +338,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "VectorKit/VectorKit-Prefix.pch";
+				GCC_PREFIX_HEADER = "MVKMapKit/MVKMapKit-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../llmr.native/include,
 					"../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include",
 				);
-				INFOPLIST_FILE = "VectorKit/VectorKit-Info.plist";
+				INFOPLIST_FILE = "MVKMapKit/MVKMapKit-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/incanus/Documents/Projects/Mapbox/vector/llmr.native/build/Debug-iphoneos",
@@ -359,7 +359,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DD0C07E519083B6A00E7D6B2 /* Build configuration list for PBXProject "VectorKit" */ = {
+		DD0C07E519083B6A00E7D6B2 /* Build configuration list for PBXProject "MVKMapKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD0C081D19083B6B00E7D6B2 /* Debug */,
@@ -368,7 +368,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DD0C081F19083B6B00E7D6B2 /* Build configuration list for PBXNativeTarget "VectorKit" */ = {
+		DD0C081F19083B6B00E7D6B2 /* Build configuration list for PBXNativeTarget "MVKMapKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD0C082019083B6B00E7D6B2 /* Debug */,

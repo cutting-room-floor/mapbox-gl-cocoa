@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:VectorKit.xcodeproj">
+      location = "group:MVKMapKit.xcodeproj">
    </FileRef>
    <FileRef
       location = "container:../llmr.native/build/ios/llmr-app.xcodeproj">
