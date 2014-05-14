@@ -302,12 +302,41 @@ LLMRView *llmrView = nullptr;
     llmrMap->setLonLat(coordinate.longitude, coordinate.latitude, duration);
 }
 
+- (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate
+{
+    [self setCenterCoordinate:centerCoordinate animated:NO];
+}
+
 - (CLLocationCoordinate2D)centerCoordinate
 {
     double lon, lat;
     llmrMap->getLonLat(lon, lat);
 
     return CLLocationCoordinate2DMake(lat, lon);
+}
+
+- (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(double)zoomLevel animated:(BOOL)animated
+{
+    double duration = (animated ? 0.3 : 0);
+
+    llmrMap->setLonLatZoom(centerCoordinate.longitude, centerCoordinate.latitude, zoomLevel, duration);
+}
+
+- (double)zoomLevel
+{
+    return llmrMap->getZoom();
+}
+
+- (void)setZoomLevel:(double)zoomLevel animated:(BOOL)animated
+{
+    double duration = (animated ? 0.3 : 0);
+
+    llmrMap->setZoom(zoomLevel, duration);
+}
+
+- (void)setZoomLevel:(double)zoomLevel
+{
+    [self setZoomLevel:zoomLevel animated:NO];
 }
 
 - (void)swap
