@@ -79,14 +79,17 @@ LLMRView *llmrView = nullptr;
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
     pan.delegate = self;
     [self addGestureRecognizer:pan];
+    self.scrollEnabled = YES;
 
     UIPinchGestureRecognizer *pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
     pinch.delegate = self;
     [self addGestureRecognizer:pinch];
+    self.zoomEnabled = YES;
 
     UIRotationGestureRecognizer *rotate = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotateGesture:)];
     rotate.delegate = self;
     [self addGestureRecognizer:rotate];
+    self.rotateEnabled = YES;
 
     UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTapGesture:)];
     doubleTap.numberOfTapsRequired = 2;
