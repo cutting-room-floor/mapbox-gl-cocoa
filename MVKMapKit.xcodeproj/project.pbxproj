@@ -17,12 +17,29 @@
 		DDAFEE091908413000580F22 /* libllmr-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE081908413000580F22 /* libllmr-ios.a */; };
 		DDAFEE12190846E900580F22 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE11190846E900580F22 /* libpng.a */; };
 		DDAFEE141908470F00580F22 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE131908470F00580F22 /* libz.dylib */; };
-		DDAFEE17190847F800580F22 /* foundation_request.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDAFEE16190847F800580F22 /* foundation_request.mm */; };
 		DDAFEE191908481900580F22 /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE181908481900580F22 /* libuv.a */; };
 		DDC61B6E1922DCC3008248FE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDC61B6D1922DCC3008248FE /* CoreLocation.framework */; };
 		DDC61B701922DCF2008248FE /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDC61B6F1922DCF2008248FE /* GLKit.framework */; };
 		DDC61B781922E6BA008248FE /* MVKMapView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDC61B771922E6BA008248FE /* MVKMapView.mm */; };
+		DDC61BC1192548D7008248FE /* foundation_request.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDC61BC0192548D7008248FE /* foundation_request.mm */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DDC61BCE19254BAC008248FE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DDC61BC619254BAC008248FE /* llmr.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1BF7D4A4E619F8612D68358A;
+			remoteInfo = "llmr-x86";
+		};
+		DDC61BD019254BAC008248FE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DDC61BC619254BAC008248FE /* llmr.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5182613C18DC1FB483FF2806;
+			remoteInfo = "llmr-ios";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		DD0C07EA19083B6A00E7D6B2 /* MVKMapKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MVKMapKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -40,13 +57,14 @@
 		DDAFEE081908413000580F22 /* libllmr-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libllmr-ios.a"; path = "../llmr.native/build/Debug-iphoneos/libllmr-ios.a"; sourceTree = "<group>"; };
 		DDAFEE11190846E900580F22 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = "../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/libpng.a"; sourceTree = "<group>"; };
 		DDAFEE131908470F00580F22 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		DDAFEE15190847F800580F22 /* foundation_request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = foundation_request.h; path = ../llmr.native/common/foundation_request.h; sourceTree = "<group>"; };
-		DDAFEE16190847F800580F22 /* foundation_request.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = foundation_request.mm; path = ../llmr.native/common/foundation_request.mm; sourceTree = "<group>"; };
 		DDAFEE181908481900580F22 /* libuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuv.a; path = "../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/libuv.a"; sourceTree = "<group>"; };
 		DDC61B6D1922DCC3008248FE /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DDC61B6F1922DCF2008248FE /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
-		DDC61B761922E6BA008248FE /* MVKMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MVKMapView.h; path = MVKMapKit/MVKMapView.h; sourceTree = "<group>"; };
-		DDC61B771922E6BA008248FE /* MVKMapView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MVKMapView.mm; path = MVKMapKit/MVKMapView.mm; sourceTree = "<group>"; };
+		DDC61B761922E6BA008248FE /* MVKMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVKMapView.h; sourceTree = "<group>"; };
+		DDC61B771922E6BA008248FE /* MVKMapView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MVKMapView.mm; sourceTree = "<group>"; };
+		DDC61BBF192548D7008248FE /* foundation_request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = foundation_request.h; path = ../../common/foundation_request.h; sourceTree = "<group>"; };
+		DDC61BC0192548D7008248FE /* foundation_request.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = foundation_request.mm; path = ../../common/foundation_request.mm; sourceTree = "<group>"; };
+		DDC61BC619254BAC008248FE /* llmr.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = llmr.xcodeproj; path = ../../build/llmr.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,10 +123,8 @@
 		DD0C07F319083B6B00E7D6B2 /* MVKMapKit */ = {
 			isa = PBXGroup;
 			children = (
-				DD0C07FC19083B6B00E7D6B2 /* MVKAppDelegate.h */,
-				DD0C07FD19083B6B00E7D6B2 /* MVKAppDelegate.m */,
-				DD0C080519083B6B00E7D6B2 /* MVKViewController.h */,
-				DD0C080619083B6B00E7D6B2 /* MVKViewController.m */,
+				DDC61BB1192548A5008248FE /* Sample App */,
+				DDC61BB2192548B3008248FE /* Map View */,
 				DDAFEE10190843A000580F22 /* LLMR */,
 				DD0C07F419083B6B00E7D6B2 /* Supporting Files */,
 			);
@@ -129,13 +145,41 @@
 		DDAFEE10190843A000580F22 /* LLMR */ = {
 			isa = PBXGroup;
 			children = (
-				DDC61B761922E6BA008248FE /* MVKMapView.h */,
-				DDC61B771922E6BA008248FE /* MVKMapView.mm */,
-				DDAFEE15190847F800580F22 /* foundation_request.h */,
-				DDAFEE16190847F800580F22 /* foundation_request.mm */,
+				DDC61BC619254BAC008248FE /* llmr.xcodeproj */,
+				DDC61BBF192548D7008248FE /* foundation_request.h */,
+				DDC61BC0192548D7008248FE /* foundation_request.mm */,
 			);
 			name = LLMR;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		DDC61BB1192548A5008248FE /* Sample App */ = {
+			isa = PBXGroup;
+			children = (
+				DD0C07FC19083B6B00E7D6B2 /* MVKAppDelegate.h */,
+				DD0C07FD19083B6B00E7D6B2 /* MVKAppDelegate.m */,
+				DD0C080519083B6B00E7D6B2 /* MVKViewController.h */,
+				DD0C080619083B6B00E7D6B2 /* MVKViewController.m */,
+			);
+			name = "Sample App";
+			sourceTree = "<group>";
+		};
+		DDC61BB2192548B3008248FE /* Map View */ = {
+			isa = PBXGroup;
+			children = (
+				DDC61B761922E6BA008248FE /* MVKMapView.h */,
+				DDC61B771922E6BA008248FE /* MVKMapView.mm */,
+			);
+			name = "Map View";
+			sourceTree = "<group>";
+		};
+		DDC61BC719254BAC008248FE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DDC61BCF19254BAC008248FE /* libllmr-x86.a */,
+				DDC61BD119254BAC008248FE /* libllmr-ios.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -179,12 +223,35 @@
 			mainGroup = DD0C07E119083B6A00E7D6B2;
 			productRefGroup = DD0C07EB19083B6A00E7D6B2 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = DDC61BC719254BAC008248FE /* Products */;
+					ProjectRef = DDC61BC619254BAC008248FE /* llmr.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				DD0C07E919083B6A00E7D6B2 /* MVKMapKit */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		DDC61BCF19254BAC008248FE /* libllmr-x86.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libllmr-x86.a";
+			remoteRef = DDC61BCE19254BAC008248FE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DDC61BD119254BAC008248FE /* libllmr-ios.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libllmr-ios.a";
+			remoteRef = DDC61BD019254BAC008248FE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DD0C07E819083B6A00E7D6B2 /* Resources */ = {
@@ -203,10 +270,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD0C080719083B6B00E7D6B2 /* MVKViewController.m in Sources */,
-				DDAFEE17190847F800580F22 /* foundation_request.mm in Sources */,
 				DDC61B781922E6BA008248FE /* MVKMapView.mm in Sources */,
 				DD0C07FA19083B6B00E7D6B2 /* main.m in Sources */,
 				DD0C07FE19083B6B00E7D6B2 /* MVKAppDelegate.m in Sources */,
+				DDC61BC1192548D7008248FE /* foundation_request.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,8 +373,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../llmr.native/include,
-					"../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include",
+					../../include,
+					"../../mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include",
 				);
 				INFOPLIST_FILE = "MVKMapKit/MVKMapKit-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
@@ -330,8 +397,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../llmr.native/include,
-					"../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include",
+					../../include,
+					"../../mapnik-packaging/osx/out/build-cpp11-libcpp-universal/include",
 				);
 				INFOPLIST_FILE = "MVKMapKit/MVKMapKit-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
