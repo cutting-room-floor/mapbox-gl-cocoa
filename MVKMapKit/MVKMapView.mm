@@ -169,6 +169,7 @@ LLMRView *llmrView = nullptr;
 
 - (void)appDidBackground:(NSNotification *)notification
 {
+    llmrMap->cleanup();
     [self.mapView deleteDrawable];
 }
 
