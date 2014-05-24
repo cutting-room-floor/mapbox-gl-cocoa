@@ -180,16 +180,23 @@ LLMRView *llmrView = nullptr;
 
 #pragma clang diagnostic pop
 
-- (void)cancelPreviousActions
+- (BOOL)cancelPreviousActions
 {
-    llmrMap->cancelTransitions();
+    if (llmrMap->getState().isInteractive())
+    {
+        llmrMap->cancelTransitions();
+
+        return YES;
+    }
+
+    return NO;
 }
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)pan
 {
     if ( ! self.isScrollEnabled) return;
 
-    [self cancelPreviousActions];
+    if ( ! [self cancelPreviousActions]) return;
 
     if (pan.state == UIGestureRecognizerStateBegan)
     {
@@ -206,10 +213,7 @@ LLMRView *llmrView = nullptr;
     }
     else if (pan.state == UIGestureRecognizerStateEnded)
     {
-        if ([pan velocityInView:pan.view].x < 50 && [pan velocityInView:pan.view].y < 50)
-        {
-            return;
-        }
+        if ([pan velocityInView:pan.view].x < 50 && [pan velocityInView:pan.view].y < 50) return;
 
         CGPoint finalCenter = CGPointMake(self.centerPoint.x + (0.1 * [pan velocityInView:pan.view].x),
                                           self.centerPoint.y + (0.1 * [pan velocityInView:pan.view].y));
@@ -224,7 +228,7 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    [self cancelPreviousActions];
+    if ( ! [self cancelPreviousActions]) return;
 
     if (pinch.state == UIGestureRecognizerStateBegan)
     {
@@ -248,16 +252,15 @@ LLMRView *llmrView = nullptr;
 
         CGFloat newZoom = log2f(self.scale) + adjustment;
 
+        if (newZoom < llmrMap->getMinZoom()) return;
+
         llmrMap->scaleBy(powf(2, newZoom) / llmrMap->getScale(), [pinch locationInView:pinch.view].x, [pinch locationInView:pinch.view].y);
     }
     else if (pinch.state == UIGestureRecognizerStateEnded)
     {
         llmrMap->stopScaling();
 
-        if (fabsf(pinch.velocity) < 20)
-        {
-            return;
-        }
+        if (fabsf(pinch.velocity) < 20) return;
 
         CGFloat finalZoom = log2f(llmrMap->getScale()) + (0.01 * pinch.velocity);
 
@@ -278,7 +281,9 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isRotateEnabled) return;
 
-    [self cancelPreviousActions];
+    if ( ! [self cancelPreviousActions]) return;
+
+    if ( ! llmrMap->canRotate()) return;
 
     if (rotate.state == UIGestureRecognizerStateBegan)
     {
@@ -300,7 +305,7 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    [self cancelPreviousActions];
+    if ( ! [self cancelPreviousActions]) return;
 
     if (doubleTap.state == UIGestureRecognizerStateEnded)
     {
@@ -312,7 +317,9 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    [self cancelPreviousActions];
+    if ( ! [self cancelPreviousActions]) return;
+
+    if (llmrMap->getZoom() == llmrMap->getMinZoom()) return;
 
     if (twoFingerTap.state == UIGestureRecognizerStateEnded)
     {
@@ -324,7 +331,7 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    [self cancelPreviousActions];
+    if ( ! [self cancelPreviousActions]) return;
 
     if (quickZoom.state == UIGestureRecognizerStateBegan)
     {
@@ -337,6 +344,8 @@ LLMRView *llmrView = nullptr;
         CGFloat distance = self.quickZoomStart - [quickZoom locationInView:quickZoom.view].y;
 
         CGFloat newZoom = log2f(self.scale) + (distance / 100);
+
+        if (newZoom < llmrMap->getMinZoom()) return;
 
         llmrMap->scaleBy(powf(2, newZoom) / llmrMap->getScale(), self.bounds.size.width / 2, self.bounds.size.height / 2);
     }
