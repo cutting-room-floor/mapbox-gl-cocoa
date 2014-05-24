@@ -6,6 +6,7 @@
 #import <OpenGLES/EAGL.h>
 
 #include <llmr/llmr.hpp>
+#include <llmr/platform/platform.hpp>
 
 @interface MVKMapView () <UIGestureRecognizerDelegate>
 
@@ -454,6 +455,21 @@ LLMRView *llmrView = nullptr;
     [self setDirection:direction animated:NO];
 }
 
+- (void)notifyMapChange
+{
+    double lon, lat, zoom;
+    llmrMap->getLonLatZoom(lon, lat, zoom);
+    while (lon > 180) lon -= 360;
+    while (lon <= -180) lon += 360;
+
+    double angle = llmrMap->getAngle();
+    angle *= 180 / M_PI;
+    while (angle >= 360) angle -= 360;
+    while (angle < 0) angle += 360;
+
+//    NSLog(@"lat: %f, lon: %f, zoom: %f, angle: %f", lat, lon, zoom, angle);
+}
+
 - (void)swap
 {
     if (llmrMap->needsSwap())
@@ -469,6 +485,16 @@ class LLMRView : public llmr::View
         LLMRView(MVKMapView *nativeView) : nativeView(nativeView) {}
         virtual ~LLMRView() {}
 
+    void notify_map_change()
+    {
+        // This drives the map view delegate callbacks, which need to happen
+        // in the next run loop pass to avoid lock contention when obtaining
+        // lat/lon/zoom. Delegate callbacks are after-the-fact and don't need
+        // to be synchronous anyway.
+        //
+        [nativeView performSelector:@selector(notifyMapChange) withObject:nil afterDelay:0];
+    }
+
     void make_active()
     {
         [EAGLContext setCurrentContext:nativeView.context];
@@ -482,5 +508,12 @@ class LLMRView : public llmr::View
     private:
         MVKMapView *nativeView = nullptr;
 };
+
+void llmr::platform::notify_map_change()
+{
+    // Notify the map view wrapper, which has access to the native view object.
+    //
+    llmrView->notify_map_change();
+}
 
 @end
