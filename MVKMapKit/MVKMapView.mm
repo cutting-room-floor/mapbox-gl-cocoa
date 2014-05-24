@@ -12,6 +12,7 @@
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *mapView;
+@property (nonatomic) UIImageView *compass;
 @property (nonatomic) CGPoint centerPoint;
 @property (nonatomic) CGFloat scale;
 @property (nonatomic) CGFloat angle;
@@ -75,8 +76,30 @@ LLMRView *llmrView = nullptr;
     llmrMap = new llmr::Map(*llmrView);
     [self setNeedsLayout];
 
+    // setup logo bug
+    //
+    UIImageView *logoBug = [[UIImageView alloc] initWithImage:[[self class] resourceImageNamed:@"mapbox.png"]];
+    logoBug.frame = CGRectMake(8, self.bounds.size.height - logoBug.bounds.size.height - 4, logoBug.bounds.size.width, logoBug.bounds.size.height);
+    logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
+    logoBug.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:logoBug];
+
+    // setup compass
+    //
+    UIImage *compassImage = [[self class] resourceImageNamed:@"Compass"];
+    UIView *compassContainer = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 10, 10, compassImage.size.width, compassImage.size.height)];
+    compassContainer.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    [self addSubview:compassContainer];
+    self.compass = [[UIImageView alloc] initWithImage:compassImage];
+    self.compass.userInteractionEnabled = YES;
+    self.compass.alpha = 0;
+    [compassContainer addSubview:self.compass];
+
     // setup interaction
     //
+    UITapGestureRecognizer *compassTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleCompassTapGesture:)];
+    [self.compass addGestureRecognizer:compassTap];
+
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
     pan.delegate = self;
     [self addGestureRecognizer:pan];
@@ -191,6 +214,11 @@ LLMRView *llmrView = nullptr;
     }
 
     return NO;
+}
+
+- (void)handleCompassTapGesture:(UITapGestureRecognizer *)compassTap
+{
+    if (compassTap.state == UIGestureRecognizerStateEnded) [self resetNorth];
 }
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)pan
@@ -468,6 +496,29 @@ LLMRView *llmrView = nullptr;
     while (angle < 0) angle += 360;
 
 //    NSLog(@"lat: %f, lon: %f, zoom: %f, angle: %f", lat, lon, zoom, angle);
+
+    self.compass.transform = CGAffineTransformMakeRotation(llmrMap->getAngle());
+
+    if (llmrMap->getAngle() && self.compass.alpha < 1)   [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 1; }];
+    else if ( ! llmrMap->getAngle() && self.compass > 0) [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 0; }];
+}
+
++ (UIImage *)resourceImageNamed:(NSString *)imageName
+{
+    if ( ! [[imageName pathExtension] length])
+        imageName = [imageName stringByAppendingString:@".png"];
+
+    return [UIImage imageWithContentsOfFile:[[self class] pathForBundleResourceNamed:imageName ofType:nil]];
+}
+
++ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension
+{
+    NSAssert([[NSBundle mainBundle] pathForResource:@"MVKMapKit" ofType:@"bundle"], @"Resource bundle not found in application.");
+
+    NSString *bundlePath      = [[NSBundle mainBundle] pathForResource:@"MVKMapKit" ofType:@"bundle"];
+    NSBundle *resourcesBundle = [NSBundle bundleWithPath:bundlePath];
+
+    return [resourcesBundle pathForResource:name ofType:extension];
 }
 
 - (void)swap

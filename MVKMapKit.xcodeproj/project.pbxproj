@@ -14,6 +14,11 @@
 		DD0C07FA19083B6B00E7D6B2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C07F919083B6B00E7D6B2 /* main.m */; };
 		DD0C07FE19083B6B00E7D6B2 /* MVKAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C07FD19083B6B00E7D6B2 /* MVKAppDelegate.m */; };
 		DD0C080719083B6B00E7D6B2 /* MVKViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD0C080619083B6B00E7D6B2 /* MVKViewController.m */; };
+		DD850F2E193032AA00727AEC /* Compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD850F2C193032AA00727AEC /* Compass@2x.png */; };
+		DD850F2F193032AA00727AEC /* Compass.png in Resources */ = {isa = PBXBuildFile; fileRef = DD850F2D193032AA00727AEC /* Compass.png */; };
+		DD850F321930333900727AEC /* mapbox@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DD850F301930333900727AEC /* mapbox@2x.png */; };
+		DD850F331930333900727AEC /* mapbox.png in Resources */ = {isa = PBXBuildFile; fileRef = DD850F311930333900727AEC /* mapbox.png */; };
+		DD850F361930366500727AEC /* MVKMapKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DD850F16193031D500727AEC /* MVKMapKit.bundle */; };
 		DDAFEE091908413000580F22 /* libllmr-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE081908413000580F22 /* libllmr-ios.a */; };
 		DDAFEE12190846E900580F22 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE11190846E900580F22 /* libpng.a */; };
 		DDAFEE141908470F00580F22 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAFEE131908470F00580F22 /* libz.dylib */; };
@@ -25,6 +30,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		DD850F28193031E400727AEC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD0C07E219083B6A00E7D6B2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD850F15193031D500727AEC;
+			remoteInfo = Resources;
+		};
 		DDC61BCE19254BAC008248FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DDC61BC619254BAC008248FE /* llmr.xcodeproj */;
@@ -54,6 +66,11 @@
 		DD0C07FD19083B6B00E7D6B2 /* MVKAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVKAppDelegate.m; sourceTree = "<group>"; };
 		DD0C080519083B6B00E7D6B2 /* MVKViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MVKViewController.h; sourceTree = "<group>"; };
 		DD0C080619083B6B00E7D6B2 /* MVKViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVKViewController.m; sourceTree = "<group>"; };
+		DD850F16193031D500727AEC /* MVKMapKit.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MVKMapKit.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD850F2C193032AA00727AEC /* Compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Compass@2x.png"; path = "Resources/Compass@2x.png"; sourceTree = "<group>"; };
+		DD850F2D193032AA00727AEC /* Compass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Compass.png; path = Resources/Compass.png; sourceTree = "<group>"; };
+		DD850F301930333900727AEC /* mapbox@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "mapbox@2x.png"; path = "Resources/mapbox@2x.png"; sourceTree = "<group>"; };
+		DD850F311930333900727AEC /* mapbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = mapbox.png; path = Resources/mapbox.png; sourceTree = "<group>"; };
 		DDAFEE081908413000580F22 /* libllmr-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libllmr-ios.a"; path = "../llmr.native/build/Debug-iphoneos/libllmr-ios.a"; sourceTree = "<group>"; };
 		DDAFEE11190846E900580F22 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = "../llmr.native/mapnik-packaging/osx/out/build-cpp11-libcpp-universal/lib/libpng.a"; sourceTree = "<group>"; };
 		DDAFEE131908470F00580F22 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -84,6 +101,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DD850F13193031D500727AEC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -100,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				DD0C07EA19083B6A00E7D6B2 /* MVKMapKit.app */,
+				DD850F16193031D500727AEC /* MVKMapKit.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -125,6 +150,7 @@
 			children = (
 				DDC61BB1192548A5008248FE /* Sample App */,
 				DDC61BB2192548B3008248FE /* Map View */,
+				DD850F2B1930329700727AEC /* Resources */,
 				DDAFEE10190843A000580F22 /* LLMR */,
 				DD0C07F419083B6B00E7D6B2 /* Supporting Files */,
 			);
@@ -140,6 +166,17 @@
 				DD0C07FB19083B6B00E7D6B2 /* MVKMapKit-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DD850F2B1930329700727AEC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				DD850F311930333900727AEC /* mapbox.png */,
+				DD850F301930333900727AEC /* mapbox@2x.png */,
+				DD850F2D193032AA00727AEC /* Compass.png */,
+				DD850F2C193032AA00727AEC /* Compass@2x.png */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		DDAFEE10190843A000580F22 /* LLMR */ = {
@@ -196,11 +233,29 @@
 			buildRules = (
 			);
 			dependencies = (
+				DD850F29193031E400727AEC /* PBXTargetDependency */,
 			);
 			name = MVKMapKit;
 			productName = MVKMapKit;
 			productReference = DD0C07EA19083B6A00E7D6B2 /* MVKMapKit.app */;
 			productType = "com.apple.product-type.application";
+		};
+		DD850F15193031D500727AEC /* Resources */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD850F27193031D600727AEC /* Build configuration list for PBXNativeTarget "Resources" */;
+			buildPhases = (
+				DD850F12193031D500727AEC /* Sources */,
+				DD850F13193031D500727AEC /* Frameworks */,
+				DD850F14193031D500727AEC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Resources;
+			productName = Resources;
+			productReference = DD850F16193031D500727AEC /* MVKMapKit.bundle */;
+			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
 
@@ -232,6 +287,7 @@
 			projectRoot = "";
 			targets = (
 				DD0C07E919083B6A00E7D6B2 /* MVKMapKit */,
+				DD850F15193031D500727AEC /* Resources */,
 			);
 		};
 /* End PBXProject section */
@@ -259,6 +315,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD0C07F819083B6B00E7D6B2 /* InfoPlist.strings in Resources */,
+				DD850F361930366500727AEC /* MVKMapKit.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD850F14193031D500727AEC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DD850F331930333900727AEC /* mapbox.png in Resources */,
+				DD850F321930333900727AEC /* mapbox@2x.png in Resources */,
+				DD850F2F193032AA00727AEC /* Compass.png in Resources */,
+				DD850F2E193032AA00727AEC /* Compass@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,7 +345,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DD850F12193031D500727AEC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DD850F29193031E400727AEC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD850F15193031D500727AEC /* Resources */;
+			targetProxy = DD850F28193031E400727AEC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		DD0C07F619083B6B00E7D6B2 /* InfoPlist.strings */ = {
@@ -411,6 +494,35 @@
 			};
 			name = Release;
 		};
+		DD850F20193031D600727AEC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Resources/Resources-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = MVKMapKit;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		DD850F21193031D600727AEC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Resources/Resources-Prefix.pch";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_NAME = MVKMapKit;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -428,6 +540,15 @@
 			buildConfigurations = (
 				DD0C082019083B6B00E7D6B2 /* Debug */,
 				DD0C082119083B6B00E7D6B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD850F27193031D600727AEC /* Build configuration list for PBXNativeTarget "Resources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD850F20193031D600727AEC /* Debug */,
+				DD850F21193031D600727AEC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
