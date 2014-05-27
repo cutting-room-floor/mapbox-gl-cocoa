@@ -76,7 +76,6 @@ LLMRView *llmrView = nullptr;
     llmrView = new LLMRView(self);
     llmrMap = new llmr::Map(*llmrView);
     [self setNeedsLayout];
-    [self setNeedsUpdateConstraints];
 
     // setup interaction
     //
@@ -177,12 +176,14 @@ LLMRView *llmrView = nullptr;
             self.logoBug.frame = CGRectMake(8, self.bounds.size.height - self.logoBug.bounds.size.height - 4, self.logoBug.bounds.size.width, self.logoBug.bounds.size.height);
             self.logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
             [self addSubview:self.logoBug];
+
+            [self setNeedsUpdateConstraints];
         }
 
         if ( ! self.compass)
         {
             UIImage *compassImage = [[self class] resourceImageNamed:@"Compass"];
-            UIView *compassContainer = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 10, 10, compassImage.size.width, compassImage.size.height)];
+            UIView *compassContainer = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 5, compassImage.size.width, compassImage.size.height)];
             compassContainer.translatesAutoresizingMaskIntoConstraints = NO;
             [self addSubview:compassContainer];
 
@@ -191,6 +192,8 @@ LLMRView *llmrView = nullptr;
             [self.compass addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleCompassTapGesture:)]];
             self.compass.alpha = 0;
             [compassContainer addSubview:self.compass];
+
+            [self setNeedsUpdateConstraints];
         }
     }
 
@@ -216,6 +219,11 @@ LLMRView *llmrView = nullptr;
 
         if (viewController)
         {
+            while (viewController.parentViewController)
+            {
+                viewController = viewController.parentViewController;
+            }
+
             [container removeConstraints:container.constraints];
 
             CGFloat topSpacing   = container.frame.origin.y;
