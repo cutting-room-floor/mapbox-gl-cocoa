@@ -1,15 +1,6 @@
 {
   'targets': [
     {
-        'target_name': 'Resources',
-        'product_name': 'MVKMapKit',
-        'type': 'loadable_module',
-        'mac_bundle': 1,
-        'mac_bundle_resources': [
-          '<!@(find MVKMapKit/Resources -type f)'
-        ],
-    },
-    {
         'target_name': 'Sample App',
         'product_name': 'MVK Sample',
         'sources': [
@@ -26,6 +17,9 @@
         'product_extension': 'app',
         'type': 'executable',
         'mac_bundle': 1,
+        'mac_bundle_resources': [
+          '<!@(find MVKMapKit/Resources -type f)'
+        ],
         'link_settings': {
           'libraries': [
             '$(SDKROOT)/System/Library/Frameworks/CoreGraphics.framework',
@@ -61,8 +55,7 @@
         },
         'default_configuration': 'Release',
         'dependencies': [
-            '../../llmr.gyp:llmr-ios',
-            'Resources'
+            '../../llmr.gyp:llmr-ios'
         ]
     }
   ]
