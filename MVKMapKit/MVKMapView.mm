@@ -457,6 +457,8 @@ LLMRView *llmrView = nullptr;
 - (void)resetNorth
 {
     llmrMap->resetNorth();
+
+    [UIView animateWithDuration:0.5 animations:^(void) { self.compass.transform = CGAffineTransformIdentity; }];
 }
 
 - (void)resetPosition
