@@ -8,7 +8,7 @@
 #include <llmr/llmr.hpp>
 #include <llmr/platform/platform.hpp>
 
-@interface MVKMapView () <UIGestureRecognizerDelegate>
+@interface MVKMapView () <UIGestureRecognizerDelegate, GLKViewDelegate>
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *mapView;
@@ -68,6 +68,10 @@ LLMRView *llmrView = nullptr;
     self.mapView.enableSetNeedsDisplay = NO;
     self.mapView.drawableStencilFormat = GLKViewDrawableStencilFormat8;
     self.mapView.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+
+
+    self.mapView.delegate = self;
+
     [self.mapView bindDrawable];
     [self addSubview:self.mapView];
 
@@ -77,6 +81,9 @@ LLMRView *llmrView = nullptr;
     llmrMap = new llmr::Map(*llmrView);
     [self setNeedsLayout];
     [self setNeedsUpdateConstraints];
+
+    CGRect rect = self.bounds;
+    llmrMap->resize(rect.size.width, rect.size.height, self.mapView.contentScaleFactor, self.mapView.drawableWidth, self.mapView.drawableHeight);
 
     // setup interaction
     //
@@ -164,12 +171,16 @@ LLMRView *llmrView = nullptr;
     [self setNeedsUpdateConstraints];
 }
 
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
+{
+    llmrMap->resize(rect.size.width, rect.size.height, view.contentScaleFactor, view.drawableWidth, view.drawableHeight);
+}
+
 - (void)layoutSubviews
 {
     if (self.mapView)
     {
-        CGRect rect = self.bounds;
-        llmrMap->resize(rect.size.width, rect.size.height, self.mapView.contentScaleFactor, self.mapView.drawableWidth, self.mapView.drawableHeight);
+        llmrMap->update();
 
         if ( ! self.logoBug)
         {
