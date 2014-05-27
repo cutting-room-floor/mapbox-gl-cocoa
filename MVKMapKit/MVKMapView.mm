@@ -87,6 +87,14 @@ LLMRView *llmrView = nullptr;
     logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
     [self addSubview:logoBug];
 
+    // setup attribution
+    //
+    UIButton *attributionButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    attributionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+    [attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
+    attributionButton.frame = CGRectMake(self.bounds.size.width  - 30, self.bounds.size.height - 30, attributionButton.bounds.size.width, attributionButton.bounds.size.height);
+    [self addSubview:attributionButton];
+
     // setup compass
     //
     _compassButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -397,6 +405,27 @@ LLMRView *llmrView = nullptr;
 
     return ([validSimultaneousGestures containsObject:gestureRecognizer] && [validSimultaneousGestures containsObject:otherGestureRecognizer]);
 }
+
+- (void)tintColorDidChange
+{
+    for (UIView *subview in self.subviews)
+    {
+        if ([subview respondsToSelector:@selector(setTintColor:)])
+        {
+            subview.tintColor = self.tintColor;
+        }
+    }
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
+- (void)showAttribution:(id)sender
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://www.mapbox.com/about/maps/"]];
+}
+
+#pragma clang diagnostic pop
 
 - (void)setDebugActive:(BOOL)debugActive
 {
