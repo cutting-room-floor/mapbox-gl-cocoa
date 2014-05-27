@@ -3,12 +3,16 @@
     {
         'target_name': 'Resources',
         'product_name': 'MVKMapKit',
-        'product_extension': 'bundle',
-        'type': 'executable',
+        'type': 'loadable_module',
         'mac_bundle': 1,
         'mac_bundle_resources': [
           '<!@(find MVKMapKit/Resources -type f)'
         ],
+        'direct_dependent_settings': {
+          'mac_bundle_resources': [
+            '$(BUILT_PRODUCTS_DIR)/MVKMapKit.bundle'
+          ],
+        },
     },
     {
         'target_name': 'Sample App',
@@ -27,9 +31,6 @@
         'product_extension': 'app',
         'type': 'executable',
         'mac_bundle': 1,
-        'mac_bundle_resources': [
-          '<(PRODUCT_DIR)/MVKMapKit.bundle'
-        ],
         'link_settings': {
           'libraries': [
             '$(SDKROOT)/System/Library/Frameworks/CoreGraphics.framework',
