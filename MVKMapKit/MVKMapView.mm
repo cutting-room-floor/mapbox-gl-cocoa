@@ -12,6 +12,7 @@
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *mapView;
+@property (nonatomic) UIImageView *logoBug;
 @property (nonatomic) UIImageView *compass;
 @property (nonatomic) CGPoint centerPoint;
 @property (nonatomic) CGFloat scale;
@@ -75,31 +76,10 @@ LLMRView *llmrView = nullptr;
     llmrView = new LLMRView(self);
     llmrMap = new llmr::Map(*llmrView);
     [self setNeedsLayout];
-
-    // setup logo bug
-    //
-    UIImageView *logoBug = [[UIImageView alloc] initWithImage:[[self class] resourceImageNamed:@"mapbox.png"]];
-    logoBug.frame = CGRectMake(8, self.bounds.size.height - logoBug.bounds.size.height - 4, logoBug.bounds.size.width, logoBug.bounds.size.height);
-    logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
-    logoBug.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:logoBug];
-
-    // setup compass
-    //
-    UIImage *compassImage = [[self class] resourceImageNamed:@"Compass"];
-    UIView *compassContainer = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 10, 10, compassImage.size.width, compassImage.size.height)];
-    compassContainer.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
-    [self addSubview:compassContainer];
-    self.compass = [[UIImageView alloc] initWithImage:compassImage];
-    self.compass.userInteractionEnabled = YES;
-    self.compass.alpha = 0;
-    [compassContainer addSubview:self.compass];
+    [self setNeedsUpdateConstraints];
 
     // setup interaction
     //
-    UITapGestureRecognizer *compassTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleCompassTapGesture:)];
-    [self.compass addGestureRecognizer:compassTap];
-
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
     pan.delegate = self;
     [self addGestureRecognizer:pan];
@@ -179,13 +159,82 @@ LLMRView *llmrView = nullptr;
     [self setNeedsLayout];
 }
 
+- (void)didMoveToSuperview
+{
+    [self setNeedsUpdateConstraints];
+}
+
 - (void)layoutSubviews
 {
     if (self.mapView)
     {
         CGRect rect = self.bounds;
         llmrMap->resize(rect.size.width, rect.size.height, self.mapView.contentScaleFactor, self.mapView.drawableWidth, self.mapView.drawableHeight);
+
+        if ( ! self.logoBug)
+        {
+            self.logoBug = [[UIImageView alloc] initWithImage:[[self class] resourceImageNamed:@"mapbox.png"]];
+            self.logoBug.frame = CGRectMake(8, self.bounds.size.height - self.logoBug.bounds.size.height - 4, self.logoBug.bounds.size.width, self.logoBug.bounds.size.height);
+            self.logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
+            [self addSubview:self.logoBug];
+        }
+
+        if ( ! self.compass)
+        {
+            UIImage *compassImage = [[self class] resourceImageNamed:@"Compass"];
+            UIView *compassContainer = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 10, 10, compassImage.size.width, compassImage.size.height)];
+            compassContainer.translatesAutoresizingMaskIntoConstraints = NO;
+            [self addSubview:compassContainer];
+
+            self.compass = [[UIImageView alloc] initWithImage:compassImage];
+            self.compass.userInteractionEnabled = YES;
+            [self.compass addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleCompassTapGesture:)]];
+            self.compass.alpha = 0;
+            [compassContainer addSubview:self.compass];
+        }
     }
+
+    [super layoutSubviews];
+}
+
+- (void)updateConstraints
+{
+    UIView *container = self.compass.superview;
+
+    if (container)
+    {
+        UIViewController *viewController = nil;
+        UIResponder *responder = self;
+        while ((responder = [responder nextResponder]))
+        {
+            if ([responder isKindOfClass:[UIViewController class]])
+            {
+                viewController = (UIViewController *)responder;
+                break;
+            }
+        }
+
+        if (viewController)
+        {
+            [container removeConstraints:container.constraints];
+
+            CGFloat topSpacing   = container.frame.origin.y;
+            CGFloat rightSpacing = container.superview.bounds.size.width - container.frame.origin.x;
+
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[topLayoutGuide]-topSpacing-[container]"
+                                                                                        options:0
+                                                                                        metrics:@{ @"topSpacing"     : @(topSpacing) }
+                                                                                          views:@{ @"topLayoutGuide" : viewController.topLayoutGuide,
+                                                                                                   @"container"      : container }]];
+
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[container]-rightSpacing-|"
+                                                                                        options:0
+                                                                                        metrics:@{ @"rightSpacing" : @(rightSpacing) }
+                                                                                          views:@{ @"container"    : container }]];
+        }
+    }
+
+    [super updateConstraints];
 }
 
 #pragma clang diagnostic push
