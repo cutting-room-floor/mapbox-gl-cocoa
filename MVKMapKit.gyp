@@ -8,11 +8,6 @@
         'mac_bundle_resources': [
           '<!@(find MVKMapKit/Resources -type f)'
         ],
-        'direct_dependent_settings': {
-          'mac_bundle_resources': [
-            '$(BUILT_PRODUCTS_DIR)/MVKMapKit.bundle'
-          ],
-        },
     },
     {
         'target_name': 'Sample App',
