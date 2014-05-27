@@ -8,7 +8,7 @@
 #include <llmr/llmr.hpp>
 #include <llmr/platform/platform.hpp>
 
-@interface MVKMapView () <UIGestureRecognizerDelegate>
+@interface MVKMapView () <UIGestureRecognizerDelegate, GLKViewDelegate>
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *glView;
@@ -70,6 +70,7 @@ LLMRView *llmrView = nullptr;
     _glView.enableSetNeedsDisplay = NO;
     _glView.drawableStencilFormat = GLKViewDrawableStencilFormat8;
     _glView.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+    _glView.delegate = self;
     [_glView bindDrawable];
     [self addSubview:_glView];
 
