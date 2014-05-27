@@ -12,7 +12,7 @@
     },
     {
         'target_name': 'Sample App',
-        'product_name': 'Sample App',
+        'product_name': 'MVK Sample',
         'sources': [
             './MVKMapKit/main.m',
             './MVKMapKit/MVKAppDelegate.h',
