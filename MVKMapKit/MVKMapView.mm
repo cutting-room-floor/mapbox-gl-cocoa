@@ -14,6 +14,9 @@
 @property (nonatomic) GLKView *mapView;
 @property (nonatomic) UIImageView *logoBug;
 @property (nonatomic) UIImageView *compass;
+@property (nonatomic) UIPanGestureRecognizer *pan;
+@property (nonatomic) UIPinchGestureRecognizer *pinch;
+@property (nonatomic) UIRotationGestureRecognizer *rotate;
 @property (nonatomic) CGPoint centerPoint;
 @property (nonatomic) CGFloat scale;
 @property (nonatomic) CGFloat angle;
@@ -79,20 +82,20 @@ LLMRView *llmrView = nullptr;
 
     // setup interaction
     //
-    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
-    pan.delegate = self;
-    [self addGestureRecognizer:pan];
-    self.scrollEnabled = YES;
+    _pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
+    _pan.delegate = self;
+    [self addGestureRecognizer:_pan];
+    _scrollEnabled = YES;
 
-    UIPinchGestureRecognizer *pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
-    pinch.delegate = self;
-    [self addGestureRecognizer:pinch];
-    self.zoomEnabled = YES;
+    _pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
+    _pinch.delegate = self;
+    [self addGestureRecognizer:_pinch];
+    _zoomEnabled = YES;
 
-    UIRotationGestureRecognizer *rotate = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotateGesture:)];
-    rotate.delegate = self;
-    [self addGestureRecognizer:rotate];
-    self.rotateEnabled = YES;
+    _rotate = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotateGesture:)];
+    _rotate.delegate = self;
+    [self addGestureRecognizer:_rotate];
+    _rotateEnabled = YES;
 
     UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTapGesture:)];
     doubleTap.numberOfTapsRequired = 2;
@@ -439,9 +442,9 @@ LLMRView *llmrView = nullptr;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    NSArray *validSimultaneousGestures = @[ [UIPanGestureRecognizer class], [UIPinchGestureRecognizer class], [UIRotationGestureRecognizer class] ];
+    NSArray *validSimultaneousGestures = @[ self.pan, self.pinch, self.rotate ];
 
-    return ([validSimultaneousGestures containsObject:[gestureRecognizer class]] && [validSimultaneousGestures containsObject:[otherGestureRecognizer class]]);
+    return ([validSimultaneousGestures containsObject:gestureRecognizer] && [validSimultaneousGestures containsObject:otherGestureRecognizer]);
 }
 
 - (void)setDebugActive:(BOOL)debugActive
