@@ -549,7 +549,7 @@ LLMRView *llmrView = nullptr;
     self.compass.transform = CGAffineTransformMakeRotation(llmrMap->getAngle());
 
     if (llmrMap->getAngle() && self.compass.alpha < 1)   [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 1; }];
-    else if ( ! llmrMap->getAngle() && self.compass > 0) [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 0; }];
+    else if ( ! llmrMap->getAngle() && self.compass.alpha > 0) [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 0; }];
 }
 
 + (UIImage *)resourceImageNamed:(NSString *)imageName
