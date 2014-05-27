@@ -521,17 +521,11 @@ LLMRView *llmrView = nullptr;
     if ( ! [[imageName pathExtension] length])
         imageName = [imageName stringByAppendingString:@".png"];
 
-    return [UIImage imageWithContentsOfFile:[[self class] pathForBundleResourceNamed:imageName ofType:nil]];
-}
+    NSString *imagePath = [[NSBundle mainBundle] pathForResource:imageName ofType:nil];
 
-+ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension
-{
-    NSAssert([[NSBundle mainBundle] pathForResource:@"MVKMapKit" ofType:@"bundle"], @"Resource bundle not found in application.");
+    NSAssert(imagePath, @"Resource image not found in application.");
 
-    NSString *bundlePath      = [[NSBundle mainBundle] pathForResource:@"MVKMapKit" ofType:@"bundle"];
-    NSBundle *resourcesBundle = [NSBundle bundleWithPath:bundlePath];
-
-    return [resourcesBundle pathForResource:name ofType:extension];
+    return [UIImage imageWithContentsOfFile:imagePath];
 }
 
 - (void)swap
