@@ -11,9 +11,8 @@
 @interface MVKMapView () <UIGestureRecognizerDelegate>
 
 @property (nonatomic) EAGLContext *context;
-@property (nonatomic) GLKView *mapView;
-@property (nonatomic) UIImageView *logoBug;
-@property (nonatomic) UIImageView *compass;
+@property (nonatomic) GLKView *glView;
+@property (nonatomic) UIButton *compassButton;
 @property (nonatomic) UIPanGestureRecognizer *pan;
 @property (nonatomic) UIPinchGestureRecognizer *pinch;
 @property (nonatomic) UIRotationGestureRecognizer *rotate;
@@ -55,9 +54,9 @@ LLMRView *llmrView = nullptr;
 {
     // create context
     //
-    self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 
-    if ( ! self.context)
+    if ( ! _context)
     {
         NSLog(@"Failed to create OpenGL ES context");
 
@@ -66,19 +65,40 @@ LLMRView *llmrView = nullptr;
 
     // create GL view
     //
-    self.mapView = [[GLKView alloc] initWithFrame:self.bounds context:self.context];
-    self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.mapView.enableSetNeedsDisplay = NO;
-    self.mapView.drawableStencilFormat = GLKViewDrawableStencilFormat8;
-    self.mapView.drawableDepthFormat = GLKViewDrawableDepthFormat16;
-    [self.mapView bindDrawable];
-    [self addSubview:self.mapView];
+    _glView = [[GLKView alloc] initWithFrame:self.bounds context:_context];
+    _glView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _glView.enableSetNeedsDisplay = NO;
+    _glView.drawableStencilFormat = GLKViewDrawableStencilFormat8;
+    _glView.drawableDepthFormat = GLKViewDrawableDepthFormat16;
+    [_glView bindDrawable];
+    [self addSubview:_glView];
 
     // setup llmr map
     //
     llmrView = new LLMRView(self);
     llmrMap = new llmr::Map(*llmrView);
-    [self setNeedsLayout];
+    llmrMap->resize(self.bounds.size.width, self.bounds.size.height, _glView.contentScaleFactor, _glView.drawableWidth, _glView.drawableHeight);
+
+    // setup logo bug
+    //
+    UIView *logoBug = [[UIImageView alloc] initWithImage:[[self class] resourceImageNamed:@"mapbox.png"]];
+    logoBug.frame = CGRectMake(8, self.bounds.size.height - logoBug.bounds.size.height - 4, logoBug.bounds.size.width, logoBug.bounds.size.height);
+    logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
+    [self addSubview:logoBug];
+
+    // setup compass
+    //
+    _compassButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *compassImage = [[self class] resourceImageNamed:@"Compass.png"];
+    _compassButton.frame = CGRectMake(0, 0, compassImage.size.width, compassImage.size.height);
+    [_compassButton setImage:compassImage forState:UIControlStateNormal];
+    [_compassButton setImage:compassImage forState:UIControlStateHighlighted];
+    _compassButton.alpha = 0;
+    [_compassButton addTarget:self action:@selector(handleCompassTapGesture:) forControlEvents:UIControlEventTouchUpInside];
+    UIView *container = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 5, compassImage.size.width, compassImage.size.height)];
+    container.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    [container addSubview:_compassButton];
+    [self addSubview:container];
 
     // setup interaction
     //
@@ -141,7 +161,7 @@ LLMRView *llmrView = nullptr;
         llmrView = nullptr;
     }
 
-    if ([[EAGLContext currentContext] isEqual:self.context])
+    if ([[EAGLContext currentContext] isEqual:_context])
     {
         [EAGLContext setCurrentContext:nil];
     }
@@ -161,91 +181,16 @@ LLMRView *llmrView = nullptr;
     [self setNeedsLayout];
 }
 
-- (void)didMoveToSuperview
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    [self setNeedsUpdateConstraints];
+    llmrMap->resize(rect.size.width, rect.size.height, view.contentScaleFactor, view.drawableWidth, view.drawableHeight);
 }
 
 - (void)layoutSubviews
 {
-    if (self.mapView)
-    {
-        CGRect rect = self.bounds;
-        llmrMap->resize(rect.size.width, rect.size.height, self.mapView.contentScaleFactor, self.mapView.drawableWidth, self.mapView.drawableHeight);
-
-        if ( ! self.logoBug)
-        {
-            self.logoBug = [[UIImageView alloc] initWithImage:[[self class] resourceImageNamed:@"mapbox.png"]];
-            self.logoBug.frame = CGRectMake(8, self.bounds.size.height - self.logoBug.bounds.size.height - 4, self.logoBug.bounds.size.width, self.logoBug.bounds.size.height);
-            self.logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
-            [self addSubview:self.logoBug];
-
-            [self setNeedsUpdateConstraints];
-        }
-
-        if ( ! self.compass)
-        {
-            UIImage *compassImage = [[self class] resourceImageNamed:@"Compass"];
-            UIView *compassContainer = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 5, compassImage.size.width, compassImage.size.height)];
-            compassContainer.translatesAutoresizingMaskIntoConstraints = NO;
-            [self addSubview:compassContainer];
-
-            self.compass = [[UIImageView alloc] initWithImage:compassImage];
-            self.compass.userInteractionEnabled = YES;
-            [self.compass addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleCompassTapGesture:)]];
-            self.compass.alpha = 0;
-            [compassContainer addSubview:self.compass];
-
-            [self setNeedsUpdateConstraints];
-        }
-    }
+    llmrMap->update();
 
     [super layoutSubviews];
-}
-
-- (void)updateConstraints
-{
-    UIView *container = self.compass.superview;
-
-    if (container)
-    {
-        UIViewController *viewController = nil;
-        UIResponder *responder = self;
-        while ((responder = [responder nextResponder]))
-        {
-            if ([responder isKindOfClass:[UIViewController class]])
-            {
-                viewController = (UIViewController *)responder;
-                break;
-            }
-        }
-
-        if (viewController)
-        {
-            while (viewController.parentViewController)
-            {
-                viewController = viewController.parentViewController;
-            }
-
-            [container removeConstraints:container.constraints];
-
-            CGFloat topSpacing   = container.frame.origin.y;
-            CGFloat rightSpacing = container.superview.bounds.size.width - container.frame.origin.x;
-
-            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[topLayoutGuide]-topSpacing-[container]"
-                                                                                        options:0
-                                                                                        metrics:@{ @"topSpacing"     : @(topSpacing) }
-                                                                                          views:@{ @"topLayoutGuide" : viewController.topLayoutGuide,
-                                                                                                   @"container"      : container }]];
-
-            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[container]-rightSpacing-|"
-                                                                                        options:0
-                                                                                        metrics:@{ @"rightSpacing" : @(rightSpacing) }
-                                                                                          views:@{ @"container"    : container }]];
-        }
-    }
-
-    [super updateConstraints];
 }
 
 #pragma clang diagnostic push
@@ -254,12 +199,12 @@ LLMRView *llmrView = nullptr;
 - (void)appDidBackground:(NSNotification *)notification
 {
     llmrMap->cleanup();
-    [self.mapView deleteDrawable];
+    [self.glView deleteDrawable];
 }
 
 - (void)appWillForeground:(NSNotification *)notification
 {
-    [self.mapView bindDrawable];
+    [self.glView bindDrawable];
 }
 
 #pragma clang diagnostic pop
@@ -276,10 +221,15 @@ LLMRView *llmrView = nullptr;
     return NO;
 }
 
-- (void)handleCompassTapGesture:(UITapGestureRecognizer *)compassTap
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
+- (void)handleCompassTapGesture:(id)sender
 {
-    if (compassTap.state == UIGestureRecognizerStateEnded) [self resetNorth];
+    [self resetNorth];
 }
+
+#pragma clang diagnostic pop
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)pan
 {
@@ -461,7 +411,7 @@ LLMRView *llmrView = nullptr;
 {
     llmrMap->resetNorth();
 
-    [UIView animateWithDuration:0.5 animations:^(void) { self.compass.transform = CGAffineTransformIdentity; }];
+    [UIView animateWithDuration:0.5 animations:^(void) { self.compassButton.transform = CGAffineTransformIdentity; }];
 }
 
 - (void)resetPosition
@@ -559,10 +509,10 @@ LLMRView *llmrView = nullptr;
 
 //    NSLog(@"lat: %f, lon: %f, zoom: %f, angle: %f", lat, lon, zoom, angle);
 
-    self.compass.transform = CGAffineTransformMakeRotation(llmrMap->getAngle());
+    self.compassButton.transform = CGAffineTransformMakeRotation(llmrMap->getAngle());
 
-    if (llmrMap->getAngle() && self.compass.alpha < 1)   [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 1; }];
-    else if ( ! llmrMap->getAngle() && self.compass.alpha > 0) [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 0; }];
+    if (llmrMap->getAngle() && self.compassButton.alpha < 1)   [UIView animateWithDuration:0.5 animations:^(void) { self.compassButton.alpha = 1; }];
+    else if ( ! llmrMap->getAngle() && self.compassButton.alpha > 0) [UIView animateWithDuration:0.5 animations:^(void) { self.compassButton.alpha = 0; }];
 }
 
 + (UIImage *)resourceImageNamed:(NSString *)imageName
@@ -587,7 +537,7 @@ LLMRView *llmrView = nullptr;
 {
     if (llmrMap->needsSwap())
     {
-        [self.mapView display];
+        [self.glView display];
         llmrMap->swapped();
     }
 }
