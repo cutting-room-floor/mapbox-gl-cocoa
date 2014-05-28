@@ -207,13 +207,16 @@ LLMRView *llmrView = nullptr;
 
 - (void)appDidBackground:(NSNotification *)notification
 {
-    llmrMap->cleanup();
+    llmrMap->stop();
+
     [self.glView deleteDrawable];
 }
 
 - (void)appWillForeground:(NSNotification *)notification
 {
     [self.glView bindDrawable];
+
+    llmrMap->start();
 }
 
 #pragma clang diagnostic pop
