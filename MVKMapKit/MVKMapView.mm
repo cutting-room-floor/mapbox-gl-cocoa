@@ -312,22 +312,7 @@ LLMRView *llmrView = nullptr;
 
         llmrMap->scaleBy(powf(2, newZoom) / llmrMap->getScale(), [pinch locationInView:pinch.view].x, [pinch locationInView:pinch.view].y);
     }
-    else if (pinch.state == UIGestureRecognizerStateEnded)
-    {
-        llmrMap->stopScaling();
-
-        if (fabsf(pinch.velocity) < 20) return;
-
-        CGFloat finalZoom = log2f(llmrMap->getScale()) + (0.01 * pinch.velocity);
-
-        double scale = llmrMap->getScale();
-        double new_scale = powf(2, finalZoom);
-
-        CGFloat duration = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad ? 0.3 : 0.5);
-
-        llmrMap->scaleBy(new_scale / scale, [pinch locationInView:pinch.view].x, [pinch locationInView:pinch.view].y, duration);
-    }
-    else if (pinch.state == UIGestureRecognizerStateCancelled)
+    else if (pinch.state == UIGestureRecognizerStateEnded || pinch.state == UIGestureRecognizerStateCancelled)
     {
         llmrMap->stopScaling();
     }
