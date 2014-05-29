@@ -264,14 +264,20 @@ LLMRView *llmrView = nullptr;
     }
     else if (pan.state == UIGestureRecognizerStateEnded)
     {
-        if ([pan velocityInView:pan.view].x < 50 && [pan velocityInView:pan.view].y < 50) return;
+        CGFloat ease = 0.25; // third cubic bezier param (assuming first two are 0)
 
-        CGPoint finalCenter = CGPointMake(self.centerPoint.x + (0.1 * [pan velocityInView:pan.view].x),
-                                          self.centerPoint.y + (0.1 * [pan velocityInView:pan.view].y));
+        CGPoint velocity = [pan velocityInView:pan.view];
+        velocity.x = velocity.x * ease;
+        velocity.y = velocity.y * ease;
 
-        CGFloat duration = ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad ? 0.3 : 0.5);
+        CGFloat speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
 
-        llmrMap->moveBy(finalCenter.x - self.centerPoint.x, finalCenter.y - self.centerPoint.y, duration);
+        CGFloat deceleration = 2000; // pixels/second^2
+        CGFloat duration = speed / (deceleration * ease);
+
+        CGPoint offset = CGPointMake(velocity.x * duration / 2, velocity.y * duration / 2);
+
+        llmrMap->moveBy(offset.x, offset.y, duration);
     }
 }
 
