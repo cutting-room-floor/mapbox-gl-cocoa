@@ -264,15 +264,14 @@ LLMRView *llmrView = nullptr;
     }
     else if (pan.state == UIGestureRecognizerStateEnded)
     {
-        CGFloat ease = 0.25; // third cubic bezier param (assuming first two are 0)
+        CGFloat ease = 0.25;
 
         CGPoint velocity = [pan velocityInView:pan.view];
         velocity.x = velocity.x * ease;
         velocity.y = velocity.y * ease;
 
         CGFloat speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-
-        CGFloat deceleration = 2000; // pixels/second^2
+        CGFloat deceleration = 2500;
         CGFloat duration = speed / (deceleration * ease);
 
         CGPoint offset = CGPointMake(velocity.x * duration / 2, velocity.y * duration / 2);
