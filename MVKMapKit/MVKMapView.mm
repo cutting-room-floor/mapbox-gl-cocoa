@@ -104,7 +104,7 @@ LLMRView *llmrView = nullptr;
     [_compassButton setImage:compassImage forState:UIControlStateHighlighted];
     _compassButton.alpha = 0;
     [_compassButton addTarget:self action:@selector(handleCompassTapGesture:) forControlEvents:UIControlEventTouchUpInside];
-    UIView *container = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 5, compassImage.size.width, compassImage.size.height)];
+    UIView *container = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 5, [[UIApplication sharedApplication] statusBarFrame].size.height + 5, compassImage.size.width, compassImage.size.height)];
     container.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
     [container addSubview:_compassButton];
     [self addSubview:container];
