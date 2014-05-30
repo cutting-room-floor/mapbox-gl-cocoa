@@ -294,23 +294,13 @@ LLMRView *llmrView = nullptr;
     }
     else if (pinch.state == UIGestureRecognizerStateChanged)
     {
-        CGFloat tolerance  = 2.5;
-        CGFloat adjustment = 0;
+        CGFloat newScale = self.scale * pinch.scale;
 
-        if (pinch.scale > 1)
-        {
-            adjustment = (pinch.scale / tolerance) - (1 / tolerance);
-        }
-        else
-        {
-            adjustment = (-1 / pinch.scale) / tolerance + (1 / tolerance);
-        }
+        if (log2(newScale) < llmrMap->getMinZoom()) return;
 
-        CGFloat newZoom = log2f(self.scale) + adjustment;
+        double scale = llmrMap->getScale();
 
-        if (newZoom < llmrMap->getMinZoom()) return;
-
-        llmrMap->scaleBy(powf(2, newZoom) / llmrMap->getScale(), [pinch locationInView:pinch.view].x, [pinch locationInView:pinch.view].y);
+        llmrMap->scaleBy(newScale / scale, [pinch locationInView:pinch.view].x, [pinch locationInView:pinch.view].y);
     }
     else if (pinch.state == UIGestureRecognizerStateEnded || pinch.state == UIGestureRecognizerStateCancelled)
     {
