@@ -9,7 +9,7 @@
 - (void)resetNorth;
 - (void)resetPosition;
 - (void)toggleDebug;
-- (void)toggleRaster;
+- (void)toggleStyle;
 
 // regular API
 //
@@ -27,5 +27,21 @@
 
 @property (nonatomic) CLLocationDirection direction;
 - (void)setDirection:(CLLocationDirection)direction animated:(BOOL)animated;
+
+// styling API
+//
+- (NSDictionary *)getRawStyle;
+- (void)setRawStyle:(NSDictionary *)style;
+
+- (NSArray *)getStyleOrderedLayerNames;
+- (void)setStyleOrderedLayerNames:(NSArray *)orderedLayerNames;
+
+- (NSArray *)getAllStyleClasses;
+- (NSArray *)getAppliedStyleClasses;
+- (void)setAppliedStyleClasses:(NSArray *)appliedClasses;
+- (void)setAppliedStyleClasses:(NSArray *)appliedClasses transitionDuration:(NSTimeInterval)transitionDuration;
+
+- (NSDictionary *)getStyleDescriptionForLayer:(NSString *)layerName inClass:(NSString *)className;
+- (void)setStyleDescription:(NSDictionary *)styleDescription forLayer:(NSString *)layerName inClass:(NSString *)className;
 
 @end
