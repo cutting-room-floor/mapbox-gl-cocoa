@@ -1,12 +1,12 @@
-# MVKMapKit
+# mapbox-gl-cocoa
 
-This is a Cocoa API wrapper for [`mapbox-gl-native`](https://github.com/mapbox/mapbox-gl-native). Use or edit this project to get access to Mapbox vector maps in your iOS apps by using `MVKMapView`. 
+This project is Cocoa API bindings for [`mapbox-gl-native`](https://github.com/mapbox/mapbox-gl-native). Use or edit this project to get access to Mapbox vector maps and dynamic OpenGL-based styling in your iOS apps by using `MGLMapView`. 
 
 ## Installation
 
-This project should be cloned as a submodule of `mapbox-gl-native` so that it is contained within that project. Then, run `./setup.sh` to use GYP to create the Xcode project for the sample app. This script will open the project, then you should select the *Sample App* target and an iOS platform of choice to build & run the sample app. 
+This project should be cloned as a submodule of `mapbox-gl-native` so that it is contained within that project. Then, run `./setup.sh` to use [GYP](https://code.google.com/p/gyp/) to create the Xcode project for the sample app. This script will open the project, then you should select the *Sample App* target and an iOS platform of choice to build & run the sample app. 
 
-GYP is currently used because the `mapbox-gl-native` iOS test app itself requires the resources bundle created by this GYP project. In future, MVKMapKit will be installable as a statically-linked library, header files, and a pre-built resource bundle for persons not wishing to develop on `mapbox-gl-native` itself. 
+GYP is currently used because the `mapbox-gl-native` iOS test app itself requires the resources bundle created by this GYP project. In future, mapbox-gl-cocoa will be installable as a statically-linked library, header files, and a pre-built resource bundle for persons not wishing to develop on `mapbox-gl-native` itself. 
 
 ## Requirements
 
@@ -22,7 +22,3 @@ GYP is currently used because the `mapbox-gl-native` iOS test app itself require
  * https://github.com/mapbox/vector-tile-spec
  * https://github.com/mapbox/mapbox-gl-native
  * https://github.com/mapbox/llmr (soon)
-
-##
-
-*Project name subject to change.*

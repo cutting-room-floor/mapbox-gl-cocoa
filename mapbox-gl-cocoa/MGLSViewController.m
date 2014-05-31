@@ -1,16 +1,8 @@
-//
-//  MVKViewController.m
-//  MVKMapKit
-//
-//  Created by Justin R. Miller on 4/23/14.
-//  Copyright (c) 2014 Mapbox. All rights reserved.
-//
+#import "MGLSViewController.h"
 
-#import "MVKViewController.h"
+#import "MGLMapView.h"
 
-#import "MVKMapView.h"
-
-@implementation MVKViewController
+@implementation MGLSViewController
 
 - (void)viewDidLoad
 {
@@ -18,7 +10,7 @@
 
     self.view.backgroundColor = [UIColor orangeColor];
 
-    MVKMapView *mapView = [[MVKMapView alloc] initWithFrame:CGRectInset(self.view.bounds, 50, 50)];
+    MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:CGRectInset(self.view.bounds, 50, 50)];
     mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view addSubview:mapView];
 

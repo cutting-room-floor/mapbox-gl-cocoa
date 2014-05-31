@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-@interface NSDictionary (MVKAdditions)
+@interface NSDictionary (MGLAdditions)
 
 - (NSMutableDictionary *)deepMutableCopy;
 

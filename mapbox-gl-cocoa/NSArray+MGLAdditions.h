@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-@interface NSArray (MVKAdditions)
+@interface NSArray (MGLAdditions)
 
 - (NSMutableArray *)deepMutableCopy;
 

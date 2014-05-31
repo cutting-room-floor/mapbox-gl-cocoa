@@ -2,16 +2,16 @@
   'targets': [
     {
         'target_name': 'Sample App',
-        'product_name': 'MVK Sample',
+        'product_name': 'MGL Sample',
         'sources': [
-            './MVKMapKit/main.m',
-            './MVKMapKit/MVKAppDelegate.h',
-            './MVKMapKit/MVKAppDelegate.m',
-            './MVKMapKit/MVKViewController.h',
-            './MVKMapKit/MVKViewController.m',
-            '<!@(find MVKMapKit -type f -name "MVKMapView.*")',
-            '<!@(find MVKMapKit -type f -name "*+MVKAdditions.*")',
-            '<!@(find MVKMapKit -type f -name "MVKTypes.*")',
+            './mapbox-gl-cocoa/main.m',
+            './mapbox-gl-cocoa/MGLSAppDelegate.h',
+            './mapbox-gl-cocoa/MGLSAppDelegate.m',
+            './mapbox-gl-cocoa/MGLSViewController.h',
+            './mapbox-gl-cocoa/MGLSViewController.m',
+            '<!@(find mapbox-gl-cocoa -type f -name "MGLMapView.*")',
+            '<!@(find mapbox-gl-cocoa -type f -name "*+MGLAdditions.*")',
+            '<!@(find mapbox-gl-cocoa -type f -name "MGLTypes.*")',
             '../../common/foundation_request.h',
             '../../common/foundation_request.mm',
         ],
@@ -19,7 +19,7 @@
         'type': 'executable',
         'mac_bundle': 1,
         'mac_bundle_resources': [
-          '<!@(find MVKMapKit/Resources -type f)'
+          '<!@(find mapbox-gl-cocoa/Resources -type f)'
         ],
         'link_settings': {
           'libraries': [
@@ -34,7 +34,7 @@
           'SDKROOT': 'iphoneos',
           'SUPPORTED_PLATFORMS':['iphonesimulator','iphoneos'],
           'ARCHS': [ 'armv7', 'armv7s', 'arm64', 'i386' ],
-          'INFOPLIST_FILE': 'MVKMapKit/MVKMapKit-Info.plist',
+          'INFOPLIST_FILE': 'mapbox-gl-cocoa/mapbox-gl-cocoa-Info.plist',
           'CLANG_CXX_LIBRARY': 'libc++',
           'CLANG_CXX_LANGUAGE_STANDARD':'c++11',
           'IPHONEOS_DEPLOYMENT_TARGET':'7.0',

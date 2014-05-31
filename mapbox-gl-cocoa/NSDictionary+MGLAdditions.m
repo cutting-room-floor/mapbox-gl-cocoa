@@ -1,6 +1,6 @@
-#import "NSDictionary+MVKAdditions.h"
+#import "NSDictionary+MGLAdditions.h"
 
-@implementation NSDictionary (MVKAdditions)
+@implementation NSDictionary (MGLAdditions)
 
 - (NSMutableDictionary *)deepMutableCopy
 {

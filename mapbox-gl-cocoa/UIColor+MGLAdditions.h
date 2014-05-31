@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-@interface UIColor (MVKAdditions)
+@interface UIColor (MGLAdditions)
 
 + (UIColor *)colorWithRGBAString:(NSString *)rgbaString;
 - (NSString *)rgbaStringFromColor;

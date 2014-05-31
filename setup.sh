@@ -1,3 +1,3 @@
 #!/bin/sh
 
-../../deps/run_gyp ./MVKMapKit.gyp --depth=. --generator-output=. -f xcode && open MVKMapKit.xcodeproj/
+../../deps/run_gyp ./mapbox-gl-cocoa.gyp --depth=. --generator-output=. -f xcode && open mapbox-gl-cocoa.xcodeproj/

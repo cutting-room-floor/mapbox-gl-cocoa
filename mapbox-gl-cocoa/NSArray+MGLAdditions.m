@@ -1,6 +1,6 @@
-#import "NSArray+MVKAdditions.h"
+#import "NSArray+MGLAdditions.h"
 
-@implementation NSArray (MVKAdditions)
+@implementation NSArray (MGLAdditions)
 
 - (NSMutableArray *)deepMutableCopy
 {

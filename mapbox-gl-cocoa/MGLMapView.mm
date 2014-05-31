@@ -1,4 +1,4 @@
-#import "MVKMapView.h"
+#import "MGLMapView.h"
 
 #import "foundation_request.h"
 
@@ -8,25 +8,25 @@
 #include <llmr/llmr.hpp>
 #include <llmr/platform/platform.hpp>
 
-#import "MVKTypes.h"
-#import "MVKStyleFunctionValue.h"
+#import "MGLTypes.h"
+#import "MGLStyleFunctionValue.h"
 
-#import "UIColor+MVKAdditions.h"
-#import "NSArray+MVKAdditions.h"
-#import "NSDictionary+MVKAdditions.h"
+#import "UIColor+MGLAdditions.h"
+#import "NSArray+MGLAdditions.h"
+#import "NSDictionary+MGLAdditions.h"
 
-extern NSString *const MVKStyleKeyGeneric;
-extern NSString *const MVKStyleKeyFill;
-extern NSString *const MVKStyleKeyLine;
-extern NSString *const MVKStyleKeyIcon;
-extern NSString *const MVKStyleKeyText;
-extern NSString *const MVKStyleKeyRaster;
-extern NSString *const MVKStyleKeyComposite;
-extern NSString *const MVKStyleKeyBackground;
+extern NSString *const MGLStyleKeyGeneric;
+extern NSString *const MGLStyleKeyFill;
+extern NSString *const MGLStyleKeyLine;
+extern NSString *const MGLStyleKeyIcon;
+extern NSString *const MGLStyleKeyText;
+extern NSString *const MGLStyleKeyRaster;
+extern NSString *const MGLStyleKeyComposite;
+extern NSString *const MGLStyleKeyBackground;
 
-extern NSString *const MVKStyleValueFunctionAllowed;
+extern NSString *const MGLStyleValueFunctionAllowed;
 
-@interface MVKMapView () <UIGestureRecognizerDelegate, GLKViewDelegate>
+@interface MGLMapView () <UIGestureRecognizerDelegate, GLKViewDelegate>
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *glView;
@@ -42,7 +42,7 @@ extern NSString *const MVKStyleValueFunctionAllowed;
 
 @end
 
-@interface MVKStyleFunctionValue (MVKMapViewFriend)
+@interface MGLStyleFunctionValue (MGLMapViewFriend)
 
 @property (nonatomic) NSString *functionType;
 @property (nonatomic) NSDictionary *stops;
@@ -58,7 +58,7 @@ extern NSString *const MVKStyleValueFunctionAllowed;
 
 @end
 
-@implementation MVKMapView
+@implementation MGLMapView
 
 @dynamic debugActive;
 
@@ -695,31 +695,31 @@ LLMRView *llmrView = nullptr;
 
     if ([bucketType isEqualToString:@"fill"])
     {
-        keyType = MVKStyleKeyFill;
+        keyType = MGLStyleKeyFill;
     }
     else if ([bucketType isEqualToString:@"line"])
     {
-        keyType = MVKStyleKeyLine;
+        keyType = MGLStyleKeyLine;
     }
     else if ([bucketType isEqualToString:@"point"])
     {
-        keyType = MVKStyleKeyIcon;
+        keyType = MGLStyleKeyIcon;
     }
     else if ([bucketType isEqualToString:@"text"])
     {
-        keyType = MVKStyleKeyText;
+        keyType = MGLStyleKeyText;
     }
     else if ([bucketType isEqualToString:@"raster"])
     {
-        keyType = MVKStyleKeyRaster;
+        keyType = MGLStyleKeyRaster;
     }
     else if ([bucketType isEqualToString:@"composite"])
     {
-        keyType = MVKStyleKeyComposite;
+        keyType = MGLStyleKeyComposite;
     }
     else if ([bucketType isEqualToString:@"background"])
     {
-        keyType = MVKStyleKeyBackground;
+        keyType = MGLStyleKeyBackground;
     }
     else
     {
@@ -764,10 +764,10 @@ LLMRView *llmrView = nullptr;
             value = style[@"constants"][value];
         }
 
-        if ([[self.allowedStyleTypes[MVKStyleKeyGeneric] allKeys] containsObject:keyName])
+        if ([[self.allowedStyleTypes[MGLStyleKeyGeneric] allKeys] containsObject:keyName])
         {
             [styleDescription setValue:[self typedPropertyForKeyName:keyName
-                                                              ofType:MVKStyleKeyGeneric
+                                                              ofType:MGLStyleKeyGeneric
                                                            withValue:value]
                                 forKey:keyName];
         }
@@ -797,9 +797,9 @@ LLMRView *llmrView = nullptr;
 
     NSArray *typeInfo = self.allowedStyleTypes[keyType][keyName];
 
-    if ([value isKindOfClass:[NSArray class]] && ! [typeInfo containsObject:MVKStyleValueTypeColor])
+    if ([value isKindOfClass:[NSArray class]] && ! [typeInfo containsObject:MGLStyleValueTypeColor])
     {
-        if ([typeInfo containsObject:MVKStyleValueFunctionAllowed])
+        if ([typeInfo containsObject:MGLStyleValueFunctionAllowed])
         {
             if ([[(NSArray *)value firstObject] isKindOfClass:[NSString class]])
             {
@@ -807,23 +807,23 @@ LLMRView *llmrView = nullptr;
 
                 if ([[(NSArray *)value firstObject] isEqualToString:@"linear"])
                 {
-                    functionType = MVKStyleValueTypeFunctionLinear;
+                    functionType = MGLStyleValueTypeFunctionLinear;
                 }
                 else if ([[(NSArray *)value firstObject] isEqualToString:@"stops"])
                 {
-                    functionType = MVKStyleValueTypeFunctionStops;
+                    functionType = MGLStyleValueTypeFunctionStops;
                 }
                 else if ([[(NSArray *)value firstObject] isEqualToString:@"exponential"])
                 {
-                    functionType = MVKStyleValueTypeFunctionExponential;
+                    functionType = MGLStyleValueTypeFunctionExponential;
                 }
                 else if ([[(NSArray *)value firstObject] isEqualToString:@"min"])
                 {
-                    functionType = MVKStyleValueTypeFunctionMinimumZoom;
+                    functionType = MGLStyleValueTypeFunctionMinimumZoom;
                 }
                 else if ([[(NSArray *)value firstObject] isEqualToString:@"max"])
                 {
-                    functionType = MVKStyleValueTypeFunctionMaximumZoom;
+                    functionType = MGLStyleValueTypeFunctionMaximumZoom;
                 }
 
                 if (functionType)
@@ -833,28 +833,28 @@ LLMRView *llmrView = nullptr;
                 }
             }
         }
-        else if ([typeInfo containsObject:MVKStyleValueTypeNumberPair])
+        else if ([typeInfo containsObject:MGLStyleValueTypeNumberPair])
         {
-            return @{ @"type"  : MVKStyleValueTypeNumberPair,
+            return @{ @"type"  : MGLStyleValueTypeNumberPair,
                       @"value" : value };
         }
     }
-    else if ([typeInfo containsObject:MVKStyleValueTypeNumber])
+    else if ([typeInfo containsObject:MGLStyleValueTypeNumber])
     {
-        return @{ @"type"  : MVKStyleValueTypeNumber,
+        return @{ @"type"  : MGLStyleValueTypeNumber,
                   @"value" : value };
     }
-    else if ([typeInfo containsObject:MVKStyleValueTypeBoolean])
+    else if ([typeInfo containsObject:MGLStyleValueTypeBoolean])
     {
-        return @{ @"type"  : MVKStyleValueTypeBoolean,
+        return @{ @"type"  : MGLStyleValueTypeBoolean,
                   @"value" : @([(NSString *)value boolValue]) };
     }
-    else if ([typeInfo containsObject:MVKStyleValueTypeString])
+    else if ([typeInfo containsObject:MGLStyleValueTypeString])
     {
-        return @{ @"type"  : MVKStyleValueTypeString,
+        return @{ @"type"  : MGLStyleValueTypeString,
                   @"value" : value };
     }
-    else if ([typeInfo containsObject:MVKStyleValueTypeColor])
+    else if ([typeInfo containsObject:MGLStyleValueTypeColor])
     {
         UIColor *color;
 
@@ -888,7 +888,7 @@ LLMRView *llmrView = nullptr;
 #pragma clang diagnostic pop
         }
 
-        return @{ @"type"  : MVKStyleValueTypeColor,
+        return @{ @"type"  : MGLStyleValueTypeColor,
                   @"value" : color };
     }
 
@@ -903,9 +903,9 @@ LLMRView *llmrView = nullptr;
     {
         NSArray *styleParameters = nil;
 
-        if ([[self.allowedStyleTypes[MVKStyleKeyGeneric] allKeys] containsObject:key])
+        if ([[self.allowedStyleTypes[MGLStyleKeyGeneric] allKeys] containsObject:key])
         {
-            styleParameters = self.allowedStyleTypes[MVKStyleKeyGeneric][key];
+            styleParameters = self.allowedStyleTypes[MGLStyleKeyGeneric][key];
         }
         else
         {
@@ -919,15 +919,15 @@ LLMRView *llmrView = nullptr;
 
         if (styleParameters)
         {
-            if ([styleDescription[key][@"value"] isKindOfClass:[MVKStyleFunctionValue class]])
+            if ([styleDescription[key][@"value"] isKindOfClass:[MGLStyleFunctionValue class]])
             {
-                convertedStyle[key] = [(MVKStyleFunctionValue *)styleDescription[key][@"value"] rawStyle];
+                convertedStyle[key] = [(MGLStyleFunctionValue *)styleDescription[key][@"value"] rawStyle];
             }
             else if ([styleParameters containsObject:styleDescription[key][@"type"]])
             {
                 NSString *valueType = styleDescription[key][@"type"];
 
-                if ([valueType isEqualToString:MVKStyleValueTypeColor])
+                if ([valueType isEqualToString:MGLStyleValueTypeColor])
                 {
                     convertedStyle[key] = [@"#" stringByAppendingString:[(UIColor *)styleDescription[key][@"value"] hexStringFromColor]];
                 }
@@ -956,46 +956,46 @@ LLMRView *llmrView = nullptr;
 
 - (NSDictionary *)allowedStyleTypes
 {
-    static NSDictionary *MVKStyleAllowedTypes = @{
-        MVKStyleKeyGeneric : @{
-            @"enabled" : @[ MVKStyleValueTypeBoolean, MVKStyleValueFunctionAllowed ],
-            @"translate" : @[ MVKStyleValueTypeNumberPair, MVKStyleValueFunctionAllowed ],
-            @"translate-anchor" : @[ MVKStyleValueTypeString, MVKStyleValueFunctionAllowed ],
-            @"opacity" : @[ MVKStyleValueTypeNumber, MVKStyleValueFunctionAllowed ],
-            @"prerender" : @[ MVKStyleValueTypeBoolean ],
-            @"prerender-buffer" : MVKStyleValueTypeNumber,
-            @"prerender-size" : @[ MVKStyleValueTypeNumber ],
-            @"prerender-blur" : @[ MVKStyleValueTypeNumber ] },
-        MVKStyleKeyFill : @{
-            @"color" : @[ MVKStyleValueTypeColor ],
-            @"stroke" : @[ MVKStyleValueTypeColor ],
-            @"antialias" : @[ MVKStyleValueTypeBoolean ],
-            @"image" : @[ MVKStyleValueTypeString ] },
-        MVKStyleKeyLine : @{
-            @"color" : @[ MVKStyleValueTypeColor ],
-            @"width" : @[ MVKStyleValueTypeNumber, MVKStyleValueFunctionAllowed ],
-            @"dasharray" : @[ MVKStyleValueTypeNumberPair, MVKStyleValueFunctionAllowed ] },
-        MVKStyleKeyIcon : @{
-            @"color" : @[ MVKStyleValueTypeColor ],
-            @"image" : @[ MVKStyleValueTypeString ],
-            @"size" : @[ MVKStyleValueTypeNumber, MVKStyleValueFunctionAllowed ],
-            @"radius" : @[ MVKStyleValueTypeNumber, MVKStyleValueFunctionAllowed],
-            @"blur" : @[ MVKStyleValueTypeNumber, MVKStyleValueFunctionAllowed ] },
-        MVKStyleKeyText : @{
-            @"color" : @[ MVKStyleValueTypeColor ],
-            @"stroke" : @[ MVKStyleValueTypeColor ],
-            @"strokeWidth" : @[ MVKStyleValueTypeNumber, MVKStyleValueFunctionAllowed ],
-            @"strokeBlur" : @[ MVKStyleValueTypeNumber, MVKStyleValueFunctionAllowed ],
-            @"size" : @[ MVKStyleValueTypeNumber, MVKStyleValueFunctionAllowed ],
-            @"rotate" : @[ MVKStyleValueTypeNumber, MVKStyleValueFunctionAllowed ],
-            @"alwaysVisible" : @[ MVKStyleValueTypeBoolean ] },
-        MVKStyleKeyRaster : @{},
-        MVKStyleKeyComposite : @{},
-        MVKStyleKeyBackground : @{
-            @"color" : @[ MVKStyleValueTypeColor ] }
+    static NSDictionary *MGLStyleAllowedTypes = @{
+        MGLStyleKeyGeneric : @{
+            @"enabled" : @[ MGLStyleValueTypeBoolean, MGLStyleValueFunctionAllowed ],
+            @"translate" : @[ MGLStyleValueTypeNumberPair, MGLStyleValueFunctionAllowed ],
+            @"translate-anchor" : @[ MGLStyleValueTypeString, MGLStyleValueFunctionAllowed ],
+            @"opacity" : @[ MGLStyleValueTypeNumber, MGLStyleValueFunctionAllowed ],
+            @"prerender" : @[ MGLStyleValueTypeBoolean ],
+            @"prerender-buffer" : MGLStyleValueTypeNumber,
+            @"prerender-size" : @[ MGLStyleValueTypeNumber ],
+            @"prerender-blur" : @[ MGLStyleValueTypeNumber ] },
+        MGLStyleKeyFill : @{
+            @"color" : @[ MGLStyleValueTypeColor ],
+            @"stroke" : @[ MGLStyleValueTypeColor ],
+            @"antialias" : @[ MGLStyleValueTypeBoolean ],
+            @"image" : @[ MGLStyleValueTypeString ] },
+        MGLStyleKeyLine : @{
+            @"color" : @[ MGLStyleValueTypeColor ],
+            @"width" : @[ MGLStyleValueTypeNumber, MGLStyleValueFunctionAllowed ],
+            @"dasharray" : @[ MGLStyleValueTypeNumberPair, MGLStyleValueFunctionAllowed ] },
+        MGLStyleKeyIcon : @{
+            @"color" : @[ MGLStyleValueTypeColor ],
+            @"image" : @[ MGLStyleValueTypeString ],
+            @"size" : @[ MGLStyleValueTypeNumber, MGLStyleValueFunctionAllowed ],
+            @"radius" : @[ MGLStyleValueTypeNumber, MGLStyleValueFunctionAllowed],
+            @"blur" : @[ MGLStyleValueTypeNumber, MGLStyleValueFunctionAllowed ] },
+        MGLStyleKeyText : @{
+            @"color" : @[ MGLStyleValueTypeColor ],
+            @"stroke" : @[ MGLStyleValueTypeColor ],
+            @"strokeWidth" : @[ MGLStyleValueTypeNumber, MGLStyleValueFunctionAllowed ],
+            @"strokeBlur" : @[ MGLStyleValueTypeNumber, MGLStyleValueFunctionAllowed ],
+            @"size" : @[ MGLStyleValueTypeNumber, MGLStyleValueFunctionAllowed ],
+            @"rotate" : @[ MGLStyleValueTypeNumber, MGLStyleValueFunctionAllowed ],
+            @"alwaysVisible" : @[ MGLStyleValueTypeBoolean ] },
+        MGLStyleKeyRaster : @{},
+        MGLStyleKeyComposite : @{},
+        MGLStyleKeyBackground : @{
+            @"color" : @[ MGLStyleValueTypeColor ] }
         };
 
-    return MVKStyleAllowedTypes;
+    return MGLStyleAllowedTypes;
 }
 
 - (void)notifyMapChange
@@ -1042,7 +1042,7 @@ LLMRView *llmrView = nullptr;
 class LLMRView : public llmr::View
 {
     public:
-        LLMRView(MVKMapView *nativeView) : nativeView(nativeView) {}
+        LLMRView(MGLMapView *nativeView) : nativeView(nativeView) {}
         virtual ~LLMRView() {}
 
     void notify_map_change()
@@ -1066,7 +1066,7 @@ class LLMRView : public llmr::View
     }
 
     private:
-        MVKMapView *nativeView = nullptr;
+        MGLMapView *nativeView = nullptr;
 };
 
 void llmr::platform::notify_map_change()

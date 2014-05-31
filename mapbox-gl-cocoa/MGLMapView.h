@@ -1,7 +1,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <UIKit/UIKit.h>
 
-@interface MVKMapView : UIView
+@interface MGLMapView : UIView
 
 // debug API that will go away
 //

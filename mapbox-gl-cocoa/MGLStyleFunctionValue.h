@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-@interface MVKStyleFunctionValue : NSObject
+@interface MGLStyleFunctionValue : NSObject
 
 + (instancetype)linearFunctionWithBaseZoomLevel:(CGFloat)zBase
                                    initialValue:(CGFloat)val

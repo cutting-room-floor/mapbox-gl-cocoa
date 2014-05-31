@@ -1,8 +1,8 @@
-#import "MVKStyleFunctionValue.h"
+#import "MGLStyleFunctionValue.h"
 
-#import "MVKTypes.h"
+#import "MGLTypes.h"
 
-@interface MVKStyleFunctionValue ()
+@interface MGLStyleFunctionValue ()
 
 @property (nonatomic) NSString *functionType;
 @property (nonatomic) NSDictionary *stops;
@@ -18,7 +18,7 @@
 
 @end
 
-@implementation MVKStyleFunctionValue
+@implementation MGLStyleFunctionValue
 
 - (id)initWithFunctionType:(NSString *)functionType
                      stops:(NSDictionary *)stops
@@ -50,23 +50,23 @@
 
 - (id)rawStyle
 {
-    if ([self.functionType isEqualToString:MVKStyleValueTypeFunctionMinimumZoom])
+    if ([self.functionType isEqualToString:MGLStyleValueTypeFunctionMinimumZoom])
     {
         return @[ @"min", @(self.minimumZoom) ];
     }
-    else if ([self.functionType isEqualToString:MVKStyleValueTypeFunctionMaximumZoom])
+    else if ([self.functionType isEqualToString:MGLStyleValueTypeFunctionMaximumZoom])
     {
         return @[ @"max", @(self.maximumZoom) ];
     }
-    else if ([self.functionType isEqualToString:MVKStyleValueTypeFunctionLinear])
+    else if ([self.functionType isEqualToString:MGLStyleValueTypeFunctionLinear])
     {
         return @[ @"linear", @(self.zBase), @(self.val), @(self.slope), @(self.min), @(self.max) ];
     }
-    else if ([self.functionType isEqualToString:MVKStyleValueTypeFunctionExponential])
+    else if ([self.functionType isEqualToString:MGLStyleValueTypeFunctionExponential])
     {
         return @[ @"exponential", @(self.zBase), @(self.val), @(self.slope), @(self.min), @(self.max) ];
     }
-    else if ([self.functionType isEqualToString:MVKStyleValueTypeFunctionStops])
+    else if ([self.functionType isEqualToString:MGLStyleValueTypeFunctionStops])
     {
         NSMutableArray *returnArray = [NSMutableArray array];
 
@@ -106,7 +106,7 @@
         stops[numbersArray[i]] = stops[numbersArray[i + 1]];
     }
 
-    return [[self alloc] initWithFunctionType:MVKStyleValueTypeFunctionStops
+    return [[self alloc] initWithFunctionType:MGLStyleValueTypeFunctionStops
                                         stops:stops
                                         zBase:0
                                           val:0
@@ -126,7 +126,7 @@
     NSAssert(zBase >= 0 && zBase <= 18, @"invalid base zoom level");
     NSAssert(min < max, @"minimum value must be less than maximum value");
 
-    return [[self alloc] initWithFunctionType:MVKStyleValueTypeFunctionLinear
+    return [[self alloc] initWithFunctionType:MGLStyleValueTypeFunctionLinear
                                         stops:nil
                                         zBase:zBase
                                           val:val
@@ -146,7 +146,7 @@
     NSAssert(zBase >= 0 && zBase <= 18, @"invalid base zoom level");
     NSAssert(min < max, @"minimum value must be less than maximum value");
 
-    return [[self alloc] initWithFunctionType:MVKStyleValueTypeFunctionExponential
+    return [[self alloc] initWithFunctionType:MGLStyleValueTypeFunctionExponential
                                         stops:nil
                                         zBase:zBase
                                           val:val
@@ -161,7 +161,7 @@
 {
     NSAssert(minimumZoom >= 0 && minimumZoom <= 18, @"invalid minimum zoom value");
 
-    return [[self alloc] initWithFunctionType:MVKStyleValueTypeFunctionMinimumZoom
+    return [[self alloc] initWithFunctionType:MGLStyleValueTypeFunctionMinimumZoom
                                         stops:nil
                                         zBase:0
                                           val:0
@@ -176,7 +176,7 @@
 {
     NSAssert(maximumZoom >= 0 && maximumZoom <= 18, @"invalid maximum zoom value");
 
-    return [[self alloc] initWithFunctionType:MVKStyleValueTypeFunctionMaximumZoom
+    return [[self alloc] initWithFunctionType:MGLStyleValueTypeFunctionMaximumZoom
                                         stops:nil
                                         zBase:0
                                           val:0

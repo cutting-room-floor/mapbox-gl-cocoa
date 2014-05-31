@@ -1,9 +1,9 @@
-#import "UIColor+MVKAdditions.h"
+#import "UIColor+MGLAdditions.h"
 
 /* Portions based on Erica Sadun's uicolor-utilities
    https://github.com/erica/uicolor-utilities */
 
-@interface UIColor (MVKAdditionsPrivate)
+@interface UIColor (MGLAdditionsPrivate)
 
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
 - (CGColorSpaceModel)colorSpaceModel;
@@ -13,7 +13,7 @@
 
 @end
 
-@implementation UIColor (MVKAdditions)
+@implementation UIColor (MGLAdditions)
 
 + (UIColor *)colorWithRGBAString:(NSString *)rgbaString
 {
