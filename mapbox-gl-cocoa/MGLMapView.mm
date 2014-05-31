@@ -949,7 +949,9 @@ LLMRView *llmrView = nullptr;
 
     NSMutableDictionary *style = [[self getRawStyle] deepMutableCopy];
 
-    style[@"classes"][0][@"layers"][layerName] = convertedStyle;
+    NSUInteger classIndex = [[self getAllStyleClasses] indexOfObject:className];
+
+    style[@"classes"][classIndex][@"layers"][layerName] = convertedStyle;
 
     [self setRawStyle:style];
 }
