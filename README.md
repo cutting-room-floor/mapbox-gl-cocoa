@@ -22,3 +22,7 @@ GYP is currently used because the `mapbox-gl-native` iOS test app itself require
  * https://github.com/mapbox/vector-tile-spec
  * https://github.com/mapbox/mapbox-gl-native
  * https://github.com/mapbox/llmr (soon)
+
+## Other notes
+
+Under early development, this project was called MVKMapKit (Mapbox... Vector Kit?), in case you see any lingering references to it. 
