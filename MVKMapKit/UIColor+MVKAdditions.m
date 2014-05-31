@@ -1,5 +1,8 @@
 #import "UIColor+MVKAdditions.h"
 
+/* Portions based on Erica Sadun's uicolor-utilities
+   https://github.com/erica/uicolor-utilities */
+
 @interface UIColor (MVKAdditionsPrivate)
 
 + (UIColor *)colorWithRGBHex:(UInt32)hex;
