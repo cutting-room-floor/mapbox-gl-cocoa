@@ -20,7 +20,8 @@
         'type': 'executable',
         'mac_bundle': 1,
         'mac_bundle_resources': [
-          '<!@(find mapbox-gl-cocoa/Resources -type f)'
+          '<!@(find mapbox-gl-cocoa/Resources -type f)',
+          '<(SHARED_INTERMEDIATE_DIR)/bin/style.min.js'
         ],
         'link_settings': {
           'libraries': [
