@@ -30,7 +30,7 @@ extern NSString *const MGLStyleValueFunctionAllowed;
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *glView;
-@property (nonatomic) UIButton *compassButton;
+@property (nonatomic) UIImageView *compass;
 @property (nonatomic) UIImageView *logoBug;
 @property (nonatomic) UIButton *attributionButton;
 @property (nonatomic) UIPanGestureRecognizer *pan;
@@ -143,16 +143,14 @@ LLMRView *llmrView = nullptr;
 
     // setup compass
     //
-    _compassButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _compass = [[UIImageView alloc] initWithImage:[[self class] resourceImageNamed:@"Compass.png"]];
     UIImage *compassImage = [[self class] resourceImageNamed:@"Compass.png"];
-    _compassButton.frame = CGRectMake(0, 0, compassImage.size.width, compassImage.size.height);
-    [_compassButton setImage:compassImage forState:UIControlStateNormal];
-    [_compassButton setImage:compassImage forState:UIControlStateHighlighted];
-    _compassButton.alpha = 0;
-    [_compassButton addTarget:self action:@selector(handleCompassTapGesture:) forControlEvents:UIControlEventTouchUpInside];
+    _compass.frame = CGRectMake(0, 0, compassImage.size.width, compassImage.size.height);
+    _compass.alpha = 0;
     UIView *container = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 5, compassImage.size.width, compassImage.size.height)];
-    [container addSubview:_compassButton];
+    [container addSubview:_compass];
     container.translatesAutoresizingMaskIntoConstraints = NO;
+    [container addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleCompassTapGesture:)]];
     [self addSubview:container];
 
     self.viewControllerForLayoutGuides = nil;
@@ -246,7 +244,7 @@ LLMRView *llmrView = nullptr;
 
 - (void)didMoveToSuperview
 {
-    [self.compassButton.superview removeConstraints:self.compassButton.superview.constraints];
+    [self.compass.superview removeConstraints:self.compass.superview.constraints];
     [self.logoBug removeConstraints:self.logoBug.constraints];
     [self.attributionButton removeConstraints:self.attributionButton.constraints];
 
@@ -257,7 +255,7 @@ LLMRView *llmrView = nullptr;
 {
     _viewControllerForLayoutGuides = viewController;
 
-    [self.compassButton.superview removeConstraints:self.compassButton.superview.constraints];
+    [self.compass.superview removeConstraints:self.compass.superview.constraints];
     [self.logoBug removeConstraints:self.logoBug.constraints];
     [self.attributionButton removeConstraints:self.attributionButton.constraints];
 
@@ -280,10 +278,10 @@ LLMRView *llmrView = nullptr;
 
     // compass
     //
-    UIView *compassContainer = self.compassButton.superview;
+    UIView *compassContainer = self.compass.superview;
 
     CGFloat compassTopSpacing   = compassContainer.frame.origin.y;
-    CGFloat compassRightSpacing = self.bounds.size.width - compassContainer.frame.origin.x;
+    CGFloat compassRightSpacing = self.bounds.size.width - compassContainer.frame.origin.x - compassContainer.frame.size.width;
 
     [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:%@-topSpacing-[container]", topGuideFormatString]
                                                                                  options:0
@@ -295,6 +293,22 @@ LLMRView *llmrView = nullptr;
                                                                                  options:0
                                                                                  metrics:@{ @"rightSpacing" : @(compassRightSpacing) }
                                                                                    views:@{ @"container"    : compassContainer }]];
+
+    [compassContainer addConstraint:[NSLayoutConstraint constraintWithItem:compassContainer
+                                                                 attribute:NSLayoutAttributeWidth
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:nil
+                                                                 attribute:NSLayoutAttributeNotAnAttribute
+                                                                multiplier:1
+                                                                  constant:self.compass.image.size.width]];
+
+    [compassContainer addConstraint:[NSLayoutConstraint constraintWithItem:compassContainer
+                                                                 attribute:NSLayoutAttributeHeight
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:nil
+                                                                 attribute:NSLayoutAttributeNotAnAttribute
+                                                                multiplier:1
+                                                                  constant:self.compass.image.size.height]];
 
     // logo bug
     //
@@ -319,8 +333,8 @@ LLMRView *llmrView = nullptr;
 
     [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[attributionButton]-bottomSpacing-%@", bottomGuideFormatString]
                                                                                  options:0
-                                                                                 metrics:@{ @"bottomSpacing"     : @(attributionButtonBottomSpacing) }
-                                                                                   views:@{ @"attributionButton" : self.attributionButton,
+                                                                                 metrics:@{ @"bottomSpacing"       : @(attributionButtonBottomSpacing) }
+                                                                                   views:@{ @"attributionButton"   : self.attributionButton,
                                                                                               @"bottomLayoutGuide" : bottomGuideViewsObject }]];
 
     [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionButton]-rightSpacing-|"
@@ -565,7 +579,7 @@ LLMRView *llmrView = nullptr;
 {
     llmrMap->resetNorth();
 
-    [UIView animateWithDuration:0.5 animations:^(void) { self.compassButton.transform = CGAffineTransformIdentity; }];
+    [UIView animateWithDuration:0.5 animations:^(void) { self.compass.transform = CGAffineTransformIdentity; }];
 }
 
 - (void)resetPosition
@@ -1110,10 +1124,10 @@ LLMRView *llmrView = nullptr;
 
 //    NSLog(@"lat: %f, lon: %f, zoom: %f, angle: %f", lat, lon, zoom, angle);
 
-    self.compassButton.transform = CGAffineTransformMakeRotation(llmrMap->getAngle());
+    self.compass.transform = CGAffineTransformMakeRotation(llmrMap->getAngle());
 
-    if (llmrMap->getAngle() && self.compassButton.alpha < 1)   [UIView animateWithDuration:0.5 animations:^(void) { self.compassButton.alpha = 1; }];
-    else if ( ! llmrMap->getAngle() && self.compassButton.alpha > 0) [UIView animateWithDuration:0.5 animations:^(void) { self.compassButton.alpha = 0; }];
+    if (llmrMap->getAngle() && self.compass.alpha < 1)   [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 1; }];
+    else if ( ! llmrMap->getAngle() && self.compass.alpha > 0) [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 0; }];
 }
 
 + (UIImage *)resourceImageNamed:(NSString *)imageName
