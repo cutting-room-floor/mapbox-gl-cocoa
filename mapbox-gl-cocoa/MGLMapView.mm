@@ -645,6 +645,8 @@ LLMRView *llmrView = nullptr;
 {
     double direction = llmrMap->getAngle();
 
+    direction *= 180 / M_PI;
+
     while (direction > 360) direction -= 360;
     while (direction < 0) direction += 360;
 
@@ -654,6 +656,8 @@ LLMRView *llmrView = nullptr;
 - (void)setDirection:(CLLocationDirection)direction animated:(BOOL)animated
 {
     double duration = (animated ? 0.3 : 0);
+
+    direction *= M_PI / 180;
 
     llmrMap->setAngle(direction, duration);
 }
