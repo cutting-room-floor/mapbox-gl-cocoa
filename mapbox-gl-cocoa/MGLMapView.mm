@@ -594,7 +594,14 @@ LLMRView *llmrView = nullptr;
 
 - (void)toggleStyle
 {
-    llmrMap->toggleStyle();
+    if ([[self getAppliedStyleClasses] containsObject:@"night"])
+    {
+        [self setAppliedStyleClasses:@[ @"default" ] transitionDuration:300];
+    }
+    else
+    {
+        [self setAppliedStyleClasses:@[ @"default", @"night" ] transitionDuration:300];
+    }
 }
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
