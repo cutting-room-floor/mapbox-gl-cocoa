@@ -13,6 +13,8 @@
 
 // regular API
 //
+@property (nonatomic, weak) UIViewController *viewControllerForLayoutGuides;
+
 @property(nonatomic, getter=isZoomEnabled) BOOL zoomEnabled;
 @property(nonatomic, getter=isScrollEnabled) BOOL scrollEnabled;
 @property(nonatomic, getter=isRotateEnabled) BOOL rotateEnabled;

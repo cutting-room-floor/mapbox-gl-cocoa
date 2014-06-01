@@ -31,6 +31,8 @@ extern NSString *const MGLStyleValueFunctionAllowed;
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *glView;
 @property (nonatomic) UIButton *compassButton;
+@property (nonatomic) UIImageView *logoBug;
+@property (nonatomic) UIButton *attributionButton;
 @property (nonatomic) UIPanGestureRecognizer *pan;
 @property (nonatomic) UIPinchGestureRecognizer *pinch;
 @property (nonatomic) UIRotationGestureRecognizer *rotate;
@@ -126,18 +128,18 @@ LLMRView *llmrView = nullptr;
 
     // setup logo bug
     //
-    UIView *logoBug = [[UIImageView alloc] initWithImage:[[self class] resourceImageNamed:@"mapbox.png"]];
-    logoBug.frame = CGRectMake(8, self.bounds.size.height - logoBug.bounds.size.height - 4, logoBug.bounds.size.width, logoBug.bounds.size.height);
-    logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
-    [self addSubview:logoBug];
+    _logoBug = [[UIImageView alloc] initWithImage:[[self class] resourceImageNamed:@"mapbox.png"]];
+    _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
+    _logoBug.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:_logoBug];
 
     // setup attribution
     //
-    UIButton *attributionButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
-    attributionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
-    [attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
-    attributionButton.frame = CGRectMake(self.bounds.size.width  - 30, self.bounds.size.height - 30, attributionButton.bounds.size.width, attributionButton.bounds.size.height);
-    [self addSubview:attributionButton];
+    _attributionButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
+    _attributionButton.frame = CGRectMake(self.bounds.size.width  - 30, self.bounds.size.height - 30, _attributionButton.bounds.size.width, _attributionButton.bounds.size.height);
+    _attributionButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:_attributionButton];
 
     // setup compass
     //
@@ -148,10 +150,12 @@ LLMRView *llmrView = nullptr;
     [_compassButton setImage:compassImage forState:UIControlStateHighlighted];
     _compassButton.alpha = 0;
     [_compassButton addTarget:self action:@selector(handleCompassTapGesture:) forControlEvents:UIControlEventTouchUpInside];
-    UIView *container = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 5, [[UIApplication sharedApplication] statusBarFrame].size.height + 5, compassImage.size.width, compassImage.size.height)];
-    container.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    UIView *container = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 5, compassImage.size.width, compassImage.size.height)];
     [container addSubview:_compassButton];
+    container.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:container];
+
+    self.viewControllerForLayoutGuides = nil;
 
     // setup interaction
     //
@@ -233,6 +237,98 @@ LLMRView *llmrView = nullptr;
     [super setBounds:bounds];
 
     [self setNeedsLayout];
+}
+
++ (BOOL)requiresConstraintBasedLayout
+{
+    return YES;
+}
+
+- (void)didMoveToSuperview
+{
+    [self.compassButton.superview removeConstraints:self.compassButton.superview.constraints];
+    [self.logoBug removeConstraints:self.logoBug.constraints];
+    [self.attributionButton removeConstraints:self.attributionButton.constraints];
+
+    [self setNeedsUpdateConstraints];
+}
+
+- (void)setViewControllerForLayoutGuides:(UIViewController *)viewController
+{
+    _viewControllerForLayoutGuides = viewController;
+
+    [self.compassButton.superview removeConstraints:self.compassButton.superview.constraints];
+    [self.logoBug removeConstraints:self.logoBug.constraints];
+    [self.attributionButton removeConstraints:self.attributionButton.constraints];
+
+    [self setNeedsUpdateConstraints];
+}
+
+- (void)updateConstraints
+{
+    // If we have a view controller reference, use its layout guides for our various top & bottom
+    // views so they don't underlap navigation or tool bars. If we don't have a reference, apply
+    // constraints against ourself to maintain (albeit less ideal) placement of the subviews.
+    //
+    NSString *topGuideFormatString    = (self.viewControllerForLayoutGuides ? @"[topLayoutGuide]"    : @"|");
+    NSString *bottomGuideFormatString = (self.viewControllerForLayoutGuides ? @"[bottomLayoutGuide]" : @"|");
+
+    id topGuideViewsObject            = (self.viewControllerForLayoutGuides ? (id)self.viewControllerForLayoutGuides.topLayoutGuide    : (id)@"");
+    id bottomGuideViewsObject         = (self.viewControllerForLayoutGuides ? (id)self.viewControllerForLayoutGuides.bottomLayoutGuide : (id)@"");
+
+    UIView *constraintParentView = (self.viewControllerForLayoutGuides.view ? self.viewControllerForLayoutGuides.view : self);
+
+    // compass
+    //
+    UIView *compassContainer = self.compassButton.superview;
+
+    CGFloat compassTopSpacing   = compassContainer.frame.origin.y;
+    CGFloat compassRightSpacing = self.bounds.size.width - compassContainer.frame.origin.x;
+
+    [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:%@-topSpacing-[container]", topGuideFormatString]
+                                                                                 options:0
+                                                                                 metrics:@{ @"topSpacing"     : @(compassTopSpacing) }
+                                                                                   views:@{ @"topLayoutGuide" : topGuideViewsObject,
+                                                                                            @"container"      : compassContainer }]];
+
+    [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[container]-rightSpacing-|"
+                                                                                 options:0
+                                                                                 metrics:@{ @"rightSpacing" : @(compassRightSpacing) }
+                                                                                   views:@{ @"container"    : compassContainer }]];
+
+    // logo bug
+    //
+    CGFloat logoBugLeftSpacing   = self.logoBug.frame.origin.x;
+    CGFloat logoBugBottomSpacing = self.bounds.size.height - self.logoBug.frame.origin.y - self.logoBug.bounds.size.height;
+
+    [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[logoBug]-bottomSpacing-%@", bottomGuideFormatString]
+                                                                                 options:0
+                                                                                 metrics:@{ @"bottomSpacing"     : @(logoBugBottomSpacing) }
+                                                                                   views:@{ @"logoBug"           : self.logoBug,
+                                                                                            @"bottomLayoutGuide" : bottomGuideViewsObject }]];
+
+    [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-leftSpacing-[logoBug]"
+                                                                                 options:0
+                                                                                 metrics:@{ @"leftSpacing"       : @(logoBugLeftSpacing) }
+                                                                                   views:@{ @"logoBug"           : self.logoBug }]];
+
+    // attribution button
+    //
+    CGFloat attributionButtonRightSpacing  = self.bounds.size.width  - self.attributionButton.frame.origin.x - self.attributionButton.bounds.size.width;
+    CGFloat attributionButtonBottomSpacing = self.bounds.size.height - self.attributionButton.frame.origin.y - self.attributionButton.bounds.size.height;
+
+    [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[attributionButton]-bottomSpacing-%@", bottomGuideFormatString]
+                                                                                 options:0
+                                                                                 metrics:@{ @"bottomSpacing"     : @(attributionButtonBottomSpacing) }
+                                                                                   views:@{ @"attributionButton" : self.attributionButton,
+                                                                                              @"bottomLayoutGuide" : bottomGuideViewsObject }]];
+
+    [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionButton]-rightSpacing-|"
+                                                                                 options:0
+                                                                                 metrics:@{ @"rightSpacing"      : @(attributionButtonRightSpacing) }
+                                                                                   views:@{ @"attributionButton" : self.attributionButton }]];
+
+    [super updateConstraints];
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
