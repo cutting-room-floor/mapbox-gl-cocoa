@@ -374,23 +374,6 @@ LLMRView *llmrView = nullptr;
     llmrMap->start();
 }
 
-#pragma clang diagnostic pop
-
-- (BOOL)cancelPreviousActions
-{
-    if (llmrMap->getState().isInteractive())
-    {
-        llmrMap->cancelTransitions();
-
-        return YES;
-    }
-
-    return NO;
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-
 - (void)handleCompassTapGesture:(id)sender
 {
     [self resetNorth];
@@ -402,7 +385,7 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isScrollEnabled) return;
 
-    if ( ! [self cancelPreviousActions]) return;
+    llmrMap->cancelTransitions();
 
     if (pan.state == UIGestureRecognizerStateBegan)
     {
@@ -439,7 +422,9 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    if ( ! [self cancelPreviousActions]) return;
+    if (llmrMap->getZoom() <= llmrMap->getMinZoom() && pinch.scale < 1) return;
+
+    llmrMap->cancelTransitions();
 
     if (pinch.state == UIGestureRecognizerStateBegan)
     {
@@ -467,9 +452,9 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isRotateEnabled) return;
 
-    if ( ! [self cancelPreviousActions]) return;
-
     if ( ! llmrMap->canRotate()) return;
+
+    llmrMap->cancelTransitions();
 
     if (rotate.state == UIGestureRecognizerStateBegan)
     {
@@ -491,7 +476,7 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    if ( ! [self cancelPreviousActions]) return;
+    llmrMap->cancelTransitions();
 
     if (doubleTap.state == UIGestureRecognizerStateEnded)
     {
@@ -503,9 +488,9 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    if ( ! [self cancelPreviousActions]) return;
-
     if (llmrMap->getZoom() == llmrMap->getMinZoom()) return;
+
+    llmrMap->cancelTransitions();
 
     if (twoFingerTap.state == UIGestureRecognizerStateEnded)
     {
@@ -517,7 +502,7 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    if ( ! [self cancelPreviousActions]) return;
+    llmrMap->cancelTransitions();
 
     if (quickZoom.state == UIGestureRecognizerStateBegan)
     {
