@@ -35,9 +35,20 @@ If you'd like to contribute to this project, go instead to [Mapbox GL native](ht
  * iOS 7+
  * a sense of adventure
 
-## Concepts
+## Styling
 
-## API Overview
+See `STYLING.md` for more information on the styling language. *This language is in rapid development and is subject to change.* Contained within the `MapboxGL.bundle` assets is a `style.js`, which describes the entire default style bundled with the framework (class: `default`), as well as the `night` class variant. 
+
+The styling language is a cascading language similar to CSS. It can be described in native code with Mapbox GL Cocoa such that the following style layer adjustments are possible: 
+
+```objective-c
+NSDictionary *buildingStyle = @{ @"color" : @{ @"type"  : MVKStyleValueTypeColor,
+                                               @"value" : [UIColor purpleColor] } };
+
+[self setStyleDescription:buildingStyle forLayer:@"buildings" inClass:@"default"];
+```
+
+By default, layer properties changes are updated instantly on the map. However, a transition animation duration can optionally be specified to animate the change between number, number pair, and even color property types. 
 
 ## Related Projects
 
