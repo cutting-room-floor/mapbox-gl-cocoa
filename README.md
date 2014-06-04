@@ -9,7 +9,7 @@ This project is Cocoa API bindings for [`mapbox-gl-native`](https://github.com/m
 To use this library in your app directly, follow these steps. Everything you need is in `./dist`. 
 
  * Copy the contents of `./dist` into your project. 
- * Add header file(s) in `Headers` to your project. 
+ * Add header files in `Headers` to your project. 
  * Add `MapboxGL.bundle` to your app target's *Copy Bundle Resources* build phase. 
  * Add `libMapboxGL.a` to your project's linked libraries. 
  * Add `MapboxGL.mm` to your project's compiled sources (this is a stub file to trigger Objective-C++ compilation). 
