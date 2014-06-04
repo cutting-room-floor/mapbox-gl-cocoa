@@ -89,7 +89,7 @@ LLMRView *llmrView = nullptr;
 
 - (NSString *)defaultStyleJSON
 {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"style.min" ofType:@"js"];
+    NSString *path = [MGLMapView pathForBundleResourceNamed:@"style.min" ofType:@"js"];
 
     NSString *json = [NSString stringWithContentsOfFile:path encoding:[NSString defaultCStringEncoding] error:nil];
 
@@ -128,7 +128,7 @@ LLMRView *llmrView = nullptr;
 
     // setup logo bug
     //
-    _logoBug = [[UIImageView alloc] initWithImage:[[self class] resourceImageNamed:@"mapbox.png"]];
+    _logoBug = [[UIImageView alloc] initWithImage:[MGLMapView resourceImageNamed:@"mapbox.png"]];
     _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
     _logoBug.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_logoBug];
@@ -143,8 +143,8 @@ LLMRView *llmrView = nullptr;
 
     // setup compass
     //
-    _compass = [[UIImageView alloc] initWithImage:[[self class] resourceImageNamed:@"Compass.png"]];
-    UIImage *compassImage = [[self class] resourceImageNamed:@"Compass.png"];
+    _compass = [[UIImageView alloc] initWithImage:[MGLMapView resourceImageNamed:@"Compass.png"]];
+    UIImage *compassImage = [MGLMapView resourceImageNamed:@"Compass.png"];
     _compass.frame = CGRectMake(0, 0, compassImage.size.width, compassImage.size.height);
     _compass.alpha = 0;
     UIView *container = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.size.width - compassImage.size.width - 5, 5, compassImage.size.width, compassImage.size.height)];
@@ -196,6 +196,7 @@ LLMRView *llmrView = nullptr;
     // start it up
     //
     llmrMap->setStyleJSON((std::string)[[self defaultStyleJSON] cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    llmrMap->setLonLatZoom(0, 0, llmrMap->getMinZoom());
     llmrMap->start();
 
     return self;
@@ -1131,11 +1132,29 @@ LLMRView *llmrView = nullptr;
     if ( ! [[imageName pathExtension] length])
         imageName = [imageName stringByAppendingString:@".png"];
 
-    NSString *imagePath = [[NSBundle mainBundle] pathForResource:imageName ofType:nil];
+    return [UIImage imageWithContentsOfFile:[MGLMapView pathForBundleResourceNamed:imageName ofType:nil]];
+}
 
-    NSAssert(imagePath, @"Resource image not found in application.");
++ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension
+{
+    NSString *path;
 
-    return [UIImage imageWithContentsOfFile:imagePath];
+    NSString *resourceBundlePath = [[NSBundle mainBundle] pathForResource:@"MapboxGL"
+                                                                   ofType:@"bundle"];
+
+    if (resourceBundlePath)
+    {
+        path = [[NSBundle bundleWithPath:resourceBundlePath] pathForResource:name
+                                                                      ofType:extension];
+    }
+    else
+    {
+        path = [[NSBundle mainBundle] pathForResource:name ofType:extension];
+    }
+
+    NSAssert(path, @"Resource not found in application.");
+
+    return path;
 }
 
 - (void)swap

@@ -4,9 +4,22 @@ This project is Cocoa API bindings for [`mapbox-gl-native`](https://github.com/m
 
 ## Installation
 
-This project should be cloned as a submodule of `mapbox-gl-native` so that it is contained within that project. Then, run `./setup.sh` to use [GYP](https://code.google.com/p/gyp/) to create the Xcode project for the sample app. This script will open the project, then you should select the *Sample App* target and an iOS platform of choice to build & run the sample app. 
+To use this library in your app directly, follow these steps. Everything you need is in `./dist`. 
 
-GYP is currently used because the `mapbox-gl-native` iOS test app itself requires the resources bundle created by this GYP project. In future, mapbox-gl-cocoa will be installable as a statically-linked library, header files, and a pre-built resource bundle for persons not wishing to develop on `mapbox-gl-native` itself. 
+ * Copy the contents of `./dist` into your project. 
+ * Add header file(s) in `Headers` to your project. 
+ * Add `MapboxGL.bundle` to your app target's *Copy Bundle Resources* build phase. 
+ * Add `libMapboxGL.a` to your project's linked libraries. 
+ * Add `MapboxGL.mm` to your project's compiled sources (this is a stub file to trigger Objective-C++ compilation). 
+ * Add the following dependent Cocoa frameworks to your project's linked libraries: 
+   - `CoreLocation.framework`
+   - `GLKit.framework`
+   - `libz.dylib`
+ * Import the necessary headers (like `MGLMapView.h`) into your project and use the APIs. 
+
+## Development
+
+If you'd like to contribute to this project, go instead to [Mapbox GL native](https://github.com/mapbox/mapbox-gl-native) and clone that project. This project is a submodule of that project and is pulled into the overarching build process there, which consists of a cross-platform C++ library and this Objective-C wrapper library, together with an iOS demo app. 
 
 ## Requirements
 
@@ -19,9 +32,8 @@ GYP is currently used because the `mapbox-gl-native` iOS test app itself require
 
 ## Related Projects
 
- * https://github.com/mapbox/vector-tile-spec
  * https://github.com/mapbox/mapbox-gl-native
- * https://github.com/mapbox/llmr (soon)
+ * https://github.com/mapbox/vector-tile-spec
 
 ## Other notes
 
