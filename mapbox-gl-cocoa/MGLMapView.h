@@ -153,6 +153,9 @@
 *   The default value of this property is `NO`. */
 @property (nonatomic, getter=isDebugActive) BOOL debugActive;
 
+/** Toggle the current value of debugActive. */
+- (void)toggleDebug;
+
 /** Resets the map to the minimum zoom level, a center coordinate of (0, 0), and a northern heading. */
 - (void)resetPosition;
 
