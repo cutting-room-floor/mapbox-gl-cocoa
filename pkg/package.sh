@@ -57,3 +57,10 @@ mkdir $OUTPUT/$NAME.bundle
 cp -v $SOURCES/Resources/* $OUTPUT/$NAME.bundle
 cp -v $PARENT/bin/style.js $OUTPUT/$NAME.bundle
 cp -v $PARENT/build/DerivedSources/Release/bin/style.min.js $OUTPUT/$NAME.bundle
+
+# record versions info
+VERSIONS="`pwd`/$OUTPUT/versions.txt"
+echo -n "mapbox-gl-cocoa  " > $VERSIONS
+git log | head -1 | awk '{ print $2 }' >> $VERSIONS
+echo -n "mapbox-gl-native " >> $VERSIONS
+cd ../.. && git log | head -1 | awk '{ print $2 }' >> $VERSIONS && cd $OLDPWD
