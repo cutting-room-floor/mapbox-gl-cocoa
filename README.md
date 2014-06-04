@@ -2,6 +2,8 @@
 
 This project is Cocoa API bindings for [`mapbox-gl-native`](https://github.com/mapbox/mapbox-gl-native). Use or edit this project to get access to Mapbox vector maps and dynamic OpenGL-based styling in your iOS apps by using `MGLMapView`. 
 
+![](https://raw.githubusercontent.com/mapbox/mapbox-gl-cocoa/master/pkg/screenshot.png)
+
 ## Installation
 
 To use this library in your app directly, follow these steps. Everything you need is in `./dist`. 
@@ -16,6 +18,13 @@ To use this library in your app directly, follow these steps. Everything you nee
    - `GLKit.framework`
    - `libz.dylib`
  * Import the necessary headers (like `MGLMapView.h`) into your project and use the APIs. 
+
+```objective-c
+MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]];
+mapView.centerCoordinate = CLLocationCoordinate2DMake(28.369334, -80.743779);
+mapView.zoomLevel = 13;
+[self.view addSubview:mapView];
+```
 
 ## Development
 
