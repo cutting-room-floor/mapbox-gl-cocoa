@@ -73,7 +73,7 @@
 - (void)setZoomLevel:(double)zoomLevel animated:(BOOL)animated;
 
 /** Changes the center coordinate and zoom level of the and optionally animates the change. 
-*   @param coordinate The new center coordinate for the map.
+*   @param centerCoordinate The new center coordinate for the map.
 *   @param zoomLevel The new zoom level for the map.
 *   @param animated Specify `YES` if you want the map view to animate scrolling and zooming to the new location or `NO` if you want the map to display the new location immediately. */
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(double)zoomLevel animated:(BOOL)animated;
