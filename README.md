@@ -42,8 +42,8 @@ See `STYLING.md` for more information on the styling language. *This language is
 The styling language is a cascading language similar to CSS. It can be described in native code with Mapbox GL Cocoa such that the following style layer adjustments are possible: 
 
 ```objective-c
-NSDictionary *buildingStyle = @{ @"color" : @{ @"type"  : MGLStyleValueTypeColor,
-                                               @"value" : [UIColor purpleColor] } };
+NSDictionary *buildingStyle = @{ @"stroke" : @{ @"type"  : MGLStyleValueTypeColor,
+                                                @"value" : [UIColor purpleColor] } };
 
 [self setStyleDescription:buildingStyle forLayer:@"buildings" inClass:@"default"];
 ```
