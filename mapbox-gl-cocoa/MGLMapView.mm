@@ -565,7 +565,22 @@ LLMRView *llmrView = nullptr;
 {
     llmrMap->resetNorth();
 
-    [UIView animateWithDuration:0.5 animations:^(void) { self.compass.transform = CGAffineTransformIdentity; }];
+    [UIView animateWithDuration:0.25
+                     animations:^(void)
+                     {
+                         self.compass.transform = CGAffineTransformIdentity;
+                     }
+                     completion:^(BOOL finished)
+                     {
+                         if (finished)
+                         {
+                             [UIView animateWithDuration:0.25
+                                              animations:^(void)
+                                              {
+                                                  self.compass.alpha = 0;
+                                              }];
+                         }
+                     }];
 }
 
 - (void)resetPosition
@@ -1123,8 +1138,17 @@ LLMRView *llmrView = nullptr;
 
     self.compass.transform = CGAffineTransformMakeRotation(llmrMap->getAngle());
 
-    if (llmrMap->getAngle() && self.compass.alpha < 1)         [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 1; }];
-    else if ( ! llmrMap->getAngle() && self.compass.alpha > 0) [UIView animateWithDuration:0.5 animations:^(void) { self.compass.alpha = 0; }];
+    if (llmrMap->getAngle() && self.compass.alpha < 1)
+    {
+        [UIView animateWithDuration:0.25
+                              delay:0
+                            options:UIViewAnimationOptionBeginFromCurrentState
+                         animations:^(void)
+                         {
+                             self.compass.alpha = 1;
+                         }
+                         completion:nil];
+    }
 }
 
 + (UIImage *)resourceImageNamed:(NSString *)imageName
