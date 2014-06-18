@@ -137,7 +137,7 @@ LLMRView *llmrView = nullptr;
     //
     _attributionButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
     [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
-    _attributionButton.frame = CGRectMake(self.bounds.size.width  - 30, self.bounds.size.height - 30, _attributionButton.bounds.size.width, _attributionButton.bounds.size.height);
+    _attributionButton.frame = CGRectMake(self.bounds.size.width - _attributionButton.bounds.size.width - 8, self.bounds.size.height - _attributionButton.bounds.size.height - 8, _attributionButton.bounds.size.width, _attributionButton.bounds.size.height);
     _attributionButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_attributionButton];
 
@@ -281,18 +281,15 @@ LLMRView *llmrView = nullptr;
     //
     UIView *compassContainer = self.compass.superview;
 
-    CGFloat compassTopSpacing   = compassContainer.frame.origin.y;
-    CGFloat compassRightSpacing = self.bounds.size.width - compassContainer.frame.origin.x - compassContainer.frame.size.width;
-
     [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:%@-topSpacing-[container]", topGuideFormatString]
                                                                                  options:0
-                                                                                 metrics:@{ @"topSpacing"     : @(compassTopSpacing) }
+                                                                                 metrics:@{ @"topSpacing"     : @(5) }
                                                                                    views:@{ @"topLayoutGuide" : topGuideViewsObject,
                                                                                             @"container"      : compassContainer }]];
 
     [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[container]-rightSpacing-|"
                                                                                  options:0
-                                                                                 metrics:@{ @"rightSpacing" : @(compassRightSpacing) }
+                                                                                 metrics:@{ @"rightSpacing" : @(5) }
                                                                                    views:@{ @"container"    : compassContainer }]];
 
     [compassContainer addConstraint:[NSLayoutConstraint constraintWithItem:compassContainer
@@ -313,34 +310,28 @@ LLMRView *llmrView = nullptr;
 
     // logo bug
     //
-    CGFloat logoBugLeftSpacing   = self.logoBug.frame.origin.x;
-    CGFloat logoBugBottomSpacing = self.bounds.size.height - self.logoBug.frame.origin.y - self.logoBug.bounds.size.height;
-
     [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[logoBug]-bottomSpacing-%@", bottomGuideFormatString]
                                                                                  options:0
-                                                                                 metrics:@{ @"bottomSpacing"     : @(logoBugBottomSpacing) }
+                                                                                 metrics:@{ @"bottomSpacing"     : @(4) }
                                                                                    views:@{ @"logoBug"           : self.logoBug,
                                                                                             @"bottomLayoutGuide" : bottomGuideViewsObject }]];
 
     [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-leftSpacing-[logoBug]"
                                                                                  options:0
-                                                                                 metrics:@{ @"leftSpacing"       : @(logoBugLeftSpacing) }
+                                                                                 metrics:@{ @"leftSpacing"       : @(8) }
                                                                                    views:@{ @"logoBug"           : self.logoBug }]];
 
     // attribution button
     //
-    CGFloat attributionButtonRightSpacing  = self.bounds.size.width  - self.attributionButton.frame.origin.x - self.attributionButton.bounds.size.width;
-    CGFloat attributionButtonBottomSpacing = self.bounds.size.height - self.attributionButton.frame.origin.y - self.attributionButton.bounds.size.height;
-
     [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[attributionButton]-bottomSpacing-%@", bottomGuideFormatString]
                                                                                  options:0
-                                                                                 metrics:@{ @"bottomSpacing"       : @(attributionButtonBottomSpacing) }
-                                                                                   views:@{ @"attributionButton"   : self.attributionButton,
-                                                                                              @"bottomLayoutGuide" : bottomGuideViewsObject }]];
+                                                                                 metrics:@{ @"bottomSpacing"     : @(8) }
+                                                                                   views:@{ @"attributionButton" : self.attributionButton,
+                                                                                            @"bottomLayoutGuide" : bottomGuideViewsObject }]];
 
     [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionButton]-rightSpacing-|"
                                                                                  options:0
-                                                                                 metrics:@{ @"rightSpacing"      : @(attributionButtonRightSpacing) }
+                                                                                 metrics:@{ @"rightSpacing"      : @(8) }
                                                                                    views:@{ @"attributionButton" : self.attributionButton }]];
 
     [super updateConstraints];
