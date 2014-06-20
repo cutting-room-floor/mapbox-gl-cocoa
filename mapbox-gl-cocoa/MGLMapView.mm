@@ -586,13 +586,16 @@ LLMRView *llmrView = nullptr;
 
 - (void)toggleStyle
 {
-    if ([[self getAppliedStyleClasses] containsObject:@"night"])
+    if ([[[self getAllStyleClasses] valueForKeyPath:@"name"] containsObject:@"default"])
     {
-        [self setAppliedStyleClasses:@[ @"default" ] transitionDuration:300];
-    }
-    else
-    {
-        [self setAppliedStyleClasses:@[ @"default", @"night" ] transitionDuration:300];
+        if ([[self getAppliedStyleClasses] containsObject:@"night"])
+        {
+            [self setAppliedStyleClasses:@[ @"default" ] transitionDuration:300];
+        }
+        else if ([[[self getAllStyleClasses] valueForKeyPath:@"name"] containsObject:@"night"])
+        {
+            [self setAppliedStyleClasses:@[ @"default", @"night" ] transitionDuration:300];
+        }
     }
 }
 
