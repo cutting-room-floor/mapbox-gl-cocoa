@@ -586,16 +586,24 @@ LLMRView *llmrView = nullptr;
 
 - (void)toggleStyle
 {
-    if ([[[self getAllStyleClasses] valueForKeyPath:@"name"] containsObject:@"default"])
+    NSArray *styles = [self getAllStyleClasses];
+
+    if ([[styles valueForKeyPath:@"name"] containsObject:@"default"])
     {
-        if ([[self getAppliedStyleClasses] containsObject:@"night"])
+        NSUInteger appliedStyleCount = [[styles filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"applied = YES"]] count];
+        NSUInteger newAppliedStyleCount = (appliedStyleCount == [styles count] ? 1 : appliedStyleCount + 1);
+
+        NSMutableArray *appliedStyles = [NSMutableArray array];
+
+        for (NSUInteger i = 0; i < [styles count]; i++)
         {
-            [self setAppliedStyleClasses:@[ @"default" ] transitionDuration:300];
+            if (i < newAppliedStyleCount)
+            {
+                [appliedStyles addObject:[styles valueForKeyPath:@"name"][i]];
+            }
         }
-        else if ([[[self getAllStyleClasses] valueForKeyPath:@"name"] containsObject:@"night"])
-        {
-            [self setAppliedStyleClasses:@[ @"default", @"night" ] transitionDuration:300];
-        }
+
+        [self setAppliedStyleClasses:appliedStyles transitionDuration:300];
     }
 }
 
