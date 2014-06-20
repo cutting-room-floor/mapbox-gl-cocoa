@@ -53,6 +53,7 @@ By default, layer properties changes are updated instantly on the map. However, 
 ## Related Projects
 
  * https://github.com/mapbox/mapbox-gl-native
+ * https://github.com/mapbox/mapbox-gl-style-spec
  * https://github.com/mapbox/vector-tile-spec
 
 ## Other notes
