@@ -20,11 +20,25 @@ The intention is yes. This includes:
 
 #### Tile sources
 
+The SDK uses the `RMTileSource` protocol to allow for extensible remote and local raster tile sources, as well as custom on-the-fly raster tile generation. We are planning to build a transitional API in Mapbox GL that acts as a wrapper to `RMTileSource` so that existing sources can be used to plug into the main Mapbox GL source API. 
+
 #### Offline caching
+
+Both the Mapbox iOS SDK and MBXMapKit feature robust support for offline caching of raster tiles and the SDK features support for [MBTiles](http://mbtiles.org) tile sources. 
+
+We're likely going to take a similar approach to both performance caching and offline maps as is done with the `0.3.0` release of MBXMapKit. That is, `NSURLCache` will be used for performance caching and specific, separate offline map database management will be used for fetching areas of map tiles. This is a cleaner design than exists in the SDK, which combines performance and offline caches and has a non-intuitive configuration API. 
+
+We're not sure yet if we're going to port over MBTiles support to Mapbox GL. 
 
 #### UTFGrid interactivity
 
+[UTFGrid](https://github.com/mapbox/utfgrid-spec) is a technology for enabling interactive features in raster tiles. Support for the technology is provided in the Mapbox iOS SDK with categories in `RMInteractiveSource` in combination with either `RMMapboxSource` or `RMMBTilesSource`. 
+
+Current plans include allowing the basic key-value querying functionality of UTFGrid with Mapbox GL Cocoa sources. 
+
 #### Annotation clustering
+
+We're planning on adding support for point clustering to Mapbox GL and it will likely have a similar API to the SDK's. Clustering will happen on an individual style layer level. The performance for clustering, as well as annotations in general, will hopefully be better than in the SDK, since it will be done with direct OpenGL rendering instead of Core Animation layers. 
   
 ### What will the migration path look like? 
 
