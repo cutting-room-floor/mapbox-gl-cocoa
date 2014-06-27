@@ -6,6 +6,10 @@ Mapbox GL is a completely new renderer technology which will eventually replace 
 
 The library is [open source](https://github.com/mapbox/mapbox-gl-cooca) right now, but an official, production-recommended release will come later in 2014. 
 
+### What iOS versions will be supported? 
+
+Mapbox GL currently supports iOS 7 and later. This will continue to be the case. MBXMapKit also supports iOS 7 and greater, but this does mean that moving from the iOS SDK will leave behind iOS 5 and 6. 
+
 ### Will the API be similar to the Mapbox iOS SDK/MBXMapKit/MapKit? 
 
 Yes. We are shooting for bringing the Mapbox GL API in line with Apple's MapKit for the easiest transition ability. 
