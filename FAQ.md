@@ -12,7 +12,7 @@ Yes. We are shooting for bringing the Mapbox GL API in line with Apple's MapKit 
 
 MBXMapKit is already an add-on to MapKit, so Apple's `MKMapView` API is used directly. 
 
-The Mapbox iOS SDK is "workalike", since it descends from an [upstream open source project](https://github.com/Alpstein/route-me) that predates Apple's own MapKit. It uses similar concepts like annotations (with the difference that the map view delegate provides `CALayer` instances instead of `UIView`), similar API for managing the map view center, bounds, and zoom levels, and an `RMUserLocation` API that is very much like `MKUserLocation`. But the Mapbox iOS SDK also features unique APIs like extensible tile sources, offline caching, UTFGrid interactivity, and point annotation clustering. 
+The Mapbox iOS SDK is "workalike", since it descends from an [upstream open source project](https://github.com/Alpstein/route-me) that predates Apple's own MapKit. It uses similar concepts like annotations (with the difference that the map view delegate provides `CALayer` instances instead of `UIView`, the intention being that Mapbox GL will support `UIView`), similar API for managing the map view center, bounds, and zoom levels, and an `RMUserLocation` API that is very much like `MKUserLocation`. But the Mapbox iOS SDK also features unique APIs like extensible tile sources, offline caching, UTFGrid interactivity, and point annotation clustering. 
 
 ### Will the iOS SDK's extra APIs make it over to Mapbox GL? 
 
