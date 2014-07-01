@@ -1196,21 +1196,26 @@ class LLMRView : public llmr::View
 {
     public:
         LLMRView(MGLMapView *nativeView) : nativeView(nativeView) {}
-        virtual ~LLMRView() {}
+        virtual ~LLMRView() {
+            map->terminate();
+        }
 
     void notify_map_change()
     {
-        // This drives the map view delegate callbacks, which need to happen
-        // in the next run loop pass to avoid lock contention when obtaining
-        // lat/lon/zoom. Delegate callbacks are after-the-fact and don't need
-        // to be synchronous anyway.
-        //
-        [nativeView performSelector:@selector(notifyMapChange) withObject:nil afterDelay:0];
+        [nativeView performSelectorOnMainThread:@selector(notifyMapChange) withObject:nil waitUntilDone:NO];
     }
 
     void make_active()
     {
         [EAGLContext setCurrentContext:nativeView.context];
+    }
+
+    void make_inactive()
+    {
+        if ( ! [EAGLContext setCurrentContext:nil])
+        {
+            NSLog(@"Removing OpenGL ES context failed");
+        }
     }
 
     void swap()
@@ -1221,12 +1226,5 @@ class LLMRView : public llmr::View
     private:
         MGLMapView *nativeView = nullptr;
 };
-
-void llmr::platform::notify_map_change()
-{
-    // Notify the map view wrapper, which has access to the native view object.
-    //
-    llmrView->notify_map_change();
-}
 
 @end
