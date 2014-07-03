@@ -718,7 +718,7 @@ LLMRView *llmrView = nullptr;
 {
     NSMutableArray *returnArray = [NSMutableArray array];
 
-    std::set<std::string> appliedClasses = llmrMap->getAppliedClasses();
+    std::vector<std::string> appliedClasses = llmrMap->getAppliedClasses();
 
     for (auto class_it = appliedClasses.begin(); class_it != appliedClasses.end(); class_it++)
     {
@@ -735,19 +735,10 @@ LLMRView *llmrView = nullptr;
 
 - (void)setAppliedStyleClasses:(NSArray *)appliedClasses transitionDuration:(NSTimeInterval)transitionDuration
 {
-    NSArray *currentClasses = [self getAllStyleClasses];
-
-    std::set<std::string> newAppliedClasses;
+    std::vector<std::string> newAppliedClasses;
 
     for (NSString *appliedClass in appliedClasses)
     {
-        if ( ! [[currentClasses valueForKeyPath:@"name"] containsObject:appliedClass])
-        {
-            [NSException raise:@"invalid class name"
-                        format:@"class name %@ unknown",
-                            appliedClass];
-        }
-
         newAppliedClasses.insert(newAppliedClasses.end(), [appliedClass cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
 
