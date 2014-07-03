@@ -676,27 +676,27 @@ LLMRView *llmrView = nullptr;
 
 - (NSArray *)getStyleOrderedLayerNames
 {
-    return [[self getRawStyle] valueForKeyPath:@"structure.name"];
+    return [[self getRawStyle] valueForKeyPath:@"layers.id"];
 }
 
 - (void)setStyleOrderedLayerNames:(NSArray *)orderedLayerNames
 {
-    NSDictionary *style = [self getRawStyle];
-    NSDictionary *oldStructure = style[@"structure"];
-    NSMutableDictionary *newStructure = [NSMutableDictionary dictionary];
+    NSMutableDictionary *style = [[self getRawStyle] deepMutableCopy];
+    NSArray *oldLayers = style[@"layers"];
+    NSMutableArray *newLayers = [NSMutableArray array];
 
-    if ([orderedLayerNames count] != [[oldStructure valueForKeyPath:@"name"] count])
+    if ([orderedLayerNames count] != [[oldLayers valueForKeyPath:@"id"] count])
     {
         [NSException raise:@"invalid layer count"
                     format:@"new layer count (%lu) should equal existing layer count (%lu)",
                         (unsigned long)[orderedLayerNames count],
-                        (unsigned long)[[oldStructure valueForKeyPath:@"name"] count]];
+                        (unsigned long)[[oldLayers valueForKeyPath:@"id"] count]];
     }
     else
     {
         for (NSString *newLayerName in orderedLayerNames)
         {
-            if ( ! [[oldStructure valueForKeyPath:@"name"] containsObject:newLayerName])
+            if ( ! [[oldLayers valueForKeyPath:@"id"] containsObject:newLayerName])
             {
                 [NSException raise:@"invalid layer name"
                             format:@"layer name %@ unknown",
@@ -704,12 +704,13 @@ LLMRView *llmrView = nullptr;
             }
             else
             {
-                newStructure[newLayerName] = oldStructure[newLayerName];
+                NSDictionary *newLayer = [oldLayers objectAtIndex:[[oldLayers valueForKeyPath:@"id"] indexOfObject:newLayerName]];
+                [newLayers addObject:newLayer];
             }
         }
     }
 
-    [style setValue:newStructure forKey:@"structure"];
+    [style setValue:newLayers forKey:@"layers"];
 
     [self setRawStyle:style];
 }
