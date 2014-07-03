@@ -720,7 +720,8 @@ LLMRView *llmrView = nullptr;
 
     NSArray *classNames = [[self getRawStyle] valueForKeyPath:@"classes.name"];
 
-    std::set<std::string> appliedClasses = llmrMap->getAppliedClasses();
+    const std::vector<std::string> &appliedClassesOrdered = llmrMap->getAppliedClasses();
+    std::set<std::string> appliedClasses(appliedClassesOrdered.begin(), appliedClassesOrdered.end());
 
     for (NSString *className in classNames)
     {
@@ -739,7 +740,7 @@ LLMRView *llmrView = nullptr;
 {
     NSMutableArray *returnArray = [NSMutableArray array];
 
-    std::set<std::string> appliedClasses = llmrMap->getAppliedClasses();
+    const std::vector<std::string> &appliedClasses = llmrMap->getAppliedClasses();
 
     for (auto class_it = appliedClasses.begin(); class_it != appliedClasses.end(); class_it++)
     {
@@ -758,7 +759,7 @@ LLMRView *llmrView = nullptr;
 {
     NSArray *currentClasses = [self getAllStyleClasses];
 
-    std::set<std::string> newAppliedClasses;
+    std::vector<std::string> newAppliedClasses;
 
     for (NSString *appliedClass in appliedClasses)
     {
@@ -769,7 +770,7 @@ LLMRView *llmrView = nullptr;
                             appliedClass];
         }
 
-        newAppliedClasses.insert(newAppliedClasses.end(), [appliedClass cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+        newAppliedClasses.push_back([appliedClass cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
 
     llmrMap->setDefaultTransitionDuration(transitionDuration);
