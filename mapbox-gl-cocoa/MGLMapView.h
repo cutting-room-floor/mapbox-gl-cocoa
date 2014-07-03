@@ -114,9 +114,6 @@
 *   @param orderedLayerNames An ordered array of layer names. The layer names array should contain the same number of layer names as getStyleOrderedLayerNames */
 - (void)setStyleOrderedLayerNames:(NSArray *)orderedLayerNames;
 
-/** Returns an array of all class names in the current style. */
-- (NSArray *)getAllStyleClasses;
-
 /** Returns the names of the applied classes in the current style. */
 - (NSArray *)getAppliedStyleClasses;
 

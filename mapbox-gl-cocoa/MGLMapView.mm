@@ -731,27 +731,6 @@ LLMRView *llmrView = nullptr;
     [self setRawStyle:style];
 }
 
-- (NSArray *)getAllStyleClasses
-{
-    NSMutableArray *returnArray = [NSMutableArray array];
-
-    NSArray *classNames = [[self getRawStyle] valueForKeyPath:@"classes.name"];
-
-    std::set<std::string> appliedClasses = llmrMap->getAppliedClasses();
-
-    for (NSString *className in classNames)
-    {
-        auto applied_it = appliedClasses.find([className cStringUsingEncoding:[NSString defaultCStringEncoding]]);
-
-        BOOL applied = (applied_it != appliedClasses.end());
-
-        [returnArray addObject:@{ @"name"    : className,
-                                  @"applied" : @(applied) }];
-    }
-
-    return returnArray;
-}
-
 - (NSArray *)getAppliedStyleClasses
 {
     NSMutableArray *returnArray = [NSMutableArray array];
