@@ -586,25 +586,8 @@ LLMRView *llmrView = nullptr;
 
 - (void)toggleStyle
 {
-    NSArray *styles = [self getAllStyleClasses];
-
-    if ([[styles valueForKeyPath:@"name"] containsObject:@"default"])
-    {
-        NSUInteger appliedStyleCount = [[styles filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"applied = YES"]] count];
-        NSUInteger newAppliedStyleCount = (appliedStyleCount == [styles count] ? 1 : appliedStyleCount + 1);
-
-        NSMutableArray *appliedStyles = [NSMutableArray array];
-
-        for (NSUInteger i = 0; i < [styles count]; i++)
-        {
-            if (i < newAppliedStyleCount)
-            {
-                [appliedStyles addObject:[styles valueForKeyPath:@"name"][i]];
-            }
-        }
-
-        [self setAppliedStyleClasses:appliedStyles transitionDuration:300];
-    }
+    llmrMap->setDefaultTransitionDuration(300);
+    llmrMap->toggleClass("night");
 }
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
