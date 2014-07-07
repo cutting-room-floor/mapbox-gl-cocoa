@@ -586,25 +586,8 @@ LLMRView *llmrView = nullptr;
 
 - (void)toggleStyle
 {
-    NSArray *styles = [self getAllStyleClasses];
-
-    if ([[styles valueForKeyPath:@"name"] containsObject:@"default"])
-    {
-        NSUInteger appliedStyleCount = [[styles filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"applied = YES"]] count];
-        NSUInteger newAppliedStyleCount = (appliedStyleCount == [styles count] ? 1 : appliedStyleCount + 1);
-
-        NSMutableArray *appliedStyles = [NSMutableArray array];
-
-        for (NSUInteger i = 0; i < [styles count]; i++)
-        {
-            if (i < newAppliedStyleCount)
-            {
-                [appliedStyles addObject:[styles valueForKeyPath:@"name"][i]];
-            }
-        }
-
-        [self setAppliedStyleClasses:appliedStyles transitionDuration:300];
-    }
+    llmrMap->setDefaultTransitionDuration(300);
+    llmrMap->toggleClass("night");
 }
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
@@ -693,27 +676,27 @@ LLMRView *llmrView = nullptr;
 
 - (NSArray *)getStyleOrderedLayerNames
 {
-    return [[self getRawStyle] valueForKeyPath:@"structure.name"];
+    return [[self getRawStyle] valueForKeyPath:@"layers.id"];
 }
 
 - (void)setStyleOrderedLayerNames:(NSArray *)orderedLayerNames
 {
-    NSDictionary *style = [self getRawStyle];
-    NSDictionary *oldStructure = style[@"structure"];
-    NSMutableDictionary *newStructure = [NSMutableDictionary dictionary];
+    NSMutableDictionary *style = [[self getRawStyle] deepMutableCopy];
+    NSArray *oldLayers = style[@"layers"];
+    NSMutableArray *newLayers = [NSMutableArray array];
 
-    if ([orderedLayerNames count] != [[oldStructure valueForKeyPath:@"name"] count])
+    if ([orderedLayerNames count] != [[oldLayers valueForKeyPath:@"id"] count])
     {
         [NSException raise:@"invalid layer count"
                     format:@"new layer count (%lu) should equal existing layer count (%lu)",
                         (unsigned long)[orderedLayerNames count],
-                        (unsigned long)[[oldStructure valueForKeyPath:@"name"] count]];
+                        (unsigned long)[[oldLayers valueForKeyPath:@"id"] count]];
     }
     else
     {
         for (NSString *newLayerName in orderedLayerNames)
         {
-            if ( ! [[oldStructure valueForKeyPath:@"name"] containsObject:newLayerName])
+            if ( ! [[oldLayers valueForKeyPath:@"id"] containsObject:newLayerName])
             {
                 [NSException raise:@"invalid layer name"
                             format:@"layer name %@ unknown",
@@ -721,43 +704,22 @@ LLMRView *llmrView = nullptr;
             }
             else
             {
-                newStructure[newLayerName] = oldStructure[newLayerName];
+                NSDictionary *newLayer = [oldLayers objectAtIndex:[[oldLayers valueForKeyPath:@"id"] indexOfObject:newLayerName]];
+                [newLayers addObject:newLayer];
             }
         }
     }
 
-    [style setValue:newStructure forKey:@"structure"];
+    [style setValue:newLayers forKey:@"layers"];
 
     [self setRawStyle:style];
-}
-
-- (NSArray *)getAllStyleClasses
-{
-    NSMutableArray *returnArray = [NSMutableArray array];
-
-    NSArray *classNames = [[self getRawStyle] valueForKeyPath:@"classes.name"];
-
-    const std::vector<std::string> &appliedClassesOrdered = llmrMap->getAppliedClasses();
-    std::set<std::string> appliedClasses(appliedClassesOrdered.begin(), appliedClassesOrdered.end());
-
-    for (NSString *className in classNames)
-    {
-        auto applied_it = appliedClasses.find([className cStringUsingEncoding:[NSString defaultCStringEncoding]]);
-
-        BOOL applied = (applied_it != appliedClasses.end());
-
-        [returnArray addObject:@{ @"name"    : className,
-                                  @"applied" : @(applied) }];
-    }
-
-    return returnArray;
 }
 
 - (NSArray *)getAppliedStyleClasses
 {
     NSMutableArray *returnArray = [NSMutableArray array];
 
-    const std::vector<std::string> &appliedClasses = llmrMap->getAppliedClasses();
+    std::vector<std::string> appliedClasses = llmrMap->getAppliedClasses();
 
     for (auto class_it = appliedClasses.begin(); class_it != appliedClasses.end(); class_it++)
     {
@@ -774,20 +736,11 @@ LLMRView *llmrView = nullptr;
 
 - (void)setAppliedStyleClasses:(NSArray *)appliedClasses transitionDuration:(NSTimeInterval)transitionDuration
 {
-    NSArray *currentClasses = [self getAllStyleClasses];
-
     std::vector<std::string> newAppliedClasses;
 
     for (NSString *appliedClass in appliedClasses)
     {
-        if ( ! [[currentClasses valueForKeyPath:@"name"] containsObject:appliedClass])
-        {
-            [NSException raise:@"invalid class name"
-                        format:@"class name %@ unknown",
-                            appliedClass];
-        }
-
-        newAppliedClasses.push_back([appliedClass cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+        newAppliedClasses.insert(newAppliedClasses.end(), [appliedClass cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
 
     llmrMap->setDefaultTransitionDuration(transitionDuration);
@@ -1072,13 +1025,13 @@ LLMRView *llmrView = nullptr;
         }
     }
 
-    NSMutableDictionary *style = [[self getRawStyle] deepMutableCopy];
-
-    NSUInteger classIndex = [[[self getAllStyleClasses] valueForKey:@"name"] indexOfObject:className];
-
-    style[@"classes"][classIndex][@"layers"][layerName] = convertedStyle;
-
-    [self setRawStyle:style];
+//    NSMutableDictionary *style = [[self getRawStyle] deepMutableCopy];
+//
+//    NSUInteger classIndex = [[[self getAllStyleClasses] valueForKey:@"name"] indexOfObject:className];
+//
+//    style[@"classes"][classIndex][@"layers"][layerName] = convertedStyle;
+//
+//    [self setRawStyle:style];
 }
 
 - (NSDictionary *)allowedStyleTypes
@@ -1125,19 +1078,101 @@ LLMRView *llmrView = nullptr;
     return MGLStyleAllowedTypes;
 }
 
-- (void)notifyMapChange
+- (void)notifyMapChange:(NSNumber *)change
 {
-    double lon, lat, zoom;
-    llmrMap->getLonLatZoom(lon, lat, zoom);
-    while (lon > 180) lon -= 360;
-    while (lon <= -180) lon += 360;
+    switch ([change unsignedIntegerValue])
+    {
+        case llmr::platform::MapChangeRegionWillChange:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapView:regionWillChangeAnimated:)])
+            {
+                [self.delegate mapView:self regionWillChangeAnimated:NO];
+            }
+            break;
+        }
+        case llmr::platform::MapChangeRegionWillChangeAnimated:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapView:regionWillChangeAnimated:)])
+            {
+                [self.delegate mapView:self regionWillChangeAnimated:YES];
+            }
+            break;
+        }
+        case llmr::platform::MapChangeRegionDidChange:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapView:regionDidChangeAnimated:)])
+            {
+                [self.delegate mapView:self regionDidChangeAnimated:NO];
+            }
+            [self updateCompass];
+            break;
+        }
+        case llmr::platform::MapChangeRegionDidChangeAnimated:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapView:regionDidChangeAnimated:)])
+            {
+                [self.delegate mapView:self regionDidChangeAnimated:YES];
+            }
+            [self updateCompass];
+            break;
+        }
+        case llmr::platform::MapChangeWillStartLoadingMap:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewWillStartLoadingMap:)])
+            {
+                [self.delegate mapViewWillStartLoadingMap:self];
+            }
+            break;
+        }
+        case llmr::platform::MapChangeDidFinishLoadingMap:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewDidFinishLoadingMap:)])
+            {
+                [self.delegate mapViewDidFinishLoadingMap:self];
+            }
+            break;
+        }
+        case llmr::platform::MapChangeDidFailLoadingMap:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewDidFailLoadingMap:withError::)])
+            {
+                [self.delegate mapViewDidFailLoadingMap:self withError:nil];
+            }
+            break;
+        }
+        case llmr::platform::MapChangeWillStartRenderingMap:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewWillStartRenderingMap:)])
+            {
+                [self.delegate mapViewWillStartRenderingMap:self];
+            }
+            break;
+        }
+        case llmr::platform::MapChangeDidFinishRenderingMap:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewDidFinishRenderingMap:fullyRendered:)])
+            {
+                [self.delegate mapViewDidFinishRenderingMap:self fullyRendered:NO];
+            }
+            break;
+        }
+        case llmr::platform::MapChangeDidFinishRenderingMapFullyRendered:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewDidFinishRenderingMap:fullyRendered:)])
+            {
+                [self.delegate mapViewDidFinishRenderingMap:self fullyRendered:YES];
+            }
+            break;
+        }
+    }
+}
 
+- (void)updateCompass
+{
     double angle = llmrMap->getAngle();
     angle *= 180 / M_PI;
     while (angle >= 360) angle -= 360;
     while (angle < 0) angle += 360;
-
-//    NSLog(@"lat: %f, lon: %f, zoom: %f, angle: %f", lat, lon, zoom, angle);
 
     self.compass.transform = CGAffineTransformMakeRotation(llmrMap->getAngle());
 
@@ -1147,9 +1182,9 @@ LLMRView *llmrView = nullptr;
                               delay:0
                             options:UIViewAnimationOptionBeginFromCurrentState
                          animations:^(void)
-                         {
-                             self.compass.alpha = 1;
-                         }
+        {
+            self.compass.alpha = 1;
+        }
                          completion:nil];
     }
 }
@@ -1199,14 +1234,11 @@ class LLMRView : public llmr::View
         LLMRView(MGLMapView *nativeView) : nativeView(nativeView) {}
         virtual ~LLMRView() {}
 
-    void notify_map_change()
+    void notify_map_change(llmr::platform::MapChange change)
     {
-        // This drives the map view delegate callbacks, which need to happen
-        // in the next run loop pass to avoid lock contention when obtaining
-        // lat/lon/zoom. Delegate callbacks are after-the-fact and don't need
-        // to be synchronous anyway.
-        //
-        [nativeView performSelector:@selector(notifyMapChange) withObject:nil afterDelay:0];
+        [nativeView performSelectorOnMainThread:@selector(notifyMapChange:)
+                                     withObject:@(change)
+                                  waitUntilDone:NO];
     }
 
     void make_active()
@@ -1216,18 +1248,18 @@ class LLMRView : public llmr::View
 
     void swap()
     {
-        [nativeView performSelectorOnMainThread:@selector(swap) withObject:nil waitUntilDone:NO];
+        [nativeView performSelectorOnMainThread:@selector(swap)
+                                     withObject:nil
+                                  waitUntilDone:NO];
     }
 
     private:
         MGLMapView *nativeView = nullptr;
 };
 
-void llmr::platform::notify_map_change()
+void llmr::platform::notify_map_change(MapChange change)
 {
-    // Notify the map view wrapper, which has access to the native view object.
-    //
-    llmrView->notify_map_change();
+    llmrView->notify_map_change(change);
 }
 
 @end
