@@ -1253,6 +1253,11 @@ class LLMRView : public llmr::View
                                   waitUntilDone:NO];
     }
 
+    unsigned int root_fbo()
+    {
+        return 1;
+    }
+
     private:
         MGLMapView *nativeView = nullptr;
 };
