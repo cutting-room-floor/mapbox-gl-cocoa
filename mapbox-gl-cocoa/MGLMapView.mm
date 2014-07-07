@@ -719,7 +719,7 @@ LLMRView *llmrView = nullptr;
 {
     NSMutableArray *returnArray = [NSMutableArray array];
 
-    std::vector<std::string> appliedClasses = llmrMap->getAppliedClasses();
+    const std::vector<std::string> &appliedClasses = llmrMap->getAppliedClasses();
 
     for (auto class_it = appliedClasses.begin(); class_it != appliedClasses.end(); class_it++)
     {
