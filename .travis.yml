@@ -1,0 +1,12 @@
+language: objective-c
+
+script:
+- "xcodebuild -project test/ios-tests.xcodeproj -scheme 'Mapbox GL Tests' -destination 'platform=iOS Simulator,name=iPad,OS=7.1' test"
+
+notifications:
+  hipchat:
+    rooms:
+      secure: "BViKnVls3ICW4y0KDraOeiGjbK8gVYeeQk7/48uYwiP7XOZqEW25/QWaK3/F5ondVD8RgDa4OPEKpAPjdnnk6AaLreyLwqIbSo2gYXV0EeAymsNmpPPdhUO2oR+MIDGYVQtwdgs4gblLNl0w2wu0Ct0/Mz+VqdJ8aN8fks3rXbs="
+    template:
+      - 'Build <a href="%{build_url}">#%{build_number}</a>: %{author} tested <a href="%{compare_url}">%{commit}</a> in branch <a href="https://github.com/%{repository_slug}/tree/%{branch}">%{branch}</a> of <a href="https://github.com/%{repository_slug}">%{repository_name}</a>: <b>%{commit_message}</b><br>%{message} (%{duration})'
+    format: html
