@@ -109,6 +109,10 @@ LLMRView *llmrView = nullptr;
         return nil;
     }
 
+    // setup accessibility
+    //
+    self.accessibilityLabel = @"Map";
+
     // create GL view
     //
     _glView = [[GLKView alloc] initWithFrame:self.bounds context:_context];
@@ -129,6 +133,7 @@ LLMRView *llmrView = nullptr;
     // setup logo bug
     //
     _logoBug = [[UIImageView alloc] initWithImage:[MGLMapView resourceImageNamed:@"mapbox.png"]];
+    _logoBug.accessibilityLabel = @"Mapbox logo";
     _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
     _logoBug.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_logoBug];
@@ -136,6 +141,7 @@ LLMRView *llmrView = nullptr;
     // setup attribution
     //
     _attributionButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    _attributionButton.accessibilityLabel = @"Attribution info";
     [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
     _attributionButton.frame = CGRectMake(self.bounds.size.width - _attributionButton.bounds.size.width - 8, self.bounds.size.height - _attributionButton.bounds.size.height - 8, _attributionButton.bounds.size.width, _attributionButton.bounds.size.height);
     _attributionButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -144,6 +150,7 @@ LLMRView *llmrView = nullptr;
     // setup compass
     //
     _compass = [[UIImageView alloc] initWithImage:[MGLMapView resourceImageNamed:@"Compass.png"]];
+    _compass.accessibilityLabel = @"Compass";
     UIImage *compassImage = [MGLMapView resourceImageNamed:@"Compass.png"];
     _compass.frame = CGRectMake(0, 0, compassImage.size.width, compassImage.size.height);
     _compass.alpha = 0;

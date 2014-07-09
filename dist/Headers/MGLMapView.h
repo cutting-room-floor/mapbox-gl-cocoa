@@ -1,6 +1,8 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
+@protocol MGLMapViewDelegate;
+
 /** An MGLMapView object provides an embeddable map interface, similar to the one provided by Apple's MapKit. You use this class to display map information and to manipulate the map contents from your application. You can center the map on a given coordinate, specify the size of the area you want to display, and style the features of the map to fit your application's use case.
 *
 *   @warning Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use. */
@@ -39,6 +41,13 @@
 *
 *   The default value of this property is `YES`. */
 @property(nonatomic, getter=isRotateEnabled) BOOL rotateEnabled;
+
+#pragma mark - Accessing the Delegate
+
+/** @name Accessing the Delegate */
+
+// TODO
+@property(nonatomic, weak) id<MGLMapViewDelegate> delegate;
 
 #pragma mark - Manipulating the Visible Portion of the Map
 
@@ -114,9 +123,6 @@
 *   @param orderedLayerNames An ordered array of layer names. The layer names array should contain the same number of layer names as getStyleOrderedLayerNames */
 - (void)setStyleOrderedLayerNames:(NSArray *)orderedLayerNames;
 
-/** Returns an array of all class names in the current style. */
-- (NSArray *)getAllStyleClasses;
-
 /** Returns the names of the applied classes in the current style. */
 - (NSArray *)getAppliedStyleClasses;
 
@@ -158,5 +164,37 @@
 
 /** Resets the map to the minimum zoom level, a center coordinate of (0, 0), and a northern heading. */
 - (void)resetPosition;
+
+@end
+
+// TODO
+@protocol MGLMapViewDelegate <NSObject>
+
+@optional
+
+// Responding to Map Position Changes
+
+// TODO
+- (void)mapView:(MGLMapView *)mapView regionWillChangeAnimated:(BOOL)animated;
+
+// TODO
+- (void)mapView:(MGLMapView *)mapView regionDidChangeAnimated:(BOOL)animated;
+
+// Loading the Map Data
+
+// TODO
+- (void)mapViewWillStartLoadingMap:(MGLMapView *)mapView;
+
+// TODO
+- (void)mapViewDidFinishLoadingMap:(MGLMapView *)mapView;
+
+// TODO
+- (void)mapViewDidFailLoadingMap:(MGLMapView *)mapView withError:(NSError *)error;
+
+// TODO
+- (void)mapViewWillStartRenderingMap:(MGLMapView *)mapView;
+
+// TODO
+- (void)mapViewDidFinishRenderingMap:(MGLMapView *)mapView fullyRendered:(BOOL)fullyRendered;
 
 @end
