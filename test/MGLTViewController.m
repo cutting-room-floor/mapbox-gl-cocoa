@@ -7,8 +7,11 @@
 {
     [super viewDidLoad];
 
-    MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:self.view.bounds];
+    MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:self.view.bounds
+                                                accessToken:@"pk.eyJ1IjoianVzdGluIiwiYSI6Ik9RX3RRQzAifQ.dmOg_BAp1ywuDZMM7YsXRg"];
+
     mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
     [self.view addSubview:mapView];
 }
 
