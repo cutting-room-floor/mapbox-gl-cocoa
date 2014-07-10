@@ -23,8 +23,8 @@ To use this library in your app directly, follow these steps. Everything you nee
 
 ```objective-c
 MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)];
-mapView.centerCoordinate = CLLocationCoordinate2DMake(28.369334, -80.743779);
-mapView.zoomLevel = 13;
+CLLocationCoordinate2D location = CLLocationCoordinate2DMake(28.369334, -80.743779);
+[mapView setCenterCoordinate:location zoomLevel:13 animated:NO];
 [self.view addSubview:mapView];
 ```
 
