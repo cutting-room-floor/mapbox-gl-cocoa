@@ -11,12 +11,14 @@ echo
 
 appledoc \
     --output /tmp/`uuidgen` \
-    --project-name "MapboxGL $VERSION" \
+    --project-name "Mapbox GL $VERSION" \
     --project-company Mapbox \
     --create-docset \
     --company-id com.mapbox \
+    --ignore app \
     --ignore dist \
     --ignore pkg \
+    --ignore test \
     --ignore .m \
     --ignore .mm \
     .
