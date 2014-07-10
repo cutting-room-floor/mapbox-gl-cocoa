@@ -69,34 +69,72 @@ class LLMRView;
 llmr::Map *llmrMap = nullptr;
 LLMRView *llmrView = nullptr;
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame styleJSON:(NSString *)styleJSON accessToken:(NSString *)accessToken
 {
     self = [super initWithFrame:frame];
 
-    if (self) return [self commonInit];
+    if (self && [self commonInit])
+    {
+        if (accessToken) [self setAccessToken:accessToken];
 
-    return nil;
+        if (styleJSON || accessToken)
+        {
+            // If style is set directly, pass it on. If not, if we have an access
+            // token, we can pass nil and use the default style.
+            //
+            [self setStyleJSON:styleJSON];
+        }
+    }
+
+    return self;
 }
 
-- (id)initWithCoder:(NSCoder *)decoder
+- (instancetype)initWithFrame:(CGRect)frame accessToken:(NSString *)accessToken
+{
+    return [self initWithFrame:frame styleJSON:nil accessToken:accessToken];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder
 {
     self = [super initWithCoder:decoder];
 
-    if (self) return [self commonInit];
+    if (self && [self commonInit])
+    {
+        return self;
+    }
 
     return nil;
 }
 
-- (NSString *)defaultStyleJSON
+- (void)setAccessToken:(NSString *)accessToken
 {
-    NSString *path = [MGLMapView pathForBundleResourceNamed:@"style.min" ofType:@"js"];
-
-    NSString *json = [NSString stringWithContentsOfFile:path encoding:[NSString defaultCStringEncoding] error:nil];
-
-    return json;
+    if (accessToken)
+    {
+        llmrMap->setAccessToken((std::string)[accessToken cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    }
 }
 
-- (id)commonInit
+- (void)setStyleJSON:(NSString *)styleJSON
+{
+    if ( ! styleJSON)
+    {
+        if ( ! [@(llmrMap->getAccessToken().c_str()) length])
+        {
+            [NSException raise:@"invalid access token"
+                        format:@"default map style requires a Mapbox API access token"];
+        }
+
+        NSString *path = [MGLMapView pathForBundleResourceNamed:@"style.min" ofType:@"js"];
+
+        styleJSON = [NSString stringWithContentsOfFile:path encoding:[NSString defaultCStringEncoding] error:nil];
+    }
+
+    llmrMap->stop();
+    llmrMap->setStyleJSON((std::string)[styleJSON cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    llmrMap->start();
+}
+
+- (BOOL)commonInit
 {
     // create context
     //
@@ -106,7 +144,7 @@ LLMRView *llmrView = nullptr;
     {
         NSLog(@"Failed to create OpenGL ES context");
 
-        return nil;
+        return NO;
     }
 
     // setup accessibility
@@ -200,13 +238,11 @@ LLMRView *llmrView = nullptr;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
 
-    // start it up
+    // set initial position
     //
-    llmrMap->setStyleJSON((std::string)[[self defaultStyleJSON] cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     llmrMap->setLonLatZoom(0, 0, llmrMap->getMinZoom());
-    llmrMap->start();
 
-    return self;
+    return YES;
 }
 
 - (void)dealloc

@@ -22,7 +22,7 @@ To use this library in your app directly, follow these steps. Everything you nee
  * Import the necessary headers (like `MGLMapView.h`) into your project and use the APIs. 
 
 ```objective-c
-MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]];
+MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)];
 mapView.centerCoordinate = CLLocationCoordinate2DMake(28.369334, -80.743779);
 mapView.zoomLevel = 13;
 [self.view addSubview:mapView];
