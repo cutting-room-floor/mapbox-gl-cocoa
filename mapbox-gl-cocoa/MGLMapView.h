@@ -8,6 +8,22 @@
 *   @warning Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use. */
 @interface MGLMapView : UIView
 
+#pragma mark - Initializing a Map View
+
+/** @name Initializing a Map View */
+
+- (instancetype)initWithFrame:(CGRect)frame styleJSON:(NSString *)styleJSON accessToken:(NSString *)accessToken;
+
+- (instancetype)initWithFrame:(CGRect)frame accessToken:(NSString *)accessToken;
+
+- (instancetype)initWithFrame:(CGRect)frame __attribute__((unavailable("Instantiating an MGLMapView requires settings a style and/or an access token.")));
+
+#pragma mark - Authorizing Access
+
+/** @name Authorizing Access */
+
+- (void)setAccessToken:(NSString *)accessToken;
+
 #pragma mark - Managing Constraints
 
 /** @name Managing Constraints */
@@ -105,6 +121,8 @@
 #pragma mark - Styling the Map
 
 /** @name Styling the Map */
+
+- (void)setStyleJSON:(NSString *)styleJSON;
 
 /** Toggle the style of the map between the `default` class and the `night` class with a transition animation. */
 - (void)toggleStyle;
