@@ -5,6 +5,8 @@
 
 /** An MGLMapView object provides an embeddable map interface, similar to the one provided by Apple's MapKit. You use this class to display map information and to manipulate the map contents from your application. You can center the map on a given coordinate, specify the size of the area you want to display, and style the features of the map to fit your application's use case.
 *
+*   Use of MGLMapView requires a Mapbox API access token. Obtain an access token on the [Mapbox account page](https://www.mapbox.com/account/apps/). If you instantiate an MGLMapView from Interface Builder, rendering of the map won't begin until the accessToken property has been set.
+*
 *   @warning Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use. */
 @interface MGLMapView : UIView
 
@@ -12,8 +14,17 @@
 
 /** @name Initializing a Map View */
 
+/** Initialize a map view with a given frame, style, and access token.
+*   @param frame The frame with which to initialize the map view.
+*   @param styleJSON The map stylesheet as JSON text.
+*   @param accessToken A Mapbox API access token.
+*   @return An initialized map view, or `nil` if the map view was unable to be initialized. */
 - (instancetype)initWithFrame:(CGRect)frame styleJSON:(NSString *)styleJSON accessToken:(NSString *)accessToken;
 
+/** Initialize a map view with a given frame, the default style, and an access token.
+*   @param frame The frame with which to initialize the map view.
+*   @param accessToken A Mapbox API access token.
+*   @return An initialized map view, or `nil` if the map view was unable to be initialized. */
 - (instancetype)initWithFrame:(CGRect)frame accessToken:(NSString *)accessToken;
 
 - (instancetype)initWithFrame:(CGRect)frame __attribute__((unavailable("Instantiating an MGLMapView requires setting a style and/or an access token.")));
@@ -22,6 +33,8 @@
 
 /** @name Authorizing Access */
 
+/** Sets a Mapbox API access token for the map view. 
+*   @param accessToken A Mapbox API token. */
 - (void)setAccessToken:(NSString *)accessToken;
 
 #pragma mark - Managing Constraints
@@ -122,6 +135,8 @@
 
 /** @name Styling the Map */
 
+/** Sets the map style.
+*   @param styleJSON The map stylesheet as JSON text. */
 - (void)setStyleJSON:(NSString *)styleJSON;
 
 /** Toggle the style of the map between the `default` class and the `night` class with a transition animation. */
