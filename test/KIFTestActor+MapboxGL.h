@@ -6,5 +6,6 @@
 
 @property (nonatomic, readonly) MGLMapView *mapView;
 @property (nonatomic, readonly) UIView *compass;
+@property (nonatomic, readonly) UIViewController *viewController;
 
 @end

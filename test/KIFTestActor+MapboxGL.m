@@ -12,4 +12,8 @@
     return [tester waitForViewWithAccessibilityLabel:@"Compass"];
 }
 
+- (UIViewController *)viewController {
+    return (UIViewController *)[[tester.mapView nextResponder] nextResponder];
+}
+
 @end
