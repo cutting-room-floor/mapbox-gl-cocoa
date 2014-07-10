@@ -152,8 +152,6 @@
 
 /** @name Debugging */
 
-/** Note that these APIs may go away in the near future. */
-
 /** A Boolean value that determines whether map debugging information is shown. 
 *
 *   The default value of this property is `NO`. */
