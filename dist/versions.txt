@@ -1,4 +1,4 @@
 -n mapbox-gl-cocoa  
-cdfc6f46957606ecfdf9ca1b22dcfa81e007c705
+3b1dd5dddc179653870a0da2b773ae44b74094c1
 -n mapbox-gl-native 
-c737766701a9c980dc3dfdd0da12666fdeb2ff55
+9c0aa55c93548936cf02167e9b74f8547fcdf463

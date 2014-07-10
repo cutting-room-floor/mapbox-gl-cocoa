@@ -16,7 +16,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame accessToken:(NSString *)accessToken;
 
-- (instancetype)initWithFrame:(CGRect)frame __attribute__((unavailable("Instantiating an MGLMapView requires settings a style and/or an access token.")));
+- (instancetype)initWithFrame:(CGRect)frame __attribute__((unavailable("Instantiating an MGLMapView requires setting a style and/or an access token.")));
 
 #pragma mark - Authorizing Access
 
