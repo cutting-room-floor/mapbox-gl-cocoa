@@ -21,6 +21,8 @@
             "../../../common/settings_nsuserdefaults.mm",
             "../../../common/foundation_request.h",
             "../../../common/foundation_request.mm",
+            "../../../common/nslog_log.hpp",
+            "../../../common/nslog_log.mm",
         ],
         'product_extension': 'app',
         'mac_bundle': 1,

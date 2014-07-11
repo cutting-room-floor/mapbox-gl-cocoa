@@ -6,6 +6,8 @@
 
 #import <CoreLocation/CoreLocation.h>
 
+#include "../../../common/nslog_log.hpp"
+
 @interface MBXViewController () <CLLocationManagerDelegate>
 
 @property (nonatomic) MGLMapView *mapView;
@@ -36,6 +38,8 @@ llmr::Settings_NSUserDefaults *settings = nullptr;
 
 - (void)viewDidLoad
 {
+    llmr::Log::Set<llmr::NSLogBackend>();
+
     [super viewDidLoad];
 
     NSString *accessToken = nil;
@@ -43,7 +47,7 @@ llmr::Settings_NSUserDefaults *settings = nullptr;
     // Set access token if present
     const char *token = getenv("MAPBOX_ACCESS_TOKEN");
     if (token == nullptr) {
-        fprintf(stderr, "[WARNING] no access token set. mapbox.com tiles won't work.\n");
+        llmr::Log::Warning(llmr::Event::Setup, "no access token set. mapbox.com tiles won't work.");
     } else {
         accessToken = [NSString stringWithCString:token encoding:NSASCIIStringEncoding];
     }
