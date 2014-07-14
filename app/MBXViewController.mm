@@ -3,10 +3,9 @@
 #import "MGLMapView.h"
 
 #import "settings_nsuserdefaults.hpp"
+#import "nslog_log.hpp"
 
 #import <CoreLocation/CoreLocation.h>
-
-#include "../../../common/nslog_log.hpp"
 
 @interface MBXViewController () <CLLocationManagerDelegate>
 
@@ -38,8 +37,6 @@ llmr::Settings_NSUserDefaults *settings = nullptr;
 
 - (void)viewDidLoad
 {
-    llmr::Log::Set<llmr::NSLogBackend>();
-
     [super viewDidLoad];
 
     NSString *accessToken = [[NSProcessInfo processInfo] environment][@"MAPBOX_ACCESS_TOKEN"];

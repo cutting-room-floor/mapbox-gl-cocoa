@@ -1,6 +1,7 @@
 #import "MGLMapView.h"
 
 #import "foundation_request.h"
+#import "nslog_log.hpp"
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
@@ -136,13 +137,17 @@ LLMRView *llmrView = nullptr;
 
 - (BOOL)commonInit
 {
+    // set logging backend
+    //
+    llmr::Log::Set<llmr::NSLogBackend>();
+
     // create context
     //
     _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 
     if ( ! _context)
     {
-        NSLog(@"Failed to create OpenGL ES context");
+        llmr::Log::Error(llmr::Event::Setup, "Failed to create OpenGL ES context");
 
         return NO;
     }
