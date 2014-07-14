@@ -128,9 +128,9 @@
 
 - (void)testBottomLayoutGuide {
     CGRect logoBugFrame, toolbarFrame, attributionButtonFrame;
-    UIView *logoBug = (UIView *)[tester.mapView valueForKey:@"logoBug"];
+    UIView *logoBug = (UIView *)[tester waitForViewWithAccessibilityLabel:@"Mapbox logo"];
     UIToolbar *toolbar = tester.viewController.navigationController.toolbar;
-    UIView *attributionButton = (UIView *)[tester.mapView valueForKey:@"attributionButton"];
+    UIView *attributionButton = (UIView *)[tester waitForViewWithAccessibilityLabel:@"Attribution info"];
 
     tester.viewController.navigationController.toolbarHidden = NO;
 
