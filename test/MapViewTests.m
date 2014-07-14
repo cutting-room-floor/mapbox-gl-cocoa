@@ -7,6 +7,8 @@
 @implementation MapViewTests
 
 - (void)beforeEach {
+    [system simulateDeviceRotationToOrientation:UIDeviceOrientationPortrait];
+    tester.mapView.viewControllerForLayoutGuides = tester.viewController;
     tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(38.913175, -77.032458);
     tester.mapView.zoomLevel = 14;
     tester.mapView.direction = 0;
@@ -97,17 +99,21 @@
     __KIFAssertEqual(tester.mapView.zoomLevel, newZoom);
 }
 
-//- (void)testTopLayoutGuideStatusBar {
-//    CGRect statusBarFrame = [tester.viewController.view convertRect:[[UIApplication sharedApplication] statusBarFrame]
-//                                                             toView:tester.viewController.view];
-//
-//    __KIFAssertEqualObjects(tester.mapView.viewControllerForLayoutGuides, tester.viewController);
-//
-//    CGRect currentCompassFrame = [tester.viewController.view convertRect:tester.compass.frame
-//                                                                  toView:tester.viewController.view];
-//
-//    XCTAssertFalse(CGRectIntersectsRect(currentCompassFrame, statusBarFrame));
-//
-//}
+- (void)testTopLayoutGuide {
+    UIWindow *mainWindow = [[UIApplication sharedApplication] windows][0];
+    CGRect statusBarFrame = [mainWindow convertRect:[[UIApplication sharedApplication] statusBarFrame] toView:nil];
+
+    __KIFAssertEqualObjects(tester.mapView.viewControllerForLayoutGuides, tester.viewController);
+
+    CGRect currentCompassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
+
+    XCTAssertFalse(CGRectIntersectsRect(currentCompassFrame, statusBarFrame));
+
+    [system simulateDeviceRotationToOrientation:UIDeviceOrientationLandscapeLeft];
+
+    currentCompassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
+
+    XCTAssertFalse(CGRectIntersectsRect(currentCompassFrame, statusBarFrame));
+}
 
 @end
