@@ -42,15 +42,8 @@ llmr::Settings_NSUserDefaults *settings = nullptr;
 
     [super viewDidLoad];
 
-    NSString *accessToken = nil;
-
-    // Set access token if present
-    const char *token = getenv("MAPBOX_ACCESS_TOKEN");
-    if (token == nullptr) {
-        llmr::Log::Warning(llmr::Event::Setup, "no access token set. mapbox.com tiles won't work.");
-    } else {
-        accessToken = [NSString stringWithCString:token encoding:NSASCIIStringEncoding];
-    }
+    NSString *accessToken = [[NSProcessInfo processInfo] environment][@"MAPBOX_ACCESS_TOKEN"];
+    if ( ! accessToken) llmr::Log::Warning(llmr::Event::Setup, "No access token set. Mapbox vector tiles won't work.");
 
     self.mapView = [[MGLMapView alloc] initWithFrame:self.view.bounds accessToken:accessToken];
     self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
