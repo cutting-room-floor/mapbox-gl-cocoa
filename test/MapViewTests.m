@@ -15,6 +15,8 @@
     tester.mapView.zoomEnabled = YES;
     tester.mapView.scrollEnabled = YES;
     tester.mapView.rotateEnabled = YES;
+    tester.viewController.navigationController.navigationBarHidden = YES;
+    tester.viewController.navigationController.toolbarHidden = YES;
 }
 
 - (void)testDirectionSet {
@@ -100,20 +102,27 @@
 }
 
 - (void)testTopLayoutGuide {
-    UIWindow *mainWindow = [[UIApplication sharedApplication] windows][0];
-    CGRect statusBarFrame = [mainWindow convertRect:[[UIApplication sharedApplication] statusBarFrame] toView:nil];
+    CGRect statusBarFrame, navigationBarFrame, compassFrame;
 
-    __KIFAssertEqualObjects(tester.mapView.viewControllerForLayoutGuides, tester.viewController);
+    compassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
+    statusBarFrame = [tester.window convertRect:[[UIApplication sharedApplication] statusBarFrame] toView:nil];
+    XCTAssertFalse(CGRectIntersectsRect(compassFrame, statusBarFrame));
 
-    CGRect currentCompassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
-
-    XCTAssertFalse(CGRectIntersectsRect(currentCompassFrame, statusBarFrame));
+    tester.viewController.navigationController.navigationBarHidden = NO;
+    compassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
+    navigationBarFrame = [tester.window convertRect:tester.viewController.navigationController.navigationBar.frame toView:nil];
+    XCTAssertFalse(CGRectIntersectsRect(compassFrame, navigationBarFrame));
 
     [system simulateDeviceRotationToOrientation:UIDeviceOrientationLandscapeLeft];
 
-    currentCompassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
+    compassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
+    navigationBarFrame = [tester.window convertRect:tester.viewController.navigationController.navigationBar.frame toView:nil];
+    XCTAssertFalse(CGRectIntersectsRect(compassFrame, navigationBarFrame));
 
-    XCTAssertFalse(CGRectIntersectsRect(currentCompassFrame, statusBarFrame));
+    tester.viewController.navigationController.navigationBarHidden = YES;
+    compassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
+    statusBarFrame = [tester.window convertRect:[[UIApplication sharedApplication] statusBarFrame] toView:nil];
+    XCTAssertFalse(CGRectIntersectsRect(compassFrame, statusBarFrame));
 }
 
 @end

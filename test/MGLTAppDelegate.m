@@ -6,7 +6,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.rootViewController = [MGLTViewController new];
+    UINavigationController *wrapper = [[UINavigationController alloc] initWithRootViewController:[MGLTViewController new]];
+    self.window.rootViewController = wrapper;
+    wrapper.navigationBarHidden = YES;
+    wrapper.toolbarHidden = YES;
     [self.window makeKeyAndVisible];
 
     return YES;
