@@ -1,11 +1,12 @@
 #import "KIFTestActor+MapboxGL.h"
+#import <KIF/UIApplication-KIFAdditions.h>
 #import <KIF/UIAccessibilityElement-KIFAdditions.h>
 #import "MGLMapView.h"
 
 @implementation KIFTestActor (MapboxGL)
 
 - (UIWindow *)window {
-    return [[UIApplication sharedApplication] windows][0];
+    return [[UIApplication sharedApplication] statusBarWindow];
 }
 
 - (UIViewController *)viewController {
