@@ -26,17 +26,6 @@
                             [NSValue valueWithCGAffineTransform:CGAffineTransformMakeRotation(M_PI * 1.5)]);
 }
 
-- (void)testDirectionSetAnimated {
-    [tester.mapView setDirection:90 animated:YES];
-    __KIFAssertEqual(tester.mapView.direction, 90);
-
-    [tester waitForTimeInterval:1];
-
-    __KIFAssertEqual(tester.compass.alpha, 1);
-    __KIFAssertEqualObjects([NSValue valueWithCGAffineTransform:tester.compass.transform],
-                            [NSValue valueWithCGAffineTransform:CGAffineTransformMakeRotation(M_PI * 0.5)]);
-}
-
 - (void)testCompassTap {
     tester.mapView.direction = 180;
     __KIFAssertEqual(tester.mapView.direction, 180);
@@ -99,54 +88,11 @@
     XCTAssertTrue(tester.mapView.centerCoordinate.longitude < -122.2328);
 }
 
-//- (void)testCenterSetAnimated {
-//    CLLocationCoordinate2D oldCenterCoordinate = tester.mapView.centerCoordinate;
-//    CLLocationCoordinate2D newCenterCoordinate = CLLocationCoordinate2DMake(45.23237263, -122.23287129);
-//    XCTAssertNotEqual(oldCenterCoordinate.latitude, newCenterCoordinate.latitude);
-//    XCTAssertNotEqual(oldCenterCoordinate.longitude, newCenterCoordinate.longitude);
-//
-//    [tester.mapView setCenterCoordinate:newCenterCoordinate animated:YES];
-//
-//    [tester waitForTimeInterval:0.1];
-//
-//    CLLocationDegrees midLatitude = tester.mapView.centerCoordinate.latitude;
-//    CLLocationDegrees midLongitude = tester.mapView.centerCoordinate.longitude;
-//    XCTAssertTrue(midLatitude > oldCenterCoordinate.latitude);
-//    XCTAssertTrue(midLatitude < newCenterCoordinate.latitude);
-//    XCTAssertTrue(midLongitude < oldCenterCoordinate.longitude);
-//    XCTAssertTrue(midLongitude > newCenterCoordinate.longitude);
-//
-//    [tester waitForTimeInterval:1];
-//
-//    XCTAssertTrue(tester.mapView.centerCoordinate.latitude > midLatitude);
-//    XCTAssertTrue(tester.mapView.centerCoordinate.latitude < 45.2324);
-//    XCTAssertTrue(tester.mapView.centerCoordinate.latitude > 45.2323);
-//    XCTAssertTrue(tester.mapView.centerCoordinate.longitude < midLongitude);
-//    XCTAssertTrue(tester.mapView.centerCoordinate.longitude < -122.2328);
-//    XCTAssertTrue(tester.mapView.centerCoordinate.longitude > -122.2329);
-//}
-
 - (void)testZoomSet {
     double newZoom = 11.65;
     XCTAssertNotEqual(tester.mapView.zoomLevel, newZoom);
 
     tester.mapView.zoomLevel = newZoom;
-
-    __KIFAssertEqual(tester.mapView.zoomLevel, newZoom);
-}
-
-- (void)testZoomSetAnimated {
-    double newZoom = 8.47;
-    double oldZoom = tester.mapView.zoomLevel;
-    XCTAssertNotEqual(oldZoom, newZoom);
-
-    [tester.mapView setZoomLevel:newZoom animated:YES];
-
-    [tester waitForTimeInterval:0.1];
-
-    XCTAssertTrue(tester.mapView.zoomLevel < oldZoom);
-
-    [tester waitForTimeInterval:1];
 
     __KIFAssertEqual(tester.mapView.zoomLevel, newZoom);
 }
