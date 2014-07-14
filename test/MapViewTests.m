@@ -103,6 +103,7 @@
 
 - (void)testTopLayoutGuide {
     CGRect statusBarFrame, navigationBarFrame, compassFrame;
+    UINavigationBar *navigationBar = tester.viewController.navigationController.navigationBar;
 
     compassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
     statusBarFrame = [tester.window convertRect:[[UIApplication sharedApplication] statusBarFrame] toView:nil];
@@ -110,19 +111,44 @@
 
     tester.viewController.navigationController.navigationBarHidden = NO;
     compassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
-    navigationBarFrame = [tester.window convertRect:tester.viewController.navigationController.navigationBar.frame toView:nil];
+    navigationBarFrame = [tester.window convertRect:navigationBar.frame toView:nil];
     XCTAssertFalse(CGRectIntersectsRect(compassFrame, navigationBarFrame));
 
     [system simulateDeviceRotationToOrientation:UIDeviceOrientationLandscapeLeft];
 
     compassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
-    navigationBarFrame = [tester.window convertRect:tester.viewController.navigationController.navigationBar.frame toView:nil];
+    navigationBarFrame = [tester.window convertRect:navigationBar.frame toView:nil];
     XCTAssertFalse(CGRectIntersectsRect(compassFrame, navigationBarFrame));
 
     tester.viewController.navigationController.navigationBarHidden = YES;
     compassFrame = [tester.compass.superview convertRect:tester.compass.frame toView:nil];
     statusBarFrame = [tester.window convertRect:[[UIApplication sharedApplication] statusBarFrame] toView:nil];
     XCTAssertFalse(CGRectIntersectsRect(compassFrame, statusBarFrame));
+}
+
+- (void)testBottomLayoutGuide {
+    CGRect logoBugFrame, toolbarFrame, attributionButtonFrame;
+    UIView *logoBug = (UIView *)[tester.mapView valueForKey:@"logoBug"];
+    UIToolbar *toolbar = tester.viewController.navigationController.toolbar;
+    UIView *attributionButton = (UIView *)[tester.mapView valueForKey:@"attributionButton"];
+
+    tester.viewController.navigationController.toolbarHidden = NO;
+
+    logoBugFrame = [logoBug.superview convertRect:logoBug.frame toView:nil];
+    toolbarFrame = [tester.window convertRect:toolbar.frame toView:nil];
+    XCTAssertFalse(CGRectIntersectsRect(logoBugFrame, toolbarFrame));
+
+    attributionButtonFrame = [attributionButton.superview convertRect:attributionButton.frame toView:nil];
+    XCTAssertFalse(CGRectIntersectsRect(attributionButtonFrame, toolbarFrame));
+
+    [system simulateDeviceRotationToOrientation:UIDeviceOrientationLandscapeRight];
+
+    logoBugFrame = [logoBug.superview convertRect:logoBug.frame toView:nil];
+    toolbarFrame = [tester.window convertRect:toolbar.frame toView:nil];
+    XCTAssertFalse(CGRectIntersectsRect(logoBugFrame, toolbarFrame));
+
+    attributionButtonFrame = [attributionButton.superview convertRect:attributionButton.frame toView:nil];
+    XCTAssertFalse(CGRectIntersectsRect(attributionButtonFrame, toolbarFrame));
 }
 
 @end
