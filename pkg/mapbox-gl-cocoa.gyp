@@ -10,6 +10,8 @@
             '<!@(find ../mapbox-gl-cocoa -type f -name "*+MGLAdditions.*")',
             '../../../common/foundation_request.h',
             '../../../common/foundation_request.mm',
+            '../../../common/nslog_log.hpp',
+            '../../../common/nslog_log.mm'
         ],
         'type': 'static_library',
         'link_settings': {
