@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script is meant to be run in place while
 # mapbox-gl-cocoa is a submodule of the Mapbox GL native
