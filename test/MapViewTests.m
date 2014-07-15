@@ -1,13 +1,17 @@
 #import "MapViewTests.h"
 #import <KIF/KIFTestStepValidation.h>
-#import <KIF/UIWindow-KIFAdditions.h>
 #import "KIFTestActor+MapboxGL.h"
 #import "MGLMapView.h"
+
+@interface MapViewTests () <MGLMapViewDelegate>
+
+@end
 
 @implementation MapViewTests
 
 - (void)beforeEach {
     [system simulateDeviceRotationToOrientation:UIDeviceOrientationPortrait];
+    [KIFTestActor setDefaultTimeout:2];
     tester.mapView.viewControllerForLayoutGuides = tester.viewController;
     tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(38.913175, -77.032458);
     tester.mapView.zoomLevel = 14;
@@ -17,6 +21,7 @@
     tester.mapView.rotateEnabled = YES;
     tester.viewController.navigationController.navigationBarHidden = YES;
     tester.viewController.navigationController.toolbarHidden = YES;
+    tester.mapView.delegate = self;
 }
 
 - (void)testDirectionSet {
@@ -149,6 +154,26 @@
 
     attributionButtonFrame = [attributionButton.superview convertRect:attributionButton.frame toView:nil];
     XCTAssertFalse(CGRectIntersectsRect(attributionButtonFrame, toolbarFrame));
+}
+
+- (void)testDelegateRegionWillChangeAnimated {
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+//    });
+//    NSNotification *notification = [system waitForNotificationName:@"regionWillChangeAnimated" object:tester.mapView];
+//    NSNotification *notification = [system waitForNotificationName:@"regionWillChangeAnimated"
+//                                                            object:tester.mapView
+//                                               whileExecutingBlock:^{
+//                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+//                                               }];
+//    XCTAssertNotNil(notification);
+//    __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], NO);
+}
+
+- (void)mapView:(MGLMapView *)mapView regionWillChangeAnimated:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"regionWillChangeAnimated"
+                                                        object:mapView
+                                                      userInfo:@{ @"animated" : @(animated) }];
 }
 
 @end
