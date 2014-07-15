@@ -11,7 +11,6 @@
 
 - (void)beforeEach {
     [system simulateDeviceRotationToOrientation:UIDeviceOrientationPortrait];
-    [KIFTestActor setDefaultTimeout:2];
     tester.mapView.viewControllerForLayoutGuides = tester.viewController;
     tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(38.913175, -77.032458);
     tester.mapView.zoomLevel = 14;
@@ -156,22 +155,27 @@
     XCTAssertFalse(CGRectIntersectsRect(attributionButtonFrame, toolbarFrame));
 }
 
-- (void)testDelegateRegionWillChangeAnimated {
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
-//    });
-//    NSNotification *notification = [system waitForNotificationName:@"regionWillChangeAnimated" object:tester.mapView];
-//    NSNotification *notification = [system waitForNotificationName:@"regionWillChangeAnimated"
-//                                                            object:tester.mapView
-//                                               whileExecutingBlock:^{
-//                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
-//                                               }];
-//    XCTAssertNotNil(notification);
-//    __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], NO);
+- (void)testDelegateRegionDidChangeAnimated {
+    NSNotification *notification = [system waitForNotificationName:@"regionDidChangeAnimated"
+                                                            object:tester.mapView
+                                               whileExecutingBlock:^{
+                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+                                               }];
+    XCTAssertNotNil(notification);
+    __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], NO);
+
+    notification = nil;
+    notification = [system waitForNotificationName:@"regionDidChangeAnimated"
+                                            object:tester.mapView
+                               whileExecutingBlock:^{
+                                   [tester.mapView setCenterCoordinate:CLLocationCoordinate2DMake(45, 100) animated:YES];
+                               }];
+    XCTAssertNotNil(notification);
+    __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], YES);
 }
 
-- (void)mapView:(MGLMapView *)mapView regionWillChangeAnimated:(BOOL)animated {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"regionWillChangeAnimated"
+- (void)mapView:(MGLMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"regionDidChangeAnimated"
                                                         object:mapView
                                                       userInfo:@{ @"animated" : @(animated) }];
 }
