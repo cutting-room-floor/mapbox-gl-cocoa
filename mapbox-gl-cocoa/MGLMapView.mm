@@ -440,7 +440,7 @@ LLMRView *llmrView = nullptr;
 
         self.centerPoint = CGPointMake(self.centerPoint.x + delta.x, self.centerPoint.y + delta.y);
     }
-    else if (pan.state == UIGestureRecognizerStateEnded)
+    else if (pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateCancelled)
     {
         CGFloat ease = 0.25;
 
