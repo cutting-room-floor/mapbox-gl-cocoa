@@ -155,7 +155,28 @@
     XCTAssertFalse(CGRectIntersectsRect(attributionButtonFrame, toolbarFrame));
 }
 
-- (void)testDelegateRegionDidChangeAnimated {
+- (void)testDelegateRegionWillChange {
+
+}
+
+- (void)mapView:(MGLMapView *)mapView regionWillChangeAnimated:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"regionWillChangeAnimated"
+                                                        object:mapView
+                                                      userInfo:@{ @"animated" : @(animated) }];
+}
+
+- (void)testDelegateRegionDidChange {
+    __block NSUInteger count = 0;
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"regionDidChangeAnimated"
+                                                      object:tester.mapView
+                                                       queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:^(NSNotification *note) {
+                                                      if ([note.userInfo[@"animated"] boolValue] == NO) {
+                                                          NSLog(@"foo");
+                                                      }
+                                                      count++;
+                                                  }];
+
     NSNotification *notification = [system waitForNotificationName:@"regionDidChangeAnimated"
                                                             object:tester.mapView
                                                whileExecutingBlock:^{
@@ -163,8 +184,9 @@
                                                }];
     XCTAssertNotNil(notification);
     __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], NO);
+    __KIFAssertEqual(count, 1);
 
-    notification = nil;
+    count = 0;
     notification = [system waitForNotificationName:@"regionDidChangeAnimated"
                                             object:tester.mapView
                                whileExecutingBlock:^{
@@ -172,6 +194,11 @@
                                }];
     XCTAssertNotNil(notification);
     __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], YES);
+    __KIFAssertEqual(count, 1);
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"regionDidChangeAnimated"
+                                                  object:tester.mapView];
 }
 
 - (void)mapView:(MGLMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
