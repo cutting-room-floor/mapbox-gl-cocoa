@@ -156,7 +156,42 @@
 }
 
 - (void)testDelegateRegionWillChange {
+    __block NSUInteger unanimatedCount = 0;
+    __block NSUInteger animatedCount = 0;
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"regionWillChangeAnimated"
+                                                      object:tester.mapView
+                                                       queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:^(NSNotification *note) {
+                                                      if ([note.userInfo[@"animated"] boolValue]) {
+                                                          animatedCount++;
+                                                      } else {
+                                                          unanimatedCount++;
+                                                      }
+                                                  }];
 
+    NSNotification *notification = [system waitForNotificationName:@"regionWillChangeAnimated"
+                                                            object:tester.mapView
+                                               whileExecutingBlock:^{
+                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+                                               }];
+    [tester waitForTimeInterval:1];
+    XCTAssertNotNil(notification);
+    __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], NO);
+    __KIFAssertEqual(unanimatedCount, 1);
+
+    notification = [system waitForNotificationName:@"regionWillChangeAnimated"
+                                            object:tester.mapView
+                               whileExecutingBlock:^{
+                                   [tester.mapView setCenterCoordinate:CLLocationCoordinate2DMake(45, 100) animated:YES];
+                               }];
+    [tester waitForTimeInterval:1];
+    XCTAssertNotNil(notification);
+    __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], YES);
+    __KIFAssertEqual(animatedCount, 1);
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"regionWillChangeAnimated"
+                                                  object:tester.mapView];
 }
 
 - (void)mapView:(MGLMapView *)mapView regionWillChangeAnimated:(BOOL)animated {
