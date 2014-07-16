@@ -64,7 +64,45 @@
                             [NSValue valueWithCGAffineTransform:CGAffineTransformIdentity]);
 }
 
-- (void)testPanning {
+- (void)testZoom {
+    double zoom = tester.mapView.zoomLevel;
+
+    [tester.mapView zoomAtPoint:CGPointMake(tester.mapView.bounds.size.width / 2,
+                                            tester.mapView.bounds.size.height / 2)
+                       distance:50
+                          steps:10];
+
+    XCTAssertTrue(tester.mapView.zoomLevel > zoom);
+
+    zoom = tester.mapView.zoomLevel;
+    [tester.mapView pinchAtPoint:CGPointMake(tester.mapView.bounds.size.width / 2,
+                                             tester.mapView.bounds.size.height / 2)
+                        distance:50
+                           steps:10];
+
+    XCTAssertTrue(tester.mapView.zoomLevel < zoom);
+}
+
+- (void)testZoomDisabled {
+    tester.mapView.zoomEnabled = NO;
+    double zoom = tester.mapView.zoomLevel;
+
+    [tester.mapView zoomAtPoint:CGPointMake(tester.mapView.bounds.size.width / 2,
+                                            tester.mapView.bounds.size.height / 2)
+                       distance:50
+                          steps:10];
+
+    __KIFAssertEqual(tester.mapView.zoomLevel, zoom);
+
+    [tester.mapView pinchAtPoint:CGPointMake(tester.mapView.bounds.size.width / 2,
+                                            tester.mapView.bounds.size.height / 2)
+                        distance:50
+                           steps:10];
+
+    __KIFAssertEqual(tester.mapView.zoomLevel, zoom);
+}
+
+- (void)testPan {
     CLLocationCoordinate2D centerCoordinate = tester.mapView.centerCoordinate;
 
     [tester.mapView dragFromPoint:CGPointMake(10, 10) toPoint:CGPointMake(50, 50)];
@@ -73,7 +111,7 @@
     XCTAssertTrue(tester.mapView.centerCoordinate.longitude < centerCoordinate.longitude);
 }
 
-- (void)testPanningDisabled {
+- (void)testPanDisabled {
     tester.mapView.scrollEnabled = NO;
     CLLocationCoordinate2D centerCoordinate = tester.mapView.centerCoordinate;
 
