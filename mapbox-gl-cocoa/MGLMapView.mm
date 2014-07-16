@@ -31,18 +31,20 @@ extern NSString *const MGLStyleValueFunctionAllowed;
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *glView;
+@property (nonatomic) NSOperationQueue *regionChangeDelegateQueue;
 @property (nonatomic) UIImageView *compass;
 @property (nonatomic) UIImageView *logoBug;
 @property (nonatomic) UIButton *attributionButton;
 @property (nonatomic) UIPanGestureRecognizer *pan;
 @property (nonatomic) UIPinchGestureRecognizer *pinch;
 @property (nonatomic) UIRotationGestureRecognizer *rotate;
+@property (nonatomic) UILongPressGestureRecognizer *quickZoom;
 @property (nonatomic, readonly) NSDictionary *allowedStyleTypes;
 @property (nonatomic) CGPoint centerPoint;
 @property (nonatomic) CGFloat scale;
 @property (nonatomic) CGFloat angle;
 @property (nonatomic) CGFloat quickZoomStart;
-@property (nonatomic) NSUInteger regionChangeNotificationSuppressionCount;
+@property (nonatomic, getter=isAnimatingGesture) BOOL animatingGesture;
 
 @end
 
@@ -138,10 +140,6 @@ LLMRView *llmrView = nullptr;
 
 - (BOOL)commonInit
 {
-    // suppress delegate notifications
-    //
-    self.regionChangeNotificationSuppressionCount++;
-
     // set logging backend
     //
     llmr::Log::Set<llmr::NSLogBackend>();
@@ -237,10 +235,10 @@ LLMRView *llmrView = nullptr;
 
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
     {
-        UILongPressGestureRecognizer *quickZoom = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleQuickZoomGesture:)];
-        quickZoom.numberOfTapsRequired = 1;
-        quickZoom.minimumPressDuration = 0.25;
-        [self addGestureRecognizer:quickZoom];
+        _quickZoom = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleQuickZoomGesture:)];
+        _quickZoom.numberOfTapsRequired = 1;
+        _quickZoom.minimumPressDuration = 0.25;
+        [self addGestureRecognizer:_quickZoom];
     }
 
     // observe app activity
@@ -252,15 +250,18 @@ LLMRView *llmrView = nullptr;
     //
     llmrMap->setLonLatZoom(0, 0, llmrMap->getMinZoom());
 
-    // restart notifications
+    // setup change delegate queue
     //
-    self.regionChangeNotificationSuppressionCount--;
+    _regionChangeDelegateQueue = [NSOperationQueue new];
+    _regionChangeDelegateQueue.maxConcurrentOperationCount = 1;
 
     return YES;
 }
 
 - (void)dealloc
 {
+    [_regionChangeDelegateQueue cancelAllOperations];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     if (llmrMap)
@@ -439,9 +440,6 @@ LLMRView *llmrView = nullptr;
     if (pan.state == UIGestureRecognizerStateBegan)
     {
         self.centerPoint = CGPointMake(0, 0);
-
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionWillChange)];
-        self.regionChangeNotificationSuppressionCount++;
     }
     else if (pan.state == UIGestureRecognizerStateChanged)
     {
@@ -454,25 +452,36 @@ LLMRView *llmrView = nullptr;
     }
     else if (pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateCancelled)
     {
-        CGFloat ease = 0.25;
-
         CGPoint velocity = [pan velocityInView:pan.view];
-        velocity.x = velocity.x * ease;
-        velocity.y = velocity.y * ease;
+        CGFloat duration = 0;
 
-        CGFloat speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-        CGFloat deceleration = 2500;
-        CGFloat duration = speed / (deceleration * ease);
+        if ( ! CGPointEqualToPoint(velocity, CGPointZero))
+        {
+            CGFloat ease = 0.25;
+
+            velocity.x = velocity.x * ease;
+            velocity.y = velocity.y * ease;
+
+            CGFloat speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+            CGFloat deceleration = 2500;
+            duration = speed / (deceleration * ease);
+        }
 
         CGPoint offset = CGPointMake(velocity.x * duration / 2, velocity.y * duration / 2);
 
         llmrMap->moveBy(offset.x, offset.y, duration);
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
+        if (duration)
         {
-            self.regionChangeNotificationSuppressionCount--;
-            [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChange)];
-        });
+            self.animatingGesture = YES;
+
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
+            {
+                self.animatingGesture = NO;
+
+                [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
+            });
+        }
     }
 }
 
@@ -489,9 +498,6 @@ LLMRView *llmrView = nullptr;
         llmrMap->startScaling();
 
         self.scale = llmrMap->getScale();
-
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionWillChange)];
-        self.regionChangeNotificationSuppressionCount++;
     }
     else if (pinch.state == UIGestureRecognizerStateChanged)
     {
@@ -507,8 +513,7 @@ LLMRView *llmrView = nullptr;
     {
         llmrMap->stopScaling();
 
-        self.regionChangeNotificationSuppressionCount--;
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChange)];
+        [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -525,9 +530,6 @@ LLMRView *llmrView = nullptr;
         llmrMap->startRotating();
 
         self.angle = llmrMap->getAngle();
-
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionWillChange)];
-        self.regionChangeNotificationSuppressionCount++;
     }
     else if (rotate.state == UIGestureRecognizerStateChanged)
     {
@@ -537,8 +539,7 @@ LLMRView *llmrView = nullptr;
     {
         llmrMap->stopRotating();
 
-        self.regionChangeNotificationSuppressionCount--;
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChange)];
+        [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -550,16 +551,16 @@ LLMRView *llmrView = nullptr;
 
     if (doubleTap.state == UIGestureRecognizerStateEnded)
     {
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionWillChangeAnimated)];
-        self.regionChangeNotificationSuppressionCount++;
-
         CGFloat duration = 0.3;
 
         llmrMap->scaleBy(2, [doubleTap locationInView:doubleTap.view].x, [doubleTap locationInView:doubleTap.view].y, duration);
 
+        self.animatingGesture = YES;
+
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
         {
-            self.regionChangeNotificationSuppressionCount--;
+            self.animatingGesture = NO;
+
             [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
         });
     }
@@ -575,16 +576,16 @@ LLMRView *llmrView = nullptr;
 
     if (twoFingerTap.state == UIGestureRecognizerStateEnded)
     {
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionWillChangeAnimated)];
-        self.regionChangeNotificationSuppressionCount++;
-
         CGFloat duration = 0.3;
 
         llmrMap->scaleBy(0.5, [twoFingerTap locationInView:twoFingerTap.view].x, [twoFingerTap locationInView:twoFingerTap.view].y, duration);
 
+        self.animatingGesture = YES;
+
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
         {
-            self.regionChangeNotificationSuppressionCount--;
+            self.animatingGesture = NO;
+
             [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
         });
     }
@@ -601,9 +602,6 @@ LLMRView *llmrView = nullptr;
         self.scale = llmrMap->getScale();
 
         self.quickZoomStart = [quickZoom locationInView:quickZoom.view].y;
-
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionWillChange)];
-        self.regionChangeNotificationSuppressionCount++;
     }
     else if (quickZoom.state == UIGestureRecognizerStateChanged)
     {
@@ -617,8 +615,7 @@ LLMRView *llmrView = nullptr;
     }
     else if (quickZoom.state == UIGestureRecognizerStateEnded || quickZoom.state == UIGestureRecognizerStateCancelled)
     {
-        self.regionChangeNotificationSuppressionCount--;
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChange)];
+        [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -1186,43 +1183,64 @@ LLMRView *llmrView = nullptr;
     return MGLStyleAllowedTypes;
 }
 
+- (void)unsuspendRegionChangeDelegateQueue
+{
+    @synchronized (self.regionChangeDelegateQueue)
+    {
+        [self.regionChangeDelegateQueue setSuspended:NO];
+    }
+}
+
 - (void)notifyMapChange:(NSNumber *)change
 {
-    if (self.regionChangeNotificationSuppressionCount) return;
-
     switch ([change unsignedIntegerValue])
     {
         case llmr::platform::MapChangeRegionWillChange:
-        {
-            if ([self.delegate respondsToSelector:@selector(mapView:regionWillChangeAnimated:)])
-            {
-                [self.delegate mapView:self regionWillChangeAnimated:NO];
-            }
-            break;
-        }
         case llmr::platform::MapChangeRegionWillChangeAnimated:
         {
-            if ([self.delegate respondsToSelector:@selector(mapView:regionWillChangeAnimated:)])
+            BOOL animated = ([change unsignedIntegerValue] == llmr::platform::MapChangeRegionWillChangeAnimated);
+
+            @synchronized (self.regionChangeDelegateQueue)
             {
-                [self.delegate mapView:self regionWillChangeAnimated:YES];
+                if ([self.regionChangeDelegateQueue operationCount] == 0)
+                {
+                    if ([self.delegate respondsToSelector:@selector(mapView:regionWillChangeAnimated:)])
+                    {
+                        [self.delegate mapView:self regionWillChangeAnimated:animated];
+                    }
+                }
+
+                [self.regionChangeDelegateQueue setSuspended:YES];
+
+                if ([self.regionChangeDelegateQueue operationCount] == 0)
+                {
+                    [self.regionChangeDelegateQueue addOperationWithBlock:^(void)
+                    {
+                        dispatch_async(dispatch_get_main_queue(), ^(void)
+                        {
+                            if ([self.delegate respondsToSelector:@selector(mapView:regionDidChangeAnimated:)])
+                            {
+                                [self.delegate mapView:self regionDidChangeAnimated:animated];
+                            }
+                        });
+                    }];
+                }
             }
             break;
         }
         case llmr::platform::MapChangeRegionDidChange:
-        {
-            if ([self.delegate respondsToSelector:@selector(mapView:regionDidChangeAnimated:)])
-            {
-                [self.delegate mapView:self regionDidChangeAnimated:NO];
-            }
-            [self updateCompass];
-            break;
-        }
         case llmr::platform::MapChangeRegionDidChangeAnimated:
         {
-            if ([self.delegate respondsToSelector:@selector(mapView:regionDidChangeAnimated:)])
-            {
-                [self.delegate mapView:self regionDidChangeAnimated:YES];
-            }
+            if (self.pan.state       == UIGestureRecognizerStateChanged ||
+                self.pinch.state     == UIGestureRecognizerStateChanged ||
+                self.rotate.state    == UIGestureRecognizerStateChanged ||
+                self.quickZoom.state == UIGestureRecognizerStateChanged) return;
+
+            if (self.isAnimatingGesture) return;
+
+            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(unsuspendRegionChangeDelegateQueue) object:nil];
+            [self performSelector:@selector(unsuspendRegionChangeDelegateQueue) withObject:nil afterDelay:0];
+
             [self updateCompass];
             break;
         }
@@ -1346,9 +1364,9 @@ class LLMRView : public llmr::View
 
     void notify_map_change(llmr::platform::MapChange change)
     {
-        [nativeView performSelectorOnMainThread:@selector(notifyMapChange:)
-                                     withObject:@(change)
-                                  waitUntilDone:NO];
+        [nativeView performSelector:@selector(notifyMapChange:)
+                         withObject:@(change)
+                         afterDelay:0];
     }
 
     void make_active()
@@ -1372,9 +1390,19 @@ class LLMRView : public llmr::View
         MGLMapView *nativeView = nullptr;
 };
 
-void llmr::platform::notify_map_change(MapChange change)
+void llmr::platform::notify_map_change(MapChange change, timestamp delay)
 {
-    llmrView->notify_map_change(change);
+    if (delay)
+    {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay)), dispatch_get_main_queue(), ^(void)
+        {
+            llmrView->notify_map_change(change);
+        });
+    }
+    else
+    {
+        llmrView->notify_map_change(change);
+    }
 }
 
 @end
