@@ -30,8 +30,8 @@ xcodebuild -project ./mapbox-gl-cocoa.xcodeproj -target static-library -configur
 xcodebuild -project ./mapbox-gl-cocoa.xcodeproj -target static-library -configuration Release -sdk iphoneos${SDK}
 
 # build Release for device/sim
-xcodebuild -project $PARENT/mbgl.xcodeproj -target mbgl-ios -configuration Release -sdk iphonesimulator${SDK} ONLY_ACTIVE_ARCH=NO
-xcodebuild -project $PARENT/mbgl.xcodeproj -target mbgl-ios -configuration Release -sdk iphoneos${SDK}
+xcodebuild -project $PARENT/mbgl.xcodeproj -target mapboxgl-ios -configuration Release -sdk iphonesimulator${SDK} ONLY_ACTIVE_ARCH=NO
+xcodebuild -project $PARENT/mbgl.xcodeproj -target mapboxgl-ios -configuration Release -sdk iphoneos${SDK}
 
 # combine into one lib per arch
 libtool -static -o ./build/libMapboxGL-device.a build/Release-iphoneos/libMapboxGL.a $PARENT/build/Release-iphoneos/lib*.a

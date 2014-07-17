@@ -65,7 +65,7 @@
           }
         },
         "dependencies": [
-            "../../../mbgl.gyp:mbgl-ios"
+            "../../../mapboxgl.gyp:mapboxgl-ios"
         ]
     }
   ]

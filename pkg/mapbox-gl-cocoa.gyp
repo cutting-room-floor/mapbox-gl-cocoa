@@ -49,7 +49,7 @@
         },
         'default_configuration': 'Release',
         "dependencies": [
-            "../../../mbgl.gyp:mbgl-ios"
+            "../../../mapboxgl.gyp:mapboxgl-ios"
         ]
     }
   ]
