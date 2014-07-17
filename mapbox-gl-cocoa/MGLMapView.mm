@@ -479,7 +479,7 @@ LLMRView *llmrView = nullptr;
             {
                 self.animatingGesture = NO;
 
-                [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
+                [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
             });
         }
     }
@@ -513,7 +513,7 @@ LLMRView *llmrView = nullptr;
     {
         llmrMap->stopScaling();
 
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
+        [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -539,7 +539,7 @@ LLMRView *llmrView = nullptr;
     {
         llmrMap->stopRotating();
 
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
+        [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -561,7 +561,7 @@ LLMRView *llmrView = nullptr;
         {
             self.animatingGesture = NO;
 
-            [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
+            [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
         });
     }
 }
@@ -586,7 +586,7 @@ LLMRView *llmrView = nullptr;
         {
             self.animatingGesture = NO;
 
-            [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
+            [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
         });
     }
 }
@@ -615,7 +615,7 @@ LLMRView *llmrView = nullptr;
     }
     else if (quickZoom.state == UIGestureRecognizerStateEnded || quickZoom.state == UIGestureRecognizerStateCancelled)
     {
-        [self notifyMapChange:@(llmr::platform::MapChangeRegionDidChangeAnimated)];
+        [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -1195,10 +1195,10 @@ LLMRView *llmrView = nullptr;
 {
     switch ([change unsignedIntegerValue])
     {
-        case llmr::platform::MapChangeRegionWillChange:
-        case llmr::platform::MapChangeRegionWillChangeAnimated:
+        case llmr::MapChangeRegionWillChange:
+        case llmr::MapChangeRegionWillChangeAnimated:
         {
-            BOOL animated = ([change unsignedIntegerValue] == llmr::platform::MapChangeRegionWillChangeAnimated);
+            BOOL animated = ([change unsignedIntegerValue] == llmr::MapChangeRegionWillChangeAnimated);
 
             @synchronized (self.regionChangeDelegateQueue)
             {
@@ -1228,8 +1228,8 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::platform::MapChangeRegionDidChange:
-        case llmr::platform::MapChangeRegionDidChangeAnimated:
+        case llmr::MapChangeRegionDidChange:
+        case llmr::MapChangeRegionDidChangeAnimated:
         {
             [self updateCompass];
 
@@ -1245,7 +1245,7 @@ LLMRView *llmrView = nullptr;
 
             break;
         }
-        case llmr::platform::MapChangeWillStartLoadingMap:
+        case llmr::MapChangeWillStartLoadingMap:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewWillStartLoadingMap:)])
             {
@@ -1253,7 +1253,7 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::platform::MapChangeDidFinishLoadingMap:
+        case llmr::MapChangeDidFinishLoadingMap:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewDidFinishLoadingMap:)])
             {
@@ -1261,7 +1261,7 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::platform::MapChangeDidFailLoadingMap:
+        case llmr::MapChangeDidFailLoadingMap:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewDidFailLoadingMap:withError::)])
             {
@@ -1269,7 +1269,7 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::platform::MapChangeWillStartRenderingMap:
+        case llmr::MapChangeWillStartRenderingMap:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewWillStartRenderingMap:)])
             {
@@ -1277,7 +1277,7 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::platform::MapChangeDidFinishRenderingMap:
+        case llmr::MapChangeDidFinishRenderingMap:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewDidFinishRenderingMap:fullyRendered:)])
             {
@@ -1285,7 +1285,7 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::platform::MapChangeDidFinishRenderingMapFullyRendered:
+        case llmr::MapChangeDidFinishRenderingMapFullyRendered:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewDidFinishRenderingMap:fullyRendered:)])
             {
@@ -1363,11 +1363,26 @@ class LLMRView : public llmr::View
         LLMRView(MGLMapView *nativeView) : nativeView(nativeView) {}
         virtual ~LLMRView() {}
 
-    void notify_map_change(llmr::platform::MapChange change)
+    void notify_map_change(llmr::MapChange change, llmr::timestamp delay = 0)
     {
-        [nativeView performSelector:@selector(notifyMapChange:)
-                         withObject:@(change)
-                         afterDelay:0];
+        if (delay)
+        {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay)), dispatch_get_main_queue(), ^(void)
+            {
+                [nativeView performSelector:@selector(notifyMapChange:)
+                                 withObject:@(change)
+                                 afterDelay:0];
+            });
+        }
+        else
+        {
+            dispatch_async(dispatch_get_main_queue(), ^(void)
+            {
+                [nativeView performSelector:@selector(notifyMapChange:)
+                                 withObject:@(change)
+                                 afterDelay:0];
+            });
+        }
     }
 
     void make_active()
@@ -1390,20 +1405,5 @@ class LLMRView : public llmr::View
     private:
         MGLMapView *nativeView = nullptr;
 };
-
-void llmr::platform::notify_map_change(MapChange change, timestamp delay)
-{
-    if (delay)
-    {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay)), dispatch_get_main_queue(), ^(void)
-        {
-            llmrView->notify_map_change(change);
-        });
-    }
-    else
-    {
-        llmrView->notify_map_change(change);
-    }
-}
 
 @end
