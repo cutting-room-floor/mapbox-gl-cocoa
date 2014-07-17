@@ -65,7 +65,7 @@
           }
         },
         "dependencies": [
-            "../../../llmr.gyp:llmr-ios"
+            "../../../mbgl.gyp:mbgl-ios"
         ]
     }
   ]

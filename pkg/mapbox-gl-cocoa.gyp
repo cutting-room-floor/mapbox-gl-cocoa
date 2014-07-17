@@ -49,7 +49,7 @@
         },
         'default_configuration': 'Release',
         "dependencies": [
-            "../../../llmr.gyp:llmr-ios"
+            "../../../mbgl.gyp:mbgl-ios"
         ]
     }
   ]

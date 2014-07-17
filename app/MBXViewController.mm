@@ -18,7 +18,7 @@
 
 @implementation MBXViewController
 
-llmr::Settings_NSUserDefaults *settings = nullptr;
+mbgl::Settings_NSUserDefaults *settings = nullptr;
 
 #pragma mark - Setup
 
@@ -40,7 +40,7 @@ llmr::Settings_NSUserDefaults *settings = nullptr;
     [super viewDidLoad];
 
     NSString *accessToken = [[NSProcessInfo processInfo] environment][@"MAPBOX_ACCESS_TOKEN"];
-    if ( ! accessToken) llmr::Log::Warning(llmr::Event::Setup, "No access token set. Mapbox vector tiles won't work.");
+    if ( ! accessToken) mbgl::Log::Warning(mbgl::Event::Setup, "No access token set. Mapbox vector tiles won't work.");
 
     self.mapView = [[MGLMapView alloc] initWithFrame:self.view.bounds accessToken:accessToken];
     self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -48,7 +48,7 @@ llmr::Settings_NSUserDefaults *settings = nullptr;
 
     self.mapView.viewControllerForLayoutGuides = self;
 
-    settings = new llmr::Settings_NSUserDefaults();
+    settings = new mbgl::Settings_NSUserDefaults();
     [self restoreState:nil];
 
     [self setupDebugUI];

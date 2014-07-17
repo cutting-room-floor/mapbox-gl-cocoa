@@ -22,7 +22,7 @@ rm -rfv $OUTPUT
 mkdir -pv $OUTPUT
 
 # run GYP to generate mapbox-gl-cocoa Xcode project
-# NOTE: the above command also creates $PARENT/llmr.xcodeproj
+# NOTE: the above command also creates $PARENT/mbgl.xcodeproj
 ../../../deps/run_gyp ./mapbox-gl-cocoa.gyp --depth=. --generator-output=. -f xcode
 
 # build Release static lib of mapbox-gl-cocoa
@@ -30,8 +30,8 @@ xcodebuild -project ./mapbox-gl-cocoa.xcodeproj -target static-library -configur
 xcodebuild -project ./mapbox-gl-cocoa.xcodeproj -target static-library -configuration Release -sdk iphoneos${SDK}
 
 # build Release for device/sim
-xcodebuild -project $PARENT/llmr.xcodeproj -target llmr-ios -configuration Release -sdk iphonesimulator${SDK} ONLY_ACTIVE_ARCH=NO
-xcodebuild -project $PARENT/llmr.xcodeproj -target llmr-ios -configuration Release -sdk iphoneos${SDK}
+xcodebuild -project $PARENT/mbgl.xcodeproj -target mbgl-ios -configuration Release -sdk iphonesimulator${SDK} ONLY_ACTIVE_ARCH=NO
+xcodebuild -project $PARENT/mbgl.xcodeproj -target mbgl-ios -configuration Release -sdk iphoneos${SDK}
 
 # combine into one lib per arch
 libtool -static -o ./build/libMapboxGL-device.a build/Release-iphoneos/libMapboxGL.a $PARENT/build/Release-iphoneos/lib*.a

@@ -6,8 +6,8 @@
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
 
-#include <llmr/llmr.hpp>
-#include <llmr/platform/platform.hpp>
+#include <mbgl/mbgl.hpp>
+#include <mbgl/platform/platform.hpp>
 
 #import "MGLTypes.h"
 #import "MGLStyleFunctionValue.h"
@@ -68,10 +68,10 @@ extern NSString *const MGLStyleValueFunctionAllowed;
 
 @dynamic debugActive;
 
-class LLMRView;
+class MBGLView;
 
-llmr::Map *llmrMap = nullptr;
-LLMRView *llmrView = nullptr;
+mbgl::Map *mbglMap = nullptr;
+MBGLView *mbglView = nullptr;
 
 - (instancetype)initWithFrame:(CGRect)frame styleJSON:(NSString *)styleJSON accessToken:(NSString *)accessToken
 {
@@ -114,7 +114,7 @@ LLMRView *llmrView = nullptr;
 {
     if (accessToken)
     {
-        llmrMap->setAccessToken((std::string)[accessToken cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+        mbglMap->setAccessToken((std::string)[accessToken cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
 }
 
@@ -122,7 +122,7 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! styleJSON)
     {
-        if ( ! [@(llmrMap->getAccessToken().c_str()) length])
+        if ( ! [@(mbglMap->getAccessToken().c_str()) length])
         {
             [NSException raise:@"invalid access token"
                         format:@"default map style requires a Mapbox API access token"];
@@ -133,16 +133,16 @@ LLMRView *llmrView = nullptr;
         styleJSON = [NSString stringWithContentsOfFile:path encoding:[NSString defaultCStringEncoding] error:nil];
     }
 
-    llmrMap->stop();
-    llmrMap->setStyleJSON((std::string)[styleJSON cStringUsingEncoding:[NSString defaultCStringEncoding]]);
-    llmrMap->start();
+    mbglMap->stop();
+    mbglMap->setStyleJSON((std::string)[styleJSON cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    mbglMap->start();
 }
 
 - (BOOL)commonInit
 {
     // set logging backend
     //
-    llmr::Log::Set<llmr::NSLogBackend>();
+    mbgl::Log::Set<mbgl::NSLogBackend>();
 
     // create context
     //
@@ -150,7 +150,7 @@ LLMRView *llmrView = nullptr;
 
     if ( ! _context)
     {
-        llmr::Log::Error(llmr::Event::Setup, "Failed to create OpenGL ES context");
+        mbgl::Log::Error(mbgl::Event::Setup, "Failed to create OpenGL ES context");
 
         return NO;
     }
@@ -170,11 +170,11 @@ LLMRView *llmrView = nullptr;
     [_glView bindDrawable];
     [self addSubview:_glView];
 
-    // setup llmr map
+    // setup mbgl map
     //
-    llmrView = new LLMRView(self);
-    llmrMap = new llmr::Map(*llmrView);
-    llmrMap->resize(self.bounds.size.width, self.bounds.size.height, _glView.contentScaleFactor, _glView.drawableWidth, _glView.drawableHeight);
+    mbglView = new MBGLView(self);
+    mbglMap = new mbgl::Map(*mbglView);
+    mbglMap->resize(self.bounds.size.width, self.bounds.size.height, _glView.contentScaleFactor, _glView.drawableWidth, _glView.drawableHeight);
 
     // setup logo bug
     //
@@ -248,7 +248,7 @@ LLMRView *llmrView = nullptr;
 
     // set initial position
     //
-    llmrMap->setLonLatZoom(0, 0, llmrMap->getMinZoom());
+    mbglMap->setLonLatZoom(0, 0, mbglMap->getMinZoom());
 
     // setup change delegate queue
     //
@@ -264,16 +264,16 @@ LLMRView *llmrView = nullptr;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    if (llmrMap)
+    if (mbglMap)
     {
-        delete llmrMap;
-        llmrMap = nullptr;
+        delete mbglMap;
+        mbglMap = nullptr;
     }
 
-    if (llmrView)
+    if (mbglView)
     {
-        delete llmrView;
-        llmrView = nullptr;
+        delete mbglView;
+        mbglView = nullptr;
     }
 
     if ([[EAGLContext currentContext] isEqual:_context])
@@ -397,12 +397,12 @@ LLMRView *llmrView = nullptr;
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    llmrMap->resize(rect.size.width, rect.size.height, view.contentScaleFactor, view.drawableWidth, view.drawableHeight);
+    mbglMap->resize(rect.size.width, rect.size.height, view.contentScaleFactor, view.drawableWidth, view.drawableHeight);
 }
 
 - (void)layoutSubviews
 {
-    llmrMap->update();
+    mbglMap->update();
 
     [super layoutSubviews];
 }
@@ -412,7 +412,7 @@ LLMRView *llmrView = nullptr;
 
 - (void)appDidBackground:(NSNotification *)notification
 {
-    llmrMap->stop();
+    mbglMap->stop();
 
     [self.glView deleteDrawable];
 }
@@ -421,7 +421,7 @@ LLMRView *llmrView = nullptr;
 {
     [self.glView bindDrawable];
 
-    llmrMap->start();
+    mbglMap->start();
 }
 
 - (void)handleCompassTapGesture:(id)sender
@@ -435,7 +435,7 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isScrollEnabled) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (pan.state == UIGestureRecognizerStateBegan)
     {
@@ -446,7 +446,7 @@ LLMRView *llmrView = nullptr;
         CGPoint delta = CGPointMake([pan translationInView:pan.view].x - self.centerPoint.x,
                                     [pan translationInView:pan.view].y - self.centerPoint.y);
 
-        llmrMap->moveBy(delta.x, delta.y);
+        mbglMap->moveBy(delta.x, delta.y);
 
         self.centerPoint = CGPointMake(self.centerPoint.x + delta.x, self.centerPoint.y + delta.y);
     }
@@ -469,7 +469,7 @@ LLMRView *llmrView = nullptr;
 
         CGPoint offset = CGPointMake(velocity.x * duration / 2, velocity.y * duration / 2);
 
-        llmrMap->moveBy(offset.x, offset.y, duration);
+        mbglMap->moveBy(offset.x, offset.y, duration);
 
         if (duration)
         {
@@ -479,7 +479,7 @@ LLMRView *llmrView = nullptr;
             {
                 self.animatingGesture = NO;
 
-                [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
+                [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
             });
         }
     }
@@ -489,31 +489,31 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    if (llmrMap->getZoom() <= llmrMap->getMinZoom() && pinch.scale < 1) return;
+    if (mbglMap->getZoom() <= mbglMap->getMinZoom() && pinch.scale < 1) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (pinch.state == UIGestureRecognizerStateBegan)
     {
-        llmrMap->startScaling();
+        mbglMap->startScaling();
 
-        self.scale = llmrMap->getScale();
+        self.scale = mbglMap->getScale();
     }
     else if (pinch.state == UIGestureRecognizerStateChanged)
     {
         CGFloat newScale = self.scale * pinch.scale;
 
-        if (log2(newScale) < llmrMap->getMinZoom()) return;
+        if (log2(newScale) < mbglMap->getMinZoom()) return;
 
-        double scale = llmrMap->getScale();
+        double scale = mbglMap->getScale();
 
-        llmrMap->scaleBy(newScale / scale, [pinch locationInView:pinch.view].x, [pinch locationInView:pinch.view].y);
+        mbglMap->scaleBy(newScale / scale, [pinch locationInView:pinch.view].x, [pinch locationInView:pinch.view].y);
     }
     else if (pinch.state == UIGestureRecognizerStateEnded || pinch.state == UIGestureRecognizerStateCancelled)
     {
-        llmrMap->stopScaling();
+        mbglMap->stopScaling();
 
-        [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
+        [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -521,25 +521,25 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isRotateEnabled) return;
 
-    if ( ! llmrMap->canRotate()) return;
+    if ( ! mbglMap->canRotate()) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (rotate.state == UIGestureRecognizerStateBegan)
     {
-        llmrMap->startRotating();
+        mbglMap->startRotating();
 
-        self.angle = llmrMap->getAngle();
+        self.angle = mbglMap->getAngle();
     }
     else if (rotate.state == UIGestureRecognizerStateChanged)
     {
-        llmrMap->setAngle(self.angle + rotate.rotation, [rotate locationInView:rotate.view].x, [rotate locationInView:rotate.view].y);
+        mbglMap->setAngle(self.angle + rotate.rotation, [rotate locationInView:rotate.view].x, [rotate locationInView:rotate.view].y);
     }
     else if (rotate.state == UIGestureRecognizerStateEnded || rotate.state == UIGestureRecognizerStateCancelled)
     {
-        llmrMap->stopRotating();
+        mbglMap->stopRotating();
 
-        [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
+        [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -547,13 +547,13 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (doubleTap.state == UIGestureRecognizerStateEnded)
     {
         CGFloat duration = 0.3;
 
-        llmrMap->scaleBy(2, [doubleTap locationInView:doubleTap.view].x, [doubleTap locationInView:doubleTap.view].y, duration);
+        mbglMap->scaleBy(2, [doubleTap locationInView:doubleTap.view].x, [doubleTap locationInView:doubleTap.view].y, duration);
 
         self.animatingGesture = YES;
 
@@ -561,7 +561,7 @@ LLMRView *llmrView = nullptr;
         {
             self.animatingGesture = NO;
 
-            [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
+            [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
         });
     }
 }
@@ -570,15 +570,15 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    if (llmrMap->getZoom() == llmrMap->getMinZoom()) return;
+    if (mbglMap->getZoom() == mbglMap->getMinZoom()) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (twoFingerTap.state == UIGestureRecognizerStateEnded)
     {
         CGFloat duration = 0.3;
 
-        llmrMap->scaleBy(0.5, [twoFingerTap locationInView:twoFingerTap.view].x, [twoFingerTap locationInView:twoFingerTap.view].y, duration);
+        mbglMap->scaleBy(0.5, [twoFingerTap locationInView:twoFingerTap.view].x, [twoFingerTap locationInView:twoFingerTap.view].y, duration);
 
         self.animatingGesture = YES;
 
@@ -586,7 +586,7 @@ LLMRView *llmrView = nullptr;
         {
             self.animatingGesture = NO;
 
-            [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
+            [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
         });
     }
 }
@@ -595,11 +595,11 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (quickZoom.state == UIGestureRecognizerStateBegan)
     {
-        self.scale = llmrMap->getScale();
+        self.scale = mbglMap->getScale();
 
         self.quickZoomStart = [quickZoom locationInView:quickZoom.view].y;
     }
@@ -609,13 +609,13 @@ LLMRView *llmrView = nullptr;
 
         CGFloat newZoom = log2f(self.scale) + (distance / 100);
 
-        if (newZoom < llmrMap->getMinZoom()) return;
+        if (newZoom < mbglMap->getMinZoom()) return;
 
-        llmrMap->scaleBy(powf(2, newZoom) / llmrMap->getScale(), self.bounds.size.width / 2, self.bounds.size.height / 2);
+        mbglMap->scaleBy(powf(2, newZoom) / mbglMap->getScale(), self.bounds.size.width / 2, self.bounds.size.height / 2);
     }
     else if (quickZoom.state == UIGestureRecognizerStateEnded || quickZoom.state == UIGestureRecognizerStateCancelled)
     {
-        [self notifyMapChange:@(llmr::MapChangeRegionDidChangeAnimated)];
+        [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -649,17 +649,17 @@ LLMRView *llmrView = nullptr;
 
 - (void)setDebugActive:(BOOL)debugActive
 {
-    llmrMap->setDebug(debugActive);
+    mbglMap->setDebug(debugActive);
 }
 
 - (BOOL)isDebugActive
 {
-    return llmrMap->getDebug();
+    return mbglMap->getDebug();
 }
 
 - (void)resetNorth
 {
-    llmrMap->resetNorth();
+    mbglMap->resetNorth();
 
     [UIView animateWithDuration:0.25
                      animations:^(void)
@@ -681,25 +681,25 @@ LLMRView *llmrView = nullptr;
 
 - (void)resetPosition
 {
-    llmrMap->resetPosition();
+    mbglMap->resetPosition();
 }
 
 - (void)toggleDebug
 {
-    llmrMap->toggleDebug();
+    mbglMap->toggleDebug();
 }
 
 - (void)toggleStyle
 {
-    llmrMap->setDefaultTransitionDuration(300);
-    llmrMap->toggleClass("night");
+    mbglMap->setDefaultTransitionDuration(300);
+    mbglMap->toggleClass("night");
 }
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
 {
     double duration = (animated ? 0.3 : 0);
 
-    llmrMap->setLonLat(coordinate.longitude, coordinate.latitude, duration);
+    mbglMap->setLonLat(coordinate.longitude, coordinate.latitude, duration);
 }
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate
@@ -710,7 +710,7 @@ LLMRView *llmrView = nullptr;
 - (CLLocationCoordinate2D)centerCoordinate
 {
     double lon, lat;
-    llmrMap->getLonLat(lon, lat);
+    mbglMap->getLonLat(lon, lat);
 
     return CLLocationCoordinate2DMake(lat, lon);
 }
@@ -719,19 +719,19 @@ LLMRView *llmrView = nullptr;
 {
     double duration = (animated ? 0.3 : 0);
 
-    llmrMap->setLonLatZoom(centerCoordinate.longitude, centerCoordinate.latitude, zoomLevel, duration);
+    mbglMap->setLonLatZoom(centerCoordinate.longitude, centerCoordinate.latitude, zoomLevel, duration);
 }
 
 - (double)zoomLevel
 {
-    return llmrMap->getZoom();
+    return mbglMap->getZoom();
 }
 
 - (void)setZoomLevel:(double)zoomLevel animated:(BOOL)animated
 {
     double duration = (animated ? 0.3 : 0);
 
-    llmrMap->setZoom(zoomLevel, duration);
+    mbglMap->setZoom(zoomLevel, duration);
 }
 
 - (void)setZoomLevel:(double)zoomLevel
@@ -741,7 +741,7 @@ LLMRView *llmrView = nullptr;
 
 - (CLLocationDirection)direction
 {
-    double direction = llmrMap->getAngle();
+    double direction = mbglMap->getAngle();
 
     direction *= 180 / M_PI;
 
@@ -757,7 +757,7 @@ LLMRView *llmrView = nullptr;
 
     direction *= M_PI / 180;
 
-    llmrMap->setAngle(direction, duration);
+    mbglMap->setAngle(direction, duration);
 }
 
 - (void)setDirection:(CLLocationDirection)direction
@@ -767,7 +767,7 @@ LLMRView *llmrView = nullptr;
 
 - (NSDictionary *)getRawStyle
 {
-    const std::string styleJSON = llmrMap->getStyleJSON();
+    const std::string styleJSON = mbglMap->getStyleJSON();
 
     return [NSJSONSerialization JSONObjectWithData:[@(styleJSON.c_str()) dataUsingEncoding:[NSString defaultCStringEncoding]] options:0 error:nil];
 }
@@ -776,7 +776,7 @@ LLMRView *llmrView = nullptr;
 {
     NSData *data = [NSJSONSerialization dataWithJSONObject:style options:0 error:nil];
 
-    llmrMap->setStyleJSON([[[NSString alloc] initWithData:data encoding:[NSString defaultCStringEncoding]] cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    mbglMap->setStyleJSON([[[NSString alloc] initWithData:data encoding:[NSString defaultCStringEncoding]] cStringUsingEncoding:[NSString defaultCStringEncoding]]);
 }
 
 - (NSArray *)getStyleOrderedLayerNames
@@ -824,7 +824,7 @@ LLMRView *llmrView = nullptr;
 {
     NSMutableArray *returnArray = [NSMutableArray array];
 
-    const std::vector<std::string> &appliedClasses = llmrMap->getAppliedClasses();
+    const std::vector<std::string> &appliedClasses = mbglMap->getAppliedClasses();
 
     for (auto class_it = appliedClasses.begin(); class_it != appliedClasses.end(); class_it++)
     {
@@ -848,8 +848,8 @@ LLMRView *llmrView = nullptr;
         newAppliedClasses.insert(newAppliedClasses.end(), [appliedClass cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
 
-    llmrMap->setDefaultTransitionDuration(transitionDuration);
-    llmrMap->setAppliedClasses(newAppliedClasses);
+    mbglMap->setDefaultTransitionDuration(transitionDuration);
+    mbglMap->setAppliedClasses(newAppliedClasses);
 }
 
 - (NSString *)getKeyTypeForLayer:(NSString *)layerName
@@ -1195,10 +1195,10 @@ LLMRView *llmrView = nullptr;
 {
     switch ([change unsignedIntegerValue])
     {
-        case llmr::MapChangeRegionWillChange:
-        case llmr::MapChangeRegionWillChangeAnimated:
+        case mbgl::MapChangeRegionWillChange:
+        case mbgl::MapChangeRegionWillChangeAnimated:
         {
-            BOOL animated = ([change unsignedIntegerValue] == llmr::MapChangeRegionWillChangeAnimated);
+            BOOL animated = ([change unsignedIntegerValue] == mbgl::MapChangeRegionWillChangeAnimated);
 
             @synchronized (self.regionChangeDelegateQueue)
             {
@@ -1228,8 +1228,8 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::MapChangeRegionDidChange:
-        case llmr::MapChangeRegionDidChangeAnimated:
+        case mbgl::MapChangeRegionDidChange:
+        case mbgl::MapChangeRegionDidChangeAnimated:
         {
             [self updateCompass];
 
@@ -1245,7 +1245,7 @@ LLMRView *llmrView = nullptr;
 
             break;
         }
-        case llmr::MapChangeWillStartLoadingMap:
+        case mbgl::MapChangeWillStartLoadingMap:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewWillStartLoadingMap:)])
             {
@@ -1253,7 +1253,7 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::MapChangeDidFinishLoadingMap:
+        case mbgl::MapChangeDidFinishLoadingMap:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewDidFinishLoadingMap:)])
             {
@@ -1261,7 +1261,7 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::MapChangeDidFailLoadingMap:
+        case mbgl::MapChangeDidFailLoadingMap:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewDidFailLoadingMap:withError::)])
             {
@@ -1269,7 +1269,7 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::MapChangeWillStartRenderingMap:
+        case mbgl::MapChangeWillStartRenderingMap:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewWillStartRenderingMap:)])
             {
@@ -1277,7 +1277,7 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::MapChangeDidFinishRenderingMap:
+        case mbgl::MapChangeDidFinishRenderingMap:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewDidFinishRenderingMap:fullyRendered:)])
             {
@@ -1285,7 +1285,7 @@ LLMRView *llmrView = nullptr;
             }
             break;
         }
-        case llmr::MapChangeDidFinishRenderingMapFullyRendered:
+        case mbgl::MapChangeDidFinishRenderingMapFullyRendered:
         {
             if ([self.delegate respondsToSelector:@selector(mapViewDidFinishRenderingMap:fullyRendered:)])
             {
@@ -1298,14 +1298,14 @@ LLMRView *llmrView = nullptr;
 
 - (void)updateCompass
 {
-    double angle = llmrMap->getAngle();
+    double angle = mbglMap->getAngle();
     angle *= 180 / M_PI;
     while (angle >= 360) angle -= 360;
     while (angle < 0) angle += 360;
 
-    self.compass.transform = CGAffineTransformMakeRotation(llmrMap->getAngle());
+    self.compass.transform = CGAffineTransformMakeRotation(mbglMap->getAngle());
 
-    if (llmrMap->getAngle() && self.compass.alpha < 1)
+    if (mbglMap->getAngle() && self.compass.alpha < 1)
     {
         [UIView animateWithDuration:0.25
                               delay:0
@@ -1350,20 +1350,20 @@ LLMRView *llmrView = nullptr;
 
 - (void)swap
 {
-    if (llmrMap->needsSwap())
+    if (mbglMap->needsSwap())
     {
         [self.glView display];
-        llmrMap->swapped();
+        mbglMap->swapped();
     }
 }
 
-class LLMRView : public llmr::View
+class MBGLView : public mbgl::View
 {
     public:
-        LLMRView(MGLMapView *nativeView) : nativeView(nativeView) {}
-        virtual ~LLMRView() {}
+        MBGLView(MGLMapView *nativeView) : nativeView(nativeView) {}
+        virtual ~MBGLView() {}
 
-    void notify_map_change(llmr::MapChange change, llmr::timestamp delay = 0)
+    void notify_map_change(mbgl::MapChange change, mbgl::timestamp delay = 0)
     {
         if (delay)
         {
