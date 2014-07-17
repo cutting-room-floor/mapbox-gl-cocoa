@@ -1231,6 +1231,8 @@ LLMRView *llmrView = nullptr;
         case llmr::platform::MapChangeRegionDidChange:
         case llmr::platform::MapChangeRegionDidChangeAnimated:
         {
+            [self updateCompass];
+
             if (self.pan.state       == UIGestureRecognizerStateChanged ||
                 self.pinch.state     == UIGestureRecognizerStateChanged ||
                 self.rotate.state    == UIGestureRecognizerStateChanged ||
@@ -1241,7 +1243,6 @@ LLMRView *llmrView = nullptr;
             [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(unsuspendRegionChangeDelegateQueue) object:nil];
             [self performSelector:@selector(unsuspendRegionChangeDelegateQueue) withObject:nil afterDelay:0];
 
-            [self updateCompass];
             break;
         }
         case llmr::platform::MapChangeWillStartLoadingMap:
