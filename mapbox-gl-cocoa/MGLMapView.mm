@@ -529,11 +529,11 @@ MBGLView *mbglView = nullptr;
     {
         mbglMap->startRotating();
 
-        self.angle = mbglMap->getAngle();
+        self.angle = mbglMap->getBearing();
     }
     else if (rotate.state == UIGestureRecognizerStateChanged)
     {
-        mbglMap->setAngle(self.angle + rotate.rotation, [rotate locationInView:rotate.view].x, [rotate locationInView:rotate.view].y);
+        mbglMap->setBearing(self.angle + rotate.rotation, [rotate locationInView:rotate.view].x, [rotate locationInView:rotate.view].y);
     }
     else if (rotate.state == UIGestureRecognizerStateEnded || rotate.state == UIGestureRecognizerStateCancelled)
     {
@@ -741,7 +741,7 @@ MBGLView *mbglView = nullptr;
 
 - (CLLocationDirection)direction
 {
-    double direction = mbglMap->getAngle();
+    double direction = mbglMap->getBearing();
 
     direction *= 180 / M_PI;
 
@@ -757,7 +757,7 @@ MBGLView *mbglView = nullptr;
 
     direction *= M_PI / 180;
 
-    mbglMap->setAngle(direction, duration);
+    mbglMap->setBearing(direction, duration);
 }
 
 - (void)setDirection:(CLLocationDirection)direction
@@ -1298,14 +1298,14 @@ MBGLView *mbglView = nullptr;
 
 - (void)updateCompass
 {
-    double angle = mbglMap->getAngle();
+    double angle = mbglMap->getBearing();
     angle *= 180 / M_PI;
     while (angle >= 360) angle -= 360;
     while (angle < 0) angle += 360;
 
-    self.compass.transform = CGAffineTransformMakeRotation(mbglMap->getAngle());
+    self.compass.transform = CGAffineTransformMakeRotation(mbglMap->getBearing());
 
-    if (mbglMap->getAngle() && self.compass.alpha < 1)
+    if (mbglMap->getBearing() && self.compass.alpha < 1)
     {
         [UIView animateWithDuration:0.25
                               delay:0

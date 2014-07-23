@@ -67,7 +67,7 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
         settings->longitude = self.mapView.centerCoordinate.longitude;
         settings->latitude = self.mapView.centerCoordinate.latitude;
         settings->zoom = self.mapView.zoomLevel;
-        settings->angle = self.mapView.direction;
+        settings->bearing = self.mapView.direction;
         settings->debug = self.mapView.isDebugActive;
         settings->save();
     }
@@ -78,7 +78,7 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
     if (self.mapView && settings) {
         settings->load();
         [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(settings->latitude, settings->longitude) zoomLevel:settings->zoom animated:NO];
-        self.mapView.direction = settings->angle;
+        self.mapView.direction = settings->bearing;
         [self.mapView setDebugActive:settings->debug];
     }
 }
