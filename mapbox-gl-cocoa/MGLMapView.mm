@@ -407,6 +407,16 @@ MBGLView *mbglView = nullptr;
     [super layoutSubviews];
 }
 
++ (CGFloat)degreesToRadians:(CGFloat)degrees
+{
+    return degrees * M_PI / 180;
+}
+
++ (CGFloat)radiansToDegrees:(CGFloat)radians
+{
+    return radians * 180 / M_PI;
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
 
@@ -529,11 +539,13 @@ MBGLView *mbglView = nullptr;
     {
         mbglMap->startRotating();
 
-        self.angle = mbglMap->getBearing();
+        self.angle = [MGLMapView degreesToRadians:mbglMap->getBearing()] * -1;
     }
     else if (rotate.state == UIGestureRecognizerStateChanged)
     {
-        mbglMap->setBearing(self.angle + rotate.rotation, [rotate locationInView:rotate.view].x, [rotate locationInView:rotate.view].y);
+        mbglMap->setBearing([MGLMapView radiansToDegrees:(self.angle + rotate.rotation)] * -1,
+                            [rotate locationInView:rotate.view].x,
+                            [rotate locationInView:rotate.view].y);
     }
     else if (rotate.state == UIGestureRecognizerStateEnded || rotate.state == UIGestureRecognizerStateCancelled)
     {
@@ -741,9 +753,7 @@ MBGLView *mbglView = nullptr;
 
 - (CLLocationDirection)direction
 {
-    double direction = mbglMap->getBearing();
-
-    direction *= 180 / M_PI;
+    double direction = mbglMap->getBearing() * -1;
 
     while (direction > 360) direction -= 360;
     while (direction < 0) direction += 360;
@@ -755,9 +765,7 @@ MBGLView *mbglView = nullptr;
 {
     double duration = (animated ? 0.3 : 0);
 
-    direction *= M_PI / 180;
-
-    mbglMap->setBearing(direction, duration);
+    mbglMap->setBearing(direction * -1, duration);
 }
 
 - (void)setDirection:(CLLocationDirection)direction
@@ -1298,12 +1306,11 @@ MBGLView *mbglView = nullptr;
 
 - (void)updateCompass
 {
-    double angle = mbglMap->getBearing();
-    angle *= 180 / M_PI;
-    while (angle >= 360) angle -= 360;
-    while (angle < 0) angle += 360;
+    double degrees = mbglMap->getBearing() * -1;
+    while (degrees >= 360) degrees -= 360;
+    while (degrees < 0) degrees += 360;
 
-    self.compass.transform = CGAffineTransformMakeRotation(mbglMap->getBearing());
+    self.compass.transform = CGAffineTransformMakeRotation([MGLMapView degreesToRadians:degrees]);
 
     if (mbglMap->getBearing() && self.compass.alpha < 1)
     {
