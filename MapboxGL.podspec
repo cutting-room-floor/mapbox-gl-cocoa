@@ -24,8 +24,10 @@ Pod::Spec.new do |m|
 
   m.frameworks = 'CoreLocation', 'Foundation', 'GLKit', 'UIKit'
 
-  m.libraries = 'z'
+  m.libraries = 'MapboxGL', 'c++', 'z'
 
   m.vendored_libraries = 'dist/libMapboxGL.a'
+
+  m.xcconfig = { 'OTHER_CPLUSPLUSFLAGS' => '-std=gnu++11 -stdlib=libc++' }
 
 end
