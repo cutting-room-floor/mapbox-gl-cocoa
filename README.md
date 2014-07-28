@@ -8,7 +8,7 @@ This project is Cocoa API bindings for [`mapbox-gl-native`](https://github.com/m
 
 ## Installation
 
-To use this library in your app directly, follow these steps. Everything you need is in `./dist`. 
+To use this library in your app directly, follow these steps. Everything you need is in `./dist`. You can also make use of [CocoaPods](http://cocoapods.org) by pointing at the `MapboxGL.podspec` file in the root of the repository (the library has not yet been added to the CocaoPods specs repository). 
 
  * Copy the contents of `./dist` into your project. 
  * Add header files in `Headers` to your project. 
