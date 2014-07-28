@@ -35,6 +35,14 @@ MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:CGRectMake(0, 0, 400, 40
 
 If you'd like to contribute to this project, go instead to [Mapbox GL native](https://github.com/mapbox/mapbox-gl-native) and clone that project. This project is a submodule of that project and is pulled into the overarching build process there, which consists of a cross-platform C++ library and this Objective-C wrapper library, together with an iOS demo app. 
 
+## Packaging
+
+This library, when standalone, makes use of static inclusion of [Mapbox GL](https://github.com/mapbox/mapbox-gl-native), the underlying C++ library. To package a version for release, run `./pkg/package.sh` while this project is checked out inside of Mapbox GL. This will update the contents of `./dist`. 
+
+## Testing
+
+Tests are in `./test` and make use of the [KIF](https://github.com/kif-framework/KIF) framework. Since this project relies on the underlying C++ library, in order to be independently testable, the tests run an Xcode project which uses the static build of this library. Thus, to fully test the framework, you should first package a build per the above instructions. Got a better idea? We'd love to [hear it](https://github.com/mapbox/mapbox-gl-cocoa/issues/new?title=great%20idea%20for%20testing) (background reading in [#35](https://github.com/mapbox/mapbox-gl-cocoa/issues/35)). 
+
 ## Requirements
 
  * iOS 7+
