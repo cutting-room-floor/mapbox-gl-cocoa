@@ -13,6 +13,7 @@ Pod::Spec.new do |m|
 
   m.source = { :git => 'https://github.com/mapbox/mapbox-gl-cocoa.git', :tag => m.version.to_s }
 
+  m.platform              = :ios
   m.ios.deployment_target = '7.0'
 
   m.source_files = 'dist/Headers/*.h', 'dist/MapboxGL.mm'
