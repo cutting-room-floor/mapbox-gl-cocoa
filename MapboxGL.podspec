@@ -20,7 +20,7 @@ Pod::Spec.new do |m|
 
   m.requires_arc = true
 
-  m.resource_bundle = { 'MapboxGL' => 'mapbox-gl-cocoa/Resources/*' }
+  m.resource_bundle = { 'MapboxGL' => 'dist/MapboxGL.bundle/*' }
 
   m.frameworks = 'CoreLocation', 'Foundation', 'GLKit', 'UIKit'
 
