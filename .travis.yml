@@ -1,7 +1,11 @@
 language: objective-c
 
+install: gem install xcpretty --no-rdoc --no-ri --no-document --quiet
+
 script:
-- "xcodebuild -project test/ios-tests.xcodeproj -scheme 'Mapbox GL Tests' -destination 'platform=iOS Simulator,name=iPad,OS=7.1' test"
+    - export LC_CTYPE=en_US.UTF-8
+    - set -o pipefail
+    - "xcodebuild -project test/ios-tests.xcodeproj -scheme 'Mapbox GL Tests' -destination 'platform=iOS Simulator,name=iPad,OS=7.1' test" | xcpretty -c
 
 notifications:
   hipchat:
