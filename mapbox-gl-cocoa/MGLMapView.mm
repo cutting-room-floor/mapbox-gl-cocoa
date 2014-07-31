@@ -1413,4 +1413,115 @@ class MBGLView : public mbgl::View
         MGLMapView *nativeView = nullptr;
 };
 
+UIWindow *debugWindow;
+GLKView *debugGLView;
+
+void mbgl::platform::show_debug_image(std::string name, const char *data, size_t width, size_t height)
+{
+    return;
+
+    NSData *capturedData = [NSData dataWithBytes:data length:strlen(data)];
+
+    dispatch_async(dispatch_get_main_queue(), ^(void)
+    {
+        if ([[UIScreen screens] count] > 1)
+        {
+            UIImageView *debugImageView;
+
+            if ( ! debugWindow)
+            {
+                UIScreen *externalScreen = [UIScreen screens][1];
+                debugWindow = [[UIWindow alloc] initWithFrame:externalScreen.bounds];
+                debugWindow.backgroundColor = [UIColor yellowColor];
+                debugWindow.screen = externalScreen;
+                debugImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, fminf(debugWindow.bounds.size.width, debugWindow.bounds.size.height), fminf(debugWindow.bounds.size.width, debugWindow.bounds.size.height))];
+                debugImageView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
+                debugImageView.contentMode = UIViewContentModeScaleAspectFit;
+                [debugWindow addSubview:debugImageView];
+                debugWindow.hidden = NO;
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    while (YES) {
+                        sleep(3);
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            debugImageView.contentMode = UIViewContentModeTopLeft;
+                        });
+                        sleep(3);
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            debugImageView.contentMode = UIViewContentModeScaleAspectFit;
+                        });
+                    }
+                });
+            }
+            else
+            {
+                debugImageView = debugWindow.subviews[0];
+            }
+
+            size_t bufferLength = capturedData.length;
+            CGDataProviderRef providerRef = CGDataProviderCreateWithData(nil, capturedData.bytes, bufferLength, nil);
+            size_t bitsPerComponent = 8;
+            size_t bitsPerPixel = 32;
+            size_t bytesPerRow = 4 * width;
+            CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
+            if ( ! colorSpaceRef)
+            {
+                NSLog(@"error allocating color space");
+                CGDataProviderRelease(providerRef);
+                return;
+            }
+            CGBitmapInfo bitmapInfo = kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedLast;
+            CGColorRenderingIntent renderingIntent = kCGRenderingIntentDefault;
+            CGImageRef imageRef = CGImageCreate(width,
+                                                height,
+                                                bitsPerComponent,
+                                                bitsPerPixel,
+                                                bytesPerRow,
+                                                colorSpaceRef,
+                                                bitmapInfo,
+                                                providerRef,
+                                                nil,
+                                                YES,
+                                                renderingIntent);
+
+            uint32_t *pixels = (uint32_t *)malloc(bufferLength);
+            if ( ! pixels)
+            {
+                NSLog(@"memory not allocated for bitmap");
+                CGDataProviderRelease(providerRef);
+                CGColorSpaceRelease(colorSpaceRef);
+                CGImageRelease(imageRef);
+                return;
+            }
+            CGContextRef contextRef = CGBitmapContextCreate(pixels,
+                                                            width,
+                                                            height,
+                                                            bitsPerComponent,
+                                                            bytesPerRow,
+                                                            colorSpaceRef,
+                                                            bitmapInfo);
+            if ( ! contextRef)
+            {
+                NSLog(@"context not created");
+                free(pixels);
+                return;
+            }
+            CGContextDrawImage(contextRef, CGRectMake(0, 0, width, height), imageRef);
+            CGImageRef imageRef2 = CGBitmapContextCreateImage(contextRef);
+            UIImage *image = [UIImage imageWithCGImage:imageRef2
+                                                 scale:[[UIScreen mainScreen] scale]
+                                           orientation:UIImageOrientationUp];
+            CGImageRelease(imageRef2);
+            CGContextRelease(contextRef);
+            CGColorSpaceRelease(colorSpaceRef);
+            CGImageRelease(imageRef);
+            CGDataProviderRelease(providerRef);
+            free(pixels);
+
+            debugImageView.image = image;
+
+//            [UIImagePNGRepresentation(image) writeToFile:[NSString stringWithFormat:@"/tmp/%@.png", @(name.c_str())] atomically:YES];
+        }
+    });
+}
+
 @end
