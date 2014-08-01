@@ -7,7 +7,7 @@
 
 #import <CoreLocation/CoreLocation.h>
 
-@interface MBXViewController () <CLLocationManagerDelegate>
+@interface MBXViewController () <CLLocationManagerDelegate, MGLMapViewDelegate>
 
 @property (nonatomic) MGLMapView *mapView;
 @property (nonatomic) BOOL debug;
@@ -47,6 +47,7 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
     [self.view addSubview:self.mapView];
 
     self.mapView.viewControllerForLayoutGuides = self;
+    self.mapView.delegate = self;
 
     settings = new mbgl::Settings_NSUserDefaults();
     [self restoreState:nil];
@@ -214,5 +215,15 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 }
 
 #pragma clang diagnostic pop
+
+- (void)mapViewWillStartLoadingMap:(MGLMapView *)mapView
+{
+    NSLog(@"will start loading");
+}
+
+- (void)mapViewDidFinishLoadingMap:(MGLMapView *)mapView
+{
+    NSLog(@"did finish loading");
+}
 
 @end
