@@ -236,4 +236,19 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
     NSLog(@"did finish loading");
 }
 
+- (void)mapViewDidFailLoadingMap:(MGLMapView *)mapView withError:(NSError *)error
+{
+    NSLog(@"did fail loading: %@", error);
+}
+
+- (void)mapViewWillStartRenderingMap:(MGLMapView *)mapView
+{
+    NSLog(@"will start rendering");
+}
+
+- (void)mapViewDidFinishRenderingMap:(MGLMapView *)mapView fullyRendered:(BOOL)fullyRendered
+{
+    NSLog(@"did finish rendering: %i", fullyRendered);
+}
+
 @end
