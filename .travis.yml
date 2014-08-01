@@ -8,10 +8,10 @@ before_install:
     - mv .git* .travis.yml .mbgl/ios/mapbox-gl-cocoa
     - mv .mbgl mbgl
     - cd mbgl
-    - make setup 2>&1 >/dev/null
+    - make setup
     - make iproj-cli
     - cd ios/mapbox-gl-cocoa/pkg
-    - ./package.sh 2>&1 >/dev/null
+    - ./package.sh
     - cd ..
 
 install: gem install xcpretty --no-rdoc --no-ri --no-document --quiet
