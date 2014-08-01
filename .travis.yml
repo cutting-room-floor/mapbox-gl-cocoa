@@ -1,4 +1,18 @@
+os: osx
+
 language: objective-c
+
+before_install: 
+    - git clone --depth 1 https://github.com/mapbox/mapbox-gl-native .mbgl
+    - mv * .mbgl/ios/mapbox-gl-cocoa
+    - mv .git* .travis.yml .mbgl/ios/mapbox-gl-cocoa
+    - mv .mbgl mbgl
+    - cd mbgl
+    - make setup 2>&1 >/dev/null
+    - make iproj-cli
+    - cd ios/mapbox-gl-cocoa/pkg
+    - ./package.sh 2>&1 >/dev/null
+    - cd ..
 
 install: gem install xcpretty --no-rdoc --no-ri --no-document --quiet
 
