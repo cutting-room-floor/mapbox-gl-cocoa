@@ -489,7 +489,7 @@ MBGLView *mbglView = nullptr;
             {
                 self.animatingGesture = NO;
 
-                [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+                [self notifyMapChange:@(mbgl::MapChangeRegionDidChange) context:@(YES)];
             });
         }
     }
@@ -523,7 +523,7 @@ MBGLView *mbglView = nullptr;
     {
         mbglMap->stopScaling();
 
-        [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+        [self notifyMapChange:@(mbgl::MapChangeRegionDidChange) context:@(YES)];
     }
 }
 
@@ -551,7 +551,7 @@ MBGLView *mbglView = nullptr;
     {
         mbglMap->stopRotating();
 
-        [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+        [self notifyMapChange:@(mbgl::MapChangeRegionDidChange) context:@(YES)];
     }
 }
 
@@ -573,7 +573,7 @@ MBGLView *mbglView = nullptr;
         {
             self.animatingGesture = NO;
 
-            [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+            [self notifyMapChange:@(mbgl::MapChangeRegionDidChange) context:@(YES)];
         });
     }
 }
@@ -598,7 +598,7 @@ MBGLView *mbglView = nullptr;
         {
             self.animatingGesture = NO;
 
-            [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+            [self notifyMapChange:@(mbgl::MapChangeRegionDidChange) context:@(YES)];
         });
     }
 }
@@ -627,7 +627,7 @@ MBGLView *mbglView = nullptr;
     }
     else if (quickZoom.state == UIGestureRecognizerStateEnded || quickZoom.state == UIGestureRecognizerStateCancelled)
     {
-        [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+        [self notifyMapChange:@(mbgl::MapChangeRegionDidChange) context:@(YES)];
     }
 }
 
@@ -1199,14 +1199,13 @@ MBGLView *mbglView = nullptr;
     }
 }
 
-- (void)notifyMapChange:(NSNumber *)change
+- (void)notifyMapChange:(NSNumber *)change context:(id)context
 {
     switch ([change unsignedIntegerValue])
     {
         case mbgl::MapChangeRegionWillChange:
-        case mbgl::MapChangeRegionWillChangeAnimated:
         {
-            BOOL animated = ([change unsignedIntegerValue] == mbgl::MapChangeRegionWillChangeAnimated);
+            BOOL animated = [(NSNumber *)context boolValue];
 
             @synchronized (self.regionChangeDelegateQueue)
             {
@@ -1237,7 +1236,6 @@ MBGLView *mbglView = nullptr;
             break;
         }
         case mbgl::MapChangeRegionDidChange:
-        case mbgl::MapChangeRegionDidChangeAnimated:
         {
             [self updateCompass];
 
@@ -1271,6 +1269,8 @@ MBGLView *mbglView = nullptr;
         }
         case mbgl::MapChangeDidFailLoadingMap:
         {
+            // TODO: grab error message
+
             if ([self.delegate respondsToSelector:@selector(mapViewDidFailLoadingMap:withError::)])
             {
                 [self.delegate mapViewDidFailLoadingMap:self withError:nil];
@@ -1287,17 +1287,11 @@ MBGLView *mbglView = nullptr;
         }
         case mbgl::MapChangeDidFinishRenderingMap:
         {
+            BOOL fullyRendered = [(NSNumber *)context boolValue];
+
             if ([self.delegate respondsToSelector:@selector(mapViewDidFinishRenderingMap:fullyRendered:)])
             {
-                [self.delegate mapViewDidFinishRenderingMap:self fullyRendered:NO];
-            }
-            break;
-        }
-        case mbgl::MapChangeDidFinishRenderingMapFullyRendered:
-        {
-            if ([self.delegate respondsToSelector:@selector(mapViewDidFinishRenderingMap:fullyRendered:)])
-            {
-                [self.delegate mapViewDidFinishRenderingMap:self fullyRendered:YES];
+                [self.delegate mapViewDidFinishRenderingMap:self fullyRendered:fullyRendered];
             }
             break;
         }
@@ -1370,24 +1364,54 @@ class MBGLView : public mbgl::View
         MBGLView(MGLMapView *nativeView) : nativeView(nativeView) {}
         virtual ~MBGLView() {}
 
-    void notify_map_change(mbgl::MapChange change, mbgl::timestamp delay = 0)
+    void notify_map_change(mbgl::MapChange change, mbgl::timestamp delay = 0, void *context = nullptr)
     {
+        NSMethodSignature *methodSignature = [nativeView methodSignatureForSelector:@selector(notifyMapChange:context:)];
+        NSNumber *changeObject = @(change);
+        id contextObject;
+
+        switch (change)
+        {
+            case mbgl::MapChangeRegionWillChange:
+            case mbgl::MapChangeRegionDidChange:
+            case mbgl::MapChangeDidFinishRenderingMap:
+            {
+                contextObject = (context ? @((bool)context) : nil);
+                break;
+            }
+            case mbgl::MapChangeDidFailLoadingMap:
+            {
+                contextObject = (__bridge NSString *)context;
+                break;
+            }
+            default:
+            {
+                contextObject = nil;
+            }
+        }
+
         if (delay)
         {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay)), dispatch_get_main_queue(), ^(void)
             {
-                [nativeView performSelector:@selector(notifyMapChange:)
-                                 withObject:@(change)
-                                 afterDelay:0];
+                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+                [invocation setTarget:nativeView];
+                [invocation setSelector:@selector(notifyMapChange:context:)];
+                [invocation setArgument:(void *)&changeObject atIndex:2];
+                [invocation setArgument:(void *)&contextObject atIndex:3];
+                [invocation invoke];
             });
         }
         else
         {
             dispatch_async(dispatch_get_main_queue(), ^(void)
             {
-                [nativeView performSelector:@selector(notifyMapChange:)
-                                 withObject:@(change)
-                                 afterDelay:0];
+                NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+                [invocation setTarget:nativeView];
+                [invocation setSelector:@selector(notifyMapChange:context:)];
+                [invocation setArgument:(void *)&changeObject atIndex:2];
+                [invocation setArgument:(void *)&contextObject atIndex:3];
+                [invocation invoke];
             });
         }
     }

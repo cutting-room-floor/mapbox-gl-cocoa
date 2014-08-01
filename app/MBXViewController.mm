@@ -216,6 +216,16 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 
 #pragma clang diagnostic pop
 
+- (void)mapView:(MGLMapView *)mapView regionWillChangeAnimated:(BOOL)animated
+{
+    NSLog(@"region will change: %i", animated);
+}
+
+- (void)mapView:(MGLMapView *)mapView regionDidChangeAnimated:(BOOL)animated
+{
+    NSLog(@"region did change: %i", animated);
+}
+
 - (void)mapViewWillStartLoadingMap:(MGLMapView *)mapView
 {
     NSLog(@"will start loading");
