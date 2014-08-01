@@ -23,6 +23,10 @@
     tester.mapView.delegate = self;
 }
 
+- (void)afterAll {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)testDirectionSet {
     tester.mapView.direction = 270;
     __KIFAssertEqual(tester.mapView.direction, 270);
@@ -226,10 +230,6 @@
     XCTAssertNotNil(notification);
     __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], YES);
     __KIFAssertEqual(animatedCount, 1);
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"regionWillChangeAnimated"
-                                                  object:tester.mapView];
 }
 
 - (void)mapView:(MGLMapView *)mapView regionWillChangeAnimated:(BOOL)animated {
@@ -271,16 +271,126 @@
     XCTAssertNotNil(notification);
     __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], YES);
     __KIFAssertEqual(animatedCount, 1);
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"regionDidChangeAnimated"
-                                                  object:tester.mapView];
 }
 
 - (void)mapView:(MGLMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"regionDidChangeAnimated"
                                                         object:mapView
                                                       userInfo:@{ @"animated" : @(animated) }];
+}
+
+- (void)testDelegateWillStartLoading {
+    __block BOOL started = NO;
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"willStartLoadingMap"
+                                                      object:tester.mapView
+                                                       queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:^(NSNotification *note) {
+                                                      started = YES;
+                                                  }];
+
+    NSNotification *notification = [system waitForNotificationName:@"willStartLoadingMap"
+                                                            object:tester.mapView
+                                               whileExecutingBlock:^{
+                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+                                               }];
+    [tester waitForTimeInterval:0.1];
+    XCTAssertNotNil(notification);
+    __KIFAssertEqual(started, YES);
+}
+
+- (void)mapViewWillStartLoadingMap:(MGLMapView *)mapView {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"willStartLoadingMap"
+                                                        object:mapView
+                                                      userInfo:nil];
+}
+
+- (void)testDelegateDidFinishLoading {
+    __block BOOL finished = NO;
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"didFinishLoadingMap"
+                                                      object:tester.mapView
+                                                       queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:^(NSNotification *note) {
+                                                      finished = YES;
+                                                  }];
+
+    NSNotification *notification = [system waitForNotificationName:@"didFinishLoadingMap"
+                                                            object:tester.mapView
+                                               whileExecutingBlock:^{
+                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+                                               }];
+    [tester waitForTimeInterval:3.0];
+    XCTAssertNotNil(notification);
+    __KIFAssertEqual(finished, YES);
+}
+
+- (void)mapViewDidFinishLoadingMap:(MGLMapView *)mapView {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"didFinishLoadingMap"
+                                                        object:mapView
+                                                      userInfo:nil];
+
+}
+
+- (void)testDelegateDidFailLoading {
+    // TODO: mock network calls & fake an error
+}
+
+- (void)mapViewDidFailLoadingMap:(MGLMapView *)mapView withError:(NSError *)error {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"didFailLoadingMap"
+                                                        object:mapView
+                                                      userInfo:@{ @"error" : error }];
+}
+
+- (void)testDelegateWillStartRendering {
+    __block BOOL started = NO;
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"willStartRenderingMap"
+                                                      object:tester.mapView
+                                                       queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:^(NSNotification *note) {
+                                                      started = YES;
+                                                  }];
+
+    NSNotification *notification = [system waitForNotificationName:@"willStartRenderingMap"
+                                                            object:tester.mapView
+                                               whileExecutingBlock:^{
+                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+                                               }];
+    [tester waitForTimeInterval:0.1];
+    XCTAssertNotNil(notification);
+    __KIFAssertEqual(started, YES);
+}
+
+- (void)mapViewWillStartRenderingMap:(MGLMapView *)mapView {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"willStartRenderingMap"
+                                                        object:mapView
+                                                      userInfo:nil];
+}
+
+- (void)testDelegateDidFinishRendering {
+    __block BOOL finished = NO;
+    __block BOOL fullyRendered = NO;
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"didFinishRenderingMap"
+                                                      object:tester.mapView
+                                                       queue:[NSOperationQueue mainQueue]
+                                                  usingBlock:^(NSNotification *note) {
+                                                      finished = YES;
+                                                      fullyRendered = [note.userInfo[@"fullyRendered"] boolValue];
+                                                  }];
+
+    NSNotification *notification = [system waitForNotificationName:@"didFinishRenderingMap"
+                                                            object:tester.mapView
+                                               whileExecutingBlock:^{
+                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+                                               }];
+    [tester waitForTimeInterval:3.0];
+    XCTAssertNotNil(notification);
+    __KIFAssertEqual(finished, YES);
+    __KIFAssertEqual(fullyRendered, YES);
+}
+
+- (void)mapViewDidFinishRenderingMap:(MGLMapView *)mapView fullyRendered:(BOOL)fullyRendered {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"didFinishRenderingMap"
+                                                        object:mapView
+                                                      userInfo:@{ @"fullyRendered" : @(fullyRendered) }];
 }
 
 @end
