@@ -1269,11 +1269,15 @@ MBGLView *mbglView = nullptr;
         }
         case mbgl::MapChangeDidFailLoadingMap:
         {
-            // TODO: grab error message
+            NSDictionary *errorInfo = (NSDictionary *)context;
 
-            if ([self.delegate respondsToSelector:@selector(mapViewDidFailLoadingMap:withError::)])
+            NSError *error = [NSError errorWithDomain:@"MGLErrorDomain"
+                                                 code:[errorInfo[@"code"] integerValue]
+                                             userInfo:@{ NSLocalizedDescriptionKey : errorInfo[@"description"] }];
+
+            if ([self.delegate respondsToSelector:@selector(mapViewDidFailLoadingMap:withError:)])
             {
-                [self.delegate mapViewDidFailLoadingMap:self withError:nil];
+                [self.delegate mapViewDidFailLoadingMap:self withError:error];
             }
             break;
         }
@@ -1381,7 +1385,9 @@ class MBGLView : public mbgl::View
             }
             case mbgl::MapChangeDidFailLoadingMap:
             {
-                contextObject = (__bridge NSString *)context;
+                std::pair<int16_t, std::string> error = *static_cast<std::pair<int16_t, std::string> *>(context);
+                contextObject = @{ @"code"        : @(error.first),
+                                   @"description" : @(error.second.c_str()) };
                 break;
             }
             default:
