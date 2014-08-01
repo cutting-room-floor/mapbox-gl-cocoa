@@ -291,7 +291,7 @@
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
                                                }];
-    [tester waitForTimeInterval:1];
+    [tester waitForTimeInterval:0.1];
     XCTAssertNotNil(notification);
     __KIFAssertEqual(started, YES);
 }
@@ -316,7 +316,7 @@
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
                                                }];
-    [tester waitForTimeInterval:3];
+    [tester waitForTimeInterval:3.0];
     XCTAssertNotNil(notification);
     __KIFAssertEqual(finished, YES);
 }
@@ -352,7 +352,7 @@
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
                                                }];
-    [tester waitForTimeInterval:1];
+    [tester waitForTimeInterval:0.1];
     XCTAssertNotNil(notification);
     __KIFAssertEqual(started, YES);
 }
@@ -379,7 +379,7 @@
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
                                                }];
-    [tester waitForTimeInterval:3];
+    [tester waitForTimeInterval:3.0];
     XCTAssertNotNil(notification);
     __KIFAssertEqual(finished, YES);
     __KIFAssertEqual(fullyRendered, YES);
