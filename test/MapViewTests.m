@@ -128,10 +128,8 @@
 
     [tester.mapView setCenterCoordinate:newCenterCoordinate];
 
-    XCTAssertTrue(tester.mapView.centerCoordinate.latitude > 45.2323);
-    XCTAssertTrue(tester.mapView.centerCoordinate.latitude < 45.2324);
-    XCTAssertTrue(tester.mapView.centerCoordinate.longitude > -122.2329);
-    XCTAssertTrue(tester.mapView.centerCoordinate.longitude < -122.2328);
+    XCTAssertTrue(tester.mapView.centerCoordinate.latitude == newCenterCoordinate.latitude);
+    XCTAssertTrue(tester.mapView.centerCoordinate.longitude == newCenterCoordinate.longitude);
 }
 
 - (void)testZoomSet {
