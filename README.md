@@ -41,7 +41,7 @@ This library, when standalone, makes use of static inclusion of [Mapbox GL](http
 
 ## Testing
 
-Tests are in `./test` and make use of the [KIF](https://github.com/kif-framework/KIF) framework. Since this project relies on the underlying C++ library, in order to be independently testable, the tests run an Xcode project which uses the static build of this library. Thus, to fully test the framework, you should first package a build per the above instructions so that the test app can link against `dist/libMapboxGL.a`. See the [`.travis.yml`](https://github.com/mapbox/mapbox-gl-cocoa/blob/master/.travis.yml) for more info on the steps required. 
+Tests are in `./test` and make use of the [KIF](https://github.com/kif-framework/KIF) framework. Since this project relies on the underlying C++ library, in order to be independently testable, the tests run an Xcode project which uses the static build of this library. Thus, to fully test the framework, you should first package a build per the above instructions so that the test app can link against `./dist/libMapboxGL.a`. See the [`.travis.yml`](https://github.com/mapbox/mapbox-gl-cocoa/blob/master/.travis.yml) for more info on the steps required. 
 
 ## Requirements
 
