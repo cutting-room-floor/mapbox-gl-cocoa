@@ -3,7 +3,7 @@ os: osx
 language: objective-c
 
 before_install: 
-    - git clone --depth 1 https://github.com/mapbox/mapbox-gl-native .mbgl
+    - git clone --branch callbacks --depth 1 https://github.com/mapbox/mapbox-gl-native .mbgl
     - mv * .mbgl/ios/mapbox-gl-cocoa
     - mv .git* .travis.yml .mbgl/ios/mapbox-gl-cocoa
     - mv .mbgl mbgl
