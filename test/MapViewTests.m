@@ -3,6 +3,14 @@
 #import "KIFTestActor+MapboxGL.h"
 #import "MGLMapView.h"
 
+NSString *const MGLRegionWillChangeAnimatedNotification = @"MGLRegionWillChangeAnimatedNotification";
+NSString *const MGLRegionDidChangeAnimatedNotification  = @"MGLRegionDidChangeAnimatedNotification";
+NSString *const MGLWillStartLoadingMapNotification      = @"MGLWillStartLoadingMapNotification";
+NSString *const MGLDidFinishLoadingMapNotification      = @"MGLDidFinishLoadingMapNotification";
+NSString *const MGLDidFailLoadingMapNotification        = @"MGLDidFailLoadingMapNotification";
+NSString *const MGLWillStartRenderingMapNotification    = @"MGLWillStartRenderingMapNotification";
+NSString *const MGLDidFinishRenderingMapNotification    = @"MGLDidFinishRenderingMapNotification";
+
 @interface MapViewTests () <MGLMapViewDelegate>
 
 @end
@@ -198,7 +206,7 @@
 - (void)testDelegateRegionWillChange {
     __block NSUInteger unanimatedCount = 0;
     __block NSUInteger animatedCount = 0;
-    [[NSNotificationCenter defaultCenter] addObserverForName:@"regionWillChangeAnimated"
+    [[NSNotificationCenter defaultCenter] addObserverForName:MGLRegionWillChangeAnimatedNotification
                                                       object:tester.mapView
                                                        queue:[NSOperationQueue mainQueue]
                                                   usingBlock:^(NSNotification *note) {
@@ -209,7 +217,7 @@
                                                       }
                                                   }];
 
-    NSNotification *notification = [system waitForNotificationName:@"regionWillChangeAnimated"
+    NSNotification *notification = [system waitForNotificationName:MGLRegionWillChangeAnimatedNotification
                                                             object:tester.mapView
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
@@ -219,7 +227,7 @@
     __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], NO);
     __KIFAssertEqual(unanimatedCount, 1);
 
-    notification = [system waitForNotificationName:@"regionWillChangeAnimated"
+    notification = [system waitForNotificationName:MGLRegionWillChangeAnimatedNotification
                                             object:tester.mapView
                                whileExecutingBlock:^{
                                    [tester.mapView setCenterCoordinate:CLLocationCoordinate2DMake(45, 100) animated:YES];
@@ -231,7 +239,7 @@
 }
 
 - (void)mapView:(MGLMapView *)mapView regionWillChangeAnimated:(BOOL)animated {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"regionWillChangeAnimated"
+    [[NSNotificationCenter defaultCenter] postNotificationName:MGLRegionWillChangeAnimatedNotification
                                                         object:mapView
                                                       userInfo:@{ @"animated" : @(animated) }];
 }
@@ -239,7 +247,7 @@
 - (void)testDelegateRegionDidChange {
     __block NSUInteger unanimatedCount = 0;
     __block NSUInteger animatedCount = 0;
-    [[NSNotificationCenter defaultCenter] addObserverForName:@"regionDidChangeAnimated"
+    [[NSNotificationCenter defaultCenter] addObserverForName:MGLRegionDidChangeAnimatedNotification
                                                       object:tester.mapView
                                                        queue:[NSOperationQueue mainQueue]
                                                   usingBlock:^(NSNotification *note) {
@@ -250,7 +258,7 @@
                                                       }
                                                   }];
 
-    NSNotification *notification = [system waitForNotificationName:@"regionDidChangeAnimated"
+    NSNotification *notification = [system waitForNotificationName:MGLRegionDidChangeAnimatedNotification
                                                             object:tester.mapView
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
@@ -260,7 +268,7 @@
     __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], NO);
     __KIFAssertEqual(unanimatedCount, 1);
 
-    notification = [system waitForNotificationName:@"regionDidChangeAnimated"
+    notification = [system waitForNotificationName:MGLRegionDidChangeAnimatedNotification
                                             object:tester.mapView
                                whileExecutingBlock:^{
                                    [tester.mapView setCenterCoordinate:CLLocationCoordinate2DMake(45, 100) animated:YES];
@@ -272,21 +280,21 @@
 }
 
 - (void)mapView:(MGLMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"regionDidChangeAnimated"
+    [[NSNotificationCenter defaultCenter] postNotificationName:MGLRegionDidChangeAnimatedNotification
                                                         object:mapView
                                                       userInfo:@{ @"animated" : @(animated) }];
 }
 
 - (void)testDelegateWillStartLoading {
     __block BOOL started = NO;
-    [[NSNotificationCenter defaultCenter] addObserverForName:@"willStartLoadingMap"
+    [[NSNotificationCenter defaultCenter] addObserverForName:MGLWillStartLoadingMapNotification
                                                       object:tester.mapView
                                                        queue:[NSOperationQueue mainQueue]
                                                   usingBlock:^(NSNotification *note) {
                                                       started = YES;
                                                   }];
 
-    NSNotification *notification = [system waitForNotificationName:@"willStartLoadingMap"
+    NSNotification *notification = [system waitForNotificationName:MGLWillStartLoadingMapNotification
                                                             object:tester.mapView
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
@@ -297,21 +305,21 @@
 }
 
 - (void)mapViewWillStartLoadingMap:(MGLMapView *)mapView {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"willStartLoadingMap"
+    [[NSNotificationCenter defaultCenter] postNotificationName:MGLWillStartLoadingMapNotification
                                                         object:mapView
                                                       userInfo:nil];
 }
 
 - (void)testDelegateDidFinishLoading {
     __block BOOL finished = NO;
-    [[NSNotificationCenter defaultCenter] addObserverForName:@"didFinishLoadingMap"
+    [[NSNotificationCenter defaultCenter] addObserverForName:MGLDidFinishLoadingMapNotification
                                                       object:tester.mapView
                                                        queue:[NSOperationQueue mainQueue]
                                                   usingBlock:^(NSNotification *note) {
                                                       finished = YES;
                                                   }];
 
-    NSNotification *notification = [system waitForNotificationName:@"didFinishLoadingMap"
+    NSNotification *notification = [system waitForNotificationName:MGLDidFinishLoadingMapNotification
                                                             object:tester.mapView
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
@@ -322,7 +330,7 @@
 }
 
 - (void)mapViewDidFinishLoadingMap:(MGLMapView *)mapView {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"didFinishLoadingMap"
+    [[NSNotificationCenter defaultCenter] postNotificationName:MGLDidFinishLoadingMapNotification
                                                         object:mapView
                                                       userInfo:nil];
 
@@ -333,21 +341,21 @@
 }
 
 - (void)mapViewDidFailLoadingMap:(MGLMapView *)mapView withError:(NSError *)error {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"didFailLoadingMap"
+    [[NSNotificationCenter defaultCenter] postNotificationName:MGLDidFailLoadingMapNotification
                                                         object:mapView
                                                       userInfo:@{ @"error" : error }];
 }
 
 - (void)testDelegateWillStartRendering {
     __block BOOL started = NO;
-    [[NSNotificationCenter defaultCenter] addObserverForName:@"willStartRenderingMap"
+    [[NSNotificationCenter defaultCenter] addObserverForName:MGLWillStartRenderingMapNotification
                                                       object:tester.mapView
                                                        queue:[NSOperationQueue mainQueue]
                                                   usingBlock:^(NSNotification *note) {
                                                       started = YES;
                                                   }];
 
-    NSNotification *notification = [system waitForNotificationName:@"willStartRenderingMap"
+    NSNotification *notification = [system waitForNotificationName:MGLWillStartRenderingMapNotification
                                                             object:tester.mapView
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
@@ -358,7 +366,7 @@
 }
 
 - (void)mapViewWillStartRenderingMap:(MGLMapView *)mapView {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"willStartRenderingMap"
+    [[NSNotificationCenter defaultCenter] postNotificationName:MGLWillStartRenderingMapNotification
                                                         object:mapView
                                                       userInfo:nil];
 }
@@ -366,7 +374,7 @@
 - (void)testDelegateDidFinishRendering {
     __block BOOL finished = NO;
     __block BOOL fullyRendered = NO;
-    [[NSNotificationCenter defaultCenter] addObserverForName:@"didFinishRenderingMap"
+    [[NSNotificationCenter defaultCenter] addObserverForName:MGLDidFinishRenderingMapNotification
                                                       object:tester.mapView
                                                        queue:[NSOperationQueue mainQueue]
                                                   usingBlock:^(NSNotification *note) {
@@ -374,7 +382,7 @@
                                                       fullyRendered = [note.userInfo[@"fullyRendered"] boolValue];
                                                   }];
 
-    NSNotification *notification = [system waitForNotificationName:@"didFinishRenderingMap"
+    NSNotification *notification = [system waitForNotificationName:MGLDidFinishRenderingMapNotification
                                                             object:tester.mapView
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
@@ -386,7 +394,7 @@
 }
 
 - (void)mapViewDidFinishRenderingMap:(MGLMapView *)mapView fullyRendered:(BOOL)fullyRendered {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"didFinishRenderingMap"
+    [[NSNotificationCenter defaultCenter] postNotificationName:MGLDidFinishRenderingMapNotification
                                                         object:mapView
                                                       userInfo:@{ @"fullyRendered" : @(fullyRendered) }];
 }
