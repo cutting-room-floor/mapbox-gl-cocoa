@@ -222,19 +222,27 @@ NSString *const MGLDidFinishRenderingMapNotification    = @"MGLDidFinishRenderin
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
                                                }];
-    [tester waitForTimeInterval:1];
-    XCTAssertNotNil(notification);
-    __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], NO);
-    __KIFAssertEqual(unanimatedCount, 1);
 
+    [tester waitForTimeInterval:1];
+
+    XCTAssertNotNil(notification);
+    __KIFAssertEqualObjects(notification.userInfo[@"animated"], @NO);
+    __KIFAssertEqual(unanimatedCount, 1);
+    __KIFAssertEqual(animatedCount, 0);
+
+    unanimatedCount = 0;
+    animatedCount = 0;
     notification = [system waitForNotificationName:MGLRegionWillChangeAnimatedNotification
                                             object:tester.mapView
                                whileExecutingBlock:^{
                                    [tester.mapView setCenterCoordinate:CLLocationCoordinate2DMake(45, 100) animated:YES];
                                }];
+
     [tester waitForTimeInterval:1];
+
     XCTAssertNotNil(notification);
-    __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], YES);
+    __KIFAssertEqualObjects(notification.userInfo[@"animated"], @YES);
+    __KIFAssertEqual(unanimatedCount, 0);
     __KIFAssertEqual(animatedCount, 1);
 }
 
@@ -263,9 +271,11 @@ NSString *const MGLDidFinishRenderingMapNotification    = @"MGLDidFinishRenderin
                                                whileExecutingBlock:^{
                                                    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
                                                }];
+
     [tester waitForTimeInterval:1];
+
     XCTAssertNotNil(notification);
-    __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], NO);
+    __KIFAssertEqualObjects(notification.userInfo[@"animated"], @NO);
     __KIFAssertEqual(unanimatedCount, 1);
 
     notification = [system waitForNotificationName:MGLRegionDidChangeAnimatedNotification
@@ -273,9 +283,11 @@ NSString *const MGLDidFinishRenderingMapNotification    = @"MGLDidFinishRenderin
                                whileExecutingBlock:^{
                                    [tester.mapView setCenterCoordinate:CLLocationCoordinate2DMake(45, 100) animated:YES];
                                }];
+
     [tester waitForTimeInterval:1];
+
     XCTAssertNotNil(notification);
-    __KIFAssertEqual([notification.userInfo[@"animated"] boolValue], YES);
+    __KIFAssertEqualObjects(notification.userInfo[@"animated"], @YES);
     __KIFAssertEqual(animatedCount, 1);
 }
 
@@ -294,13 +306,10 @@ NSString *const MGLDidFinishRenderingMapNotification    = @"MGLDidFinishRenderin
                                                       started = YES;
                                                   }];
 
-    NSNotification *notification = [system waitForNotificationName:MGLWillStartLoadingMapNotification
-                                                            object:tester.mapView
-                                               whileExecutingBlock:^{
-                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
-                                               }];
+    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+
     [tester waitForTimeInterval:0.1];
-    XCTAssertNotNil(notification);
+
     __KIFAssertEqual(started, YES);
 }
 
@@ -319,13 +328,10 @@ NSString *const MGLDidFinishRenderingMapNotification    = @"MGLDidFinishRenderin
                                                       finished = YES;
                                                   }];
 
-    NSNotification *notification = [system waitForNotificationName:MGLDidFinishLoadingMapNotification
-                                                            object:tester.mapView
-                                               whileExecutingBlock:^{
-                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
-                                               }];
+    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+
     [tester waitForTimeInterval:3.0];
-    XCTAssertNotNil(notification);
+
     __KIFAssertEqual(finished, YES);
 }
 
@@ -355,13 +361,10 @@ NSString *const MGLDidFinishRenderingMapNotification    = @"MGLDidFinishRenderin
                                                       started = YES;
                                                   }];
 
-    NSNotification *notification = [system waitForNotificationName:MGLWillStartRenderingMapNotification
-                                                            object:tester.mapView
-                                               whileExecutingBlock:^{
-                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
-                                               }];
+    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+
     [tester waitForTimeInterval:0.1];
-    XCTAssertNotNil(notification);
+
     __KIFAssertEqual(started, YES);
 }
 
@@ -382,13 +385,10 @@ NSString *const MGLDidFinishRenderingMapNotification    = @"MGLDidFinishRenderin
                                                       fullyRendered = [note.userInfo[@"fullyRendered"] boolValue];
                                                   }];
 
-    NSNotification *notification = [system waitForNotificationName:MGLDidFinishRenderingMapNotification
-                                                            object:tester.mapView
-                                               whileExecutingBlock:^{
-                                                   tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
-                                               }];
+    tester.mapView.centerCoordinate = CLLocationCoordinate2DMake(0, 0);
+
     [tester waitForTimeInterval:3.0];
-    XCTAssertNotNil(notification);
+
     __KIFAssertEqual(finished, YES);
     __KIFAssertEqual(fullyRendered, YES);
 }
