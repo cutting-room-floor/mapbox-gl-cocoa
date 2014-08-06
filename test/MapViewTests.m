@@ -2,6 +2,7 @@
 #import <KIF/KIFTestStepValidation.h>
 #import "KIFTestActor+MapboxGL.h"
 #import "MGLMapView.h"
+#import "MGLTestCommon.h"
 
 NSString *const MGLRegionWillChangeAnimatedNotification = @"MGLRegionWillChangeAnimatedNotification";
 NSString *const MGLRegionDidChangeAnimatedNotification  = @"MGLRegionDidChangeAnimatedNotification";
@@ -33,6 +34,8 @@ NSString *const MGLDidFinishRenderingMapNotification    = @"MGLDidFinishRenderin
 
 - (void)afterAll {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:MGLTestsCompletedNotification object:nil];
+    [tester waitForTimeInterval:3];
 }
 
 - (void)testDirectionSet {

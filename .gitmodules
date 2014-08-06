@@ -1,3 +1,6 @@
 [submodule "test/KIF"]
 	path = test/KIF
 	url = https://github.com/mapbox/KIF.git
+[submodule "test/VCRURLConnection"]
+	path = test/VCRURLConnection
+	url = https://github.com/dstnbrkr/VCRURLConnection.git
