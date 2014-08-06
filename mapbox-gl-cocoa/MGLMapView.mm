@@ -701,12 +701,6 @@ MBGLView *mbglView = nullptr;
     mbglMap->toggleDebug();
 }
 
-- (void)toggleStyle
-{
-    mbglMap->setDefaultTransitionDuration(300);
-    mbglMap->toggleClass("night");
-}
-
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
 {
     double duration = (animated ? 0.3 : 0);

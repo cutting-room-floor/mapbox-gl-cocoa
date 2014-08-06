@@ -139,9 +139,6 @@
 *   @param styleJSON The map stylesheet as JSON text. */
 - (void)setStyleJSON:(NSString *)styleJSON;
 
-/** Toggle the style of the map between the `default` class and the `night` class with a transition animation. */
-- (void)toggleStyle;
-
 /** Returns the raw JSON style as a native dictionary object. */
 - (NSDictionary *)getRawStyle;
 
