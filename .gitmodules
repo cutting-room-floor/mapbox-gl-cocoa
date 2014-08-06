@@ -1,3 +1,6 @@
 [submodule "test/KIF"]
 	path = test/KIF
 	url = https://github.com/mapbox/KIF.git
+[submodule "spec"]
+	path = spec
+	url = https://github.com/mapbox/mapbox-gl-style-spec

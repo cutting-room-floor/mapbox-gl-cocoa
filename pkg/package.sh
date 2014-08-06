@@ -57,6 +57,7 @@ mkdir $OUTPUT/$NAME.bundle
 cp -v $SOURCES/Resources/* $OUTPUT/$NAME.bundle
 cp -v $PARENT/bin/style.js $OUTPUT/$NAME.bundle
 cp -v $PARENT/build/DerivedSources/Release/bin/style.min.js $OUTPUT/$NAME.bundle
+cp -v '../spec/reference/v4.json' $OUTPUT/$NAME.bundle
 
 # record versions info
 VERSIONS="`pwd`/$OUTPUT/versions.txt"

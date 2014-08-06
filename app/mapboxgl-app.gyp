@@ -29,7 +29,8 @@
         'mac_bundle_resources': [
           '<!@(find ./img -type f)',
           '<!@(find ../mapbox-gl-cocoa/Resources -type f)',
-          '<(SHARED_INTERMEDIATE_DIR)/bin/style.min.js'
+          '<(SHARED_INTERMEDIATE_DIR)/bin/style.min.js',
+          '../spec/reference/v4.json'
         ],
         'link_settings': {
           'libraries': [
