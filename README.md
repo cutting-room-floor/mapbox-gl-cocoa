@@ -50,7 +50,7 @@ Tests are in `./test` and make use of the [KIF](https://github.com/kif-framework
 
 ## Styling
 
-See `STYLING.md` for more information on the styling language. *This language is in rapid development and is subject to change.* Contained within the `MapboxGL.bundle` assets is a `style.js`, which describes the entire default style bundled with the framework (class: `default`), as well as the `night` class variant. 
+See the [style spec](https://www.mapbox.com/mapbox-gl-style-spec/) for more information on the styling language. Contained within the `MapboxGL.bundle` assets is a `style.js`, which describes the entire default style bundled with the framework. 
 
 The styling language is a cascading language similar to CSS. It can be described in native code with Mapbox GL Cocoa such that the following style layer adjustments are possible: 
 
@@ -66,6 +66,7 @@ By default, layer properties changes are updated instantly on the map. However, 
 ## Related Projects
 
  * https://github.com/mapbox/mapbox-gl-native
+ * https://github.com/mapbox/mapbox-gl-js
  * https://github.com/mapbox/mapbox-gl-style-spec
  * https://github.com/mapbox/vector-tile-spec
 
