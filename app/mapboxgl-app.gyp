@@ -29,7 +29,6 @@
         'mac_bundle_resources': [
           '<!@(find ./img -type f)',
           '<!@(find ../mapbox-gl-cocoa/Resources -type f)',
-          '<(SHARED_INTERMEDIATE_DIR)/bin/style.min.js'
         ],
         'link_settings': {
           'libraries': [
@@ -65,6 +64,7 @@
           }
         },
         "dependencies": [
+            "../../../mapboxgl.gyp:bundle_styles",
             "../../../mapboxgl.gyp:mapboxgl-ios"
         ]
     }
