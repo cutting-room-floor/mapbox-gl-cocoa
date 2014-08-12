@@ -120,6 +120,7 @@ MBGLView *mbglView = nullptr;
 
 - (void)setStyleJSON:(NSString *)styleJSON
 {
+    mbglMap->stop();
     if ( ! styleJSON)
     {
         if ( ! [@(mbglMap->getAccessToken().c_str()) length])
@@ -128,13 +129,11 @@ MBGLView *mbglView = nullptr;
                         format:@"default map style requires a Mapbox API access token"];
         }
 
-        NSString *path = [MGLMapView pathForBundleResourceNamed:@"style.min" ofType:@"js"];
-
-        styleJSON = [NSString stringWithContentsOfFile:path encoding:[NSString defaultCStringEncoding] error:nil];
+        const std::string path([[MGLMapView pathForBundleResourceNamed:@"style" ofType:@"json" inDirectory:@"styles/bright"] UTF8String]);
+        mbglMap->setStyleURL(std::string("file://") + path);
+    } else {
+        mbglMap->setStyleJSON((std::string)[styleJSON cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
-
-    mbglMap->stop();
-    mbglMap->setStyleJSON((std::string)[styleJSON cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     mbglMap->start();
 }
 
@@ -1330,10 +1329,10 @@ MBGLView *mbglView = nullptr;
     if ( ! [[imageName pathExtension] length])
         imageName = [imageName stringByAppendingString:@".png"];
 
-    return [UIImage imageWithContentsOfFile:[MGLMapView pathForBundleResourceNamed:imageName ofType:nil]];
+    return [UIImage imageWithContentsOfFile:[MGLMapView pathForBundleResourceNamed:imageName ofType:nil inDirectory:@""]];
 }
 
-+ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension
++ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension inDirectory:(NSString *)dir
 {
     NSString *path;
 
@@ -1343,11 +1342,12 @@ MBGLView *mbglView = nullptr;
     if (resourceBundlePath)
     {
         path = [[NSBundle bundleWithPath:resourceBundlePath] pathForResource:name
-                                                                      ofType:extension];
+                                                                      ofType:extension
+                                                                 inDirectory:dir];
     }
     else
     {
-        path = [[NSBundle mainBundle] pathForResource:name ofType:extension];
+        path = [[NSBundle mainBundle] pathForResource:name ofType:extension inDirectory:dir];
     }
 
     NSAssert(path, @"Resource not found in application.");
