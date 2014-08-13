@@ -50,7 +50,6 @@ mkdir -p $OUTPUT/Headers
 for header in `ls $SOURCES/*.h`; do
    cp -v $header $OUTPUT/Headers
 done
-cp -v MapboxGL.mm $OUTPUT
 
 # create resource bundle
 mkdir $OUTPUT/$NAME.bundle

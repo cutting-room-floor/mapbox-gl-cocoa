@@ -14,10 +14,10 @@ To use this library in your app directly, follow these steps. Everything you nee
  * Add header files in `Headers` to your project. 
  * Add `MapboxGL.bundle` to your app target's *Copy Bundle Resources* build phase. 
  * Add `libMapboxGL.a` to your project's linked libraries. 
- * Add `MapboxGL.mm` to your project's compiled sources (this is a stub file to trigger Objective-C++ compilation). 
  * Add the following dependent Cocoa frameworks to your project's linked libraries: 
    - `CoreLocation.framework`
    - `GLKit.framework`
+   - `libc++.dylib`
    - `libz.dylib`
  * Get a Mapbox API access token on [your account page](https://mapbox.com/account/apps). 
  * Import the necessary headers (like `MGLMapView.h`) into your project and use the APIs. 

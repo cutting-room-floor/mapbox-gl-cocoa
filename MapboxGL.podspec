@@ -16,7 +16,7 @@ Pod::Spec.new do |m|
   m.platform              = :ios
   m.ios.deployment_target = '7.0'
 
-  m.source_files = 'dist/Headers/*.h', 'dist/MapboxGL.mm'
+  m.source_files = 'dist/Headers/*.h'
 
   m.requires_arc = true
 
