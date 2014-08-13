@@ -139,9 +139,6 @@
 *   @param styleJSON The map stylesheet as JSON text. */
 - (void)setStyleJSON:(NSString *)styleJSON;
 
-/** Toggle the style of the map between the `default` class and the `night` class with a transition animation. */
-- (void)toggleStyle;
-
 /** Returns the raw JSON style as a native dictionary object. */
 - (NSDictionary *)getRawStyle;
 
@@ -149,37 +146,12 @@
 *   @param style The style JSON as a dictionary object. */
 - (void)setRawStyle:(NSDictionary *)style;
 
-/** Returns the feature layers in the current style as an array of ordered layer names. */
-- (NSArray *)getStyleOrderedLayerNames;
+/** Returns the names of the styles bundled with the library. */
+- (NSArray *)bundledStyleNames;
 
-/** Sets the ordered layer names for the current style. 
-*   @param orderedLayerNames An ordered array of layer names. The layer names array should contain the same number of layer names as getStyleOrderedLayerNames */
-- (void)setStyleOrderedLayerNames:(NSArray *)orderedLayerNames;
-
-/** Returns the names of the applied classes in the current style. */
-- (NSArray *)getAppliedStyleClasses;
-
-/** Sets the applied classes from the current style with a transition animation.
-*   @param appliedClasses An ordered array of class names to apply and cascade in order to update the map's appearance. */
-- (void)setAppliedStyleClasses:(NSArray *)appliedClasses;
-
-/** Sets the applied classes from the current style with a specified transition animation duration. 
-*   @param appliedClasses An ordered array of class names to apply and cascade in order to update the map's appearance. 
-*   @param transitionDuration Specifies the duration of the style transition. */
-- (void)setAppliedStyleClasses:(NSArray *)appliedClasses transitionDuration:(NSTimeInterval)transitionDuration;
-
-/** Returns a dictionary object containing the style description for the specified layer and class. 
-*   @param layerName The layer whose description you wish to obtain.
-*   @param className The style class from which to obtain the layer style description. 
-*
-*   Style description object contain members which are returned as native types, either `NSNumber` objects for numbers and booleans, `NSArray` or `NSDictionary` containers, `UIColor` or `NSString` objects, or style function types such as `MGLStyleValueTypeFunctionLinear`. */
-- (NSDictionary *)getStyleDescriptionForLayer:(NSString *)layerName inClass:(NSString *)className;
-
-/** Sets the style description for a layer in a specified class. 
-*   @param styleDescription The description as a dictionary object with member types as described in getStyleDescriptionForLayer:inClass:. 
-*   @param layerName The layer whose description you wish to obtain.
-*   @param className The style class from which to obtain the layer style description. */
-- (void)setStyleDescription:(NSDictionary *)styleDescription forLayer:(NSString *)layerName inClass:(NSString *)className;
+/** Sets the map style to a named, bundled style.
+*   @param styleName The map style name to use. */
+- (void)useBundledStyleNamed:(NSString *)styleName;
 
 #pragma mark - Debugging
 
