@@ -8,7 +8,7 @@ This project is Cocoa API bindings for [`mapbox-gl-native`](https://github.com/m
 
 ## Installation
 
-To use this library in your app directly, follow these steps. Everything you need is in `./dist`. You can also make use of [CocoaPods](http://cocoapods.org) by pointing at the `MapboxGL.podspec` file in the root of the repository (the library has not yet been added to the CocaoPods specs repository). 
+To use this library in your app directly, follow these steps. Everything you need is in `./dist`. You can also make use of [CocoaPods](http://cocoapods.org) by pointing at the `MapboxGL.podspec` file in the root of the repository (the library has not yet been added to the CocoaPods specs repository). 
 
  * Copy the contents of `./dist` into your project. 
  * Add header files in `Headers` to your project. 
@@ -58,6 +58,7 @@ The Cocoa programmatic styling API is currently under renovation per [#31](https
 
  * https://github.com/mapbox/mapbox-gl-native
  * https://github.com/mapbox/mapbox-gl-style-spec
+ * https://github.com/mapbox/mapbox-gl-js
  * https://github.com/mapbox/vector-tile-spec
 
 ## Other notes
