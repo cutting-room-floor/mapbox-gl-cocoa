@@ -55,8 +55,7 @@ cp -v MapboxGL.mm $OUTPUT
 # create resource bundle
 mkdir $OUTPUT/$NAME.bundle
 cp -v $SOURCES/Resources/* $OUTPUT/$NAME.bundle
-cp -v $PARENT/bin/style.js $OUTPUT/$NAME.bundle
-cp -v $PARENT/build/DerivedSources/Release/bin/style.min.js $OUTPUT/$NAME.bundle
+cp -rv $PARENT/styles $OUTPUT/$NAME.bundle/styles
 
 # record versions info
 VERSIONS="`pwd`/$OUTPUT/versions.txt"
