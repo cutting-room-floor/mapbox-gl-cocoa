@@ -91,7 +91,7 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
     singleTap.numberOfTapsRequired = 1;
     [self.mapView addGestureRecognizer:singleTap];
 
-    NSArray *selectorNames = @[ @"unrotate", @"resetPosition", @"toggleDebug", @"toggleStyle", @"locateUser" ];
+    NSArray *selectorNames = @[ @"unrotate", @"resetPosition", @"toggleDebug", @"locateUser" ];
     CGFloat buttonSize  = 40;
     CGFloat bufferSize  = 20;
     CGFloat alpha       = 0.75;
@@ -170,11 +170,6 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
     [self.mapView toggleDebug];
 
     self.debug = ! self.debug;
-}
-
-- (void)toggleStyle
-{
-    [self.mapView toggleStyle];
 }
 
 - (void)locateUser
