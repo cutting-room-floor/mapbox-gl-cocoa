@@ -146,6 +146,13 @@
 *   @param style The style JSON as a dictionary object. */
 - (void)setRawStyle:(NSDictionary *)style;
 
+/** Returns the names of the styles bundled with the library. */
+- (NSArray *)bundledStyleNames;
+
+/** Sets the map style to a named, bundled style.
+*   @param styleName The map style name to use. */
+- (void)useBundledStyleNamed:(NSString *)styleName;
+
 #pragma mark - Debugging
 
 /** @name Debugging */
