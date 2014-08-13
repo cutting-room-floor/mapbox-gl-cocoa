@@ -24,12 +24,13 @@ To use this library in your app directly, follow these steps. Everything you nee
 
 ```objective-c
 MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)
-                                              styleJSON:@"<style JSON string"
                                             accessToken:@"<access token string>"];
 
 [mapView setCenterCoordinate:CLLocationCoordinate2DMake(28.369334, -80.743779) 
                    zoomLevel:13 
                     animated:NO];
+
+[mapView useBundledStyleNamed:@"outdoors"];
 
 [self.view addSubview:mapView];
 ```
@@ -38,12 +39,13 @@ Swift works, too:
 
 ```swift
 let mapView = MGLMapView(frame: CGRect(x: 0, y: 0, width: 400, height: 400),
-                         styleJSON: "<style JSON string>",
                          accessToken: "<access token string>")
 
 mapView.setCenterCoordinate(CLLocationCoordinate2DMake(46.049900, -122.095678),
         zoomLevel: 12,
         animated: false)
+
+mapView.useBundledStyleNamed("outdoors")
 
 view.addSubview(mapView)
 ```
