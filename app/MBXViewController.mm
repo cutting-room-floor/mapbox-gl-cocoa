@@ -3,7 +3,6 @@
 #import "MGLMapView.h"
 
 #import "settings_nsuserdefaults.hpp"
-#import "nslog_log.hpp"
 
 #import <CoreLocation/CoreLocation.h>
 
@@ -40,7 +39,7 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
     [super viewDidLoad];
 
     NSString *accessToken = [[NSProcessInfo processInfo] environment][@"MAPBOX_ACCESS_TOKEN"];
-    if ( ! accessToken) mbgl::Log::Warning(mbgl::Event::Setup, "No access token set. Mapbox vector tiles won't work.");
+    if ( ! accessToken) NSLog(@"No access token set. Mapbox vector tiles won't work.");
 
     self.mapView = [[MGLMapView alloc] initWithFrame:self.view.bounds accessToken:accessToken];
     self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
