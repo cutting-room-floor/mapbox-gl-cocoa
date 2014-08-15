@@ -27,6 +27,7 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 
     if (self)
     {
+        mbgl::Log::Set<mbgl::NSLogBackend>();
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveState:) name:UIApplicationDidEnterBackgroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(restoreState:) name:UIApplicationWillEnterForegroundNotification object:nil];
     }
