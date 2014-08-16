@@ -71,6 +71,9 @@
 *   The default value of this property is `YES`. */
 @property(nonatomic, getter=isRotateEnabled) BOOL rotateEnabled;
 
+/** A Boolean value indicating whether to show a small logo in the corner of the map view. Defaults to `YES`. */
+@property (nonatomic, assign) BOOL showLogoBug;
+
 #pragma mark - Accessing the Delegate
 
 /** @name Accessing the Delegate */

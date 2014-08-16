@@ -178,13 +178,7 @@ MBGLView *mbglView = nullptr;
     mbglMap = new mbgl::Map(*mbglView);
     mbglMap->resize(self.bounds.size.width, self.bounds.size.height, _glView.contentScaleFactor, _glView.drawableWidth, _glView.drawableHeight);
 
-    // setup logo bug
-    //
-    _logoBug = [[UIImageView alloc] initWithImage:[MGLMapView resourceImageNamed:@"mapbox.png"]];
-    _logoBug.accessibilityLabel = @"Mapbox logo";
-    _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
-    _logoBug.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:_logoBug];
+    self.showLogoBug = YES;
 
     // setup attribution
     //
@@ -370,16 +364,19 @@ MBGLView *mbglView = nullptr;
 
     // logo bug
     //
-    [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[logoBug]-bottomSpacing-%@", bottomGuideFormatString]
-                                                                                 options:0
-                                                                                 metrics:@{ @"bottomSpacing"     : @(4) }
-                                                                                   views:@{ @"logoBug"           : self.logoBug,
-                                                                                            @"bottomLayoutGuide" : bottomGuideViewsObject }]];
-
-    [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-leftSpacing-[logoBug]"
-                                                                                 options:0
-                                                                                 metrics:@{ @"leftSpacing"       : @(8) }
-                                                                                   views:@{ @"logoBug"           : self.logoBug }]];
+    if (self.logoBug)
+    {
+        [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[logoBug]-bottomSpacing-%@", bottomGuideFormatString]
+                                                                                     options:0
+                                                                                     metrics:@{ @"bottomSpacing"     : @(4) }
+                                                                                       views:@{ @"logoBug"           : self.logoBug,
+                                                                                                @"bottomLayoutGuide" : bottomGuideViewsObject }]];
+        
+        [constraintParentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-leftSpacing-[logoBug]"
+                                                                                     options:0
+                                                                                     metrics:@{ @"leftSpacing"       : @(8) }
+                                                                                       views:@{ @"logoBug"           : self.logoBug }]];
+    }
 
     // attribution button
     //
@@ -1439,5 +1436,24 @@ class MBGLView : public mbgl::View
     private:
         MGLMapView *nativeView = nullptr;
 };
+
+- (void)setShowLogoBug:(BOOL)showLogoBug
+{
+    if (showLogoBug && ! _logoBug)
+    {
+        _logoBug = [[UIImageView alloc] initWithImage:[MGLMapView resourceImageNamed:@"mapbox.png"]];
+        _logoBug.accessibilityLabel = @"Mapbox logo";
+        _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
+        _logoBug.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addSubview:_logoBug];
+    }
+    else if ( ! showLogoBug && _logoBug)
+    {
+        [_logoBug removeFromSuperview];
+        _logoBug = nil;
+    }
+    
+    _showLogoBug = showLogoBug;
+}
 
 @end
