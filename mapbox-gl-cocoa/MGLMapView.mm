@@ -1456,4 +1456,13 @@ class MBGLView : public mbgl::View
     _showLogoBug = showLogoBug;
 }
 
+- (void)setHideAttribution:(BOOL)flag
+{
+    if (_hideAttribution == flag)
+        return;
+    
+    self.attributionButton.hidden = flag;
+    _hideAttribution = flag;
+}
+
 @end
