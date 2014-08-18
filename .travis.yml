@@ -13,6 +13,7 @@ before_install:
     - cd ios/mapbox-gl-cocoa/pkg
     - ./package.sh 2>&1 >/dev/null
     - cd ..
+    - sudo pip install awscli
 
 install: gem install xcpretty --no-rdoc --no-ri --no-document --quiet
 
