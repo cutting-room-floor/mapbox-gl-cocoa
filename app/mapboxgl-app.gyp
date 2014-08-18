@@ -32,11 +32,11 @@
         ],
         'link_settings': {
           'libraries': [
-            '$(SDKROOT)/System/Library/Frameworks/UIKit.framework',
-            '$(SDKROOT)/System/Library/Frameworks/OpenGLES.framework',
-            '$(SDKROOT)/System/Library/Frameworks/GLKit.framework',
+            '$(SDKROOT)/System/Library/Frameworks/CoreGraphics.framework',
             '$(SDKROOT)/System/Library/Frameworks/CoreLocation.framework',
-            '$(SDKROOT)/System/Library/Frameworks/CoreGraphics.framework'
+            '$(SDKROOT)/System/Library/Frameworks/GLKit.framework',
+            '$(SDKROOT)/System/Library/Frameworks/OpenGLES.framework',
+            '$(SDKROOT)/System/Library/Frameworks/UIKit.framework'
           ],
         },
         'xcode_settings': {

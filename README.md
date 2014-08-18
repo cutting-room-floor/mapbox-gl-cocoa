@@ -15,8 +15,11 @@ To use this library in your app directly, follow these steps. Everything you nee
  * Add `MapboxGL.bundle` to your app target's *Copy Bundle Resources* build phase. 
  * Add `libMapboxGL.a` to your project's linked libraries. 
  * Add the following dependent Cocoa frameworks to your project's linked libraries: 
+   - `CoreGraphics.framework`
    - `CoreLocation.framework`
    - `GLKit.framework`
+   - `OpenGLES.framework`
+   - `UIKit.framework`
    - `libc++.dylib`
    - `libz.dylib`
  * Get a Mapbox API access token on [your account page](https://mapbox.com/account/apps). 
