@@ -50,13 +50,11 @@ mkdir -p $OUTPUT/Headers
 for header in `ls $SOURCES/*.h`; do
    cp -v $header $OUTPUT/Headers
 done
-cp -v MapboxGL.mm $OUTPUT
 
 # create resource bundle
 mkdir $OUTPUT/$NAME.bundle
 cp -v $SOURCES/Resources/* $OUTPUT/$NAME.bundle
-cp -v $PARENT/bin/style.js $OUTPUT/$NAME.bundle
-cp -v $PARENT/build/DerivedSources/Release/bin/style.min.js $OUTPUT/$NAME.bundle
+cp -rv $PARENT/styles $OUTPUT/$NAME.bundle/styles
 cp -v '../spec/reference/v4.json' $OUTPUT/$NAME.bundle
 
 # record versions info

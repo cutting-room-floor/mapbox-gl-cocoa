@@ -1,2 +1,2 @@
-mapbox-gl-cocoa  df76bbe7a3dd363400b38e1a3021995cbd07766a
-mapbox-gl-native 2be561ed4ace7440b9c135906f4685d824c8955a
+mapbox-gl-cocoa  8bbcc8e79dfec5654371ab1d2fac50f56d812f99
+mapbox-gl-native 6ed3d67b625038c359130f38712d378acc2802e2

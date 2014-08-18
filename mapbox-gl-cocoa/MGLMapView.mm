@@ -120,6 +120,8 @@ MBGLView *mbglView = nullptr;
 
 - (void)setStyleJSON:(NSString *)styleJSON
 {
+    mbglMap->stop();
+
     if ( ! styleJSON)
     {
         if ( ! [@(mbglMap->getAccessToken().c_str()) length])
@@ -128,13 +130,13 @@ MBGLView *mbglView = nullptr;
                         format:@"default map style requires a Mapbox API access token"];
         }
 
-        NSString *path = [MGLMapView pathForBundleResourceNamed:@"style.min" ofType:@"js"];
-
-        styleJSON = [NSString stringWithContentsOfFile:path encoding:[NSString defaultCStringEncoding] error:nil];
+        [self useBundledStyleNamed:@"bright"];
+    }
+    else
+    {
+        mbglMap->setStyleJSON((std::string)[styleJSON cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
 
-    mbglMap->stop();
-    mbglMap->setStyleJSON((std::string)[styleJSON cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     mbglMap->start();
 }
 
@@ -781,6 +783,36 @@ MBGLView *mbglView = nullptr;
     mbglMap->setStyleJSON([[[NSString alloc] initWithData:data encoding:[NSString defaultCStringEncoding]] cStringUsingEncoding:[NSString defaultCStringEncoding]]);
 }
 
+- (NSArray *)bundledStyleNames
+{
+    NSMutableArray *styleNames = [NSMutableArray array];
+
+    NSString *styleFoldersPath = [[MGLMapView resourceBundlePath] stringByAppendingString:@"/styles"];
+
+    NSArray *styleFolders = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:styleFoldersPath error:nil];
+
+    for (NSString *styleFolder in styleFolders)
+    {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/%@/style.json", styleFoldersPath, styleFolder]])
+        {
+            [styleNames addObject:styleFolder];
+        }
+    }
+
+    return [NSArray arrayWithArray:styleNames];
+}
+
+- (void)useBundledStyleNamed:(NSString *)styleName
+{
+    NSString *path = [MGLMapView pathForBundleResourceNamed:@"style"
+                                                     ofType:@"json"
+                                                inDirectory:[NSString stringWithFormat:@"styles/%@", styleName]];
+
+    NSAssert(path, @"Invalid bundled style name specified.");
+
+    mbglMap->setStyleURL(std::string("file://" + std::string([path cStringUsingEncoding:[NSString defaultCStringEncoding]])));
+}
+
 - (NSArray *)getStyleOrderedLayerNames
 {
     return [[self getRawStyle] valueForKeyPath:@"layers.id"];
@@ -1322,31 +1354,32 @@ MBGLView *mbglView = nullptr;
 + (UIImage *)resourceImageNamed:(NSString *)imageName
 {
     if ( ! [[imageName pathExtension] length])
+    {
         imageName = [imageName stringByAppendingString:@".png"];
+    }
 
-    return [UIImage imageWithContentsOfFile:[MGLMapView pathForBundleResourceNamed:imageName ofType:nil]];
+    return [UIImage imageWithContentsOfFile:[MGLMapView pathForBundleResourceNamed:imageName ofType:nil inDirectory:@""]];
 }
 
-+ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension
++ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension inDirectory:(NSString *)directory
 {
-    NSString *path;
-
-    NSString *resourceBundlePath = [[NSBundle mainBundle] pathForResource:@"MapboxGL"
-                                                                   ofType:@"bundle"];
-
-    if (resourceBundlePath)
-    {
-        path = [[NSBundle bundleWithPath:resourceBundlePath] pathForResource:name
-                                                                      ofType:extension];
-    }
-    else
-    {
-        path = [[NSBundle mainBundle] pathForResource:name ofType:extension];
-    }
+    NSString *path = [[NSBundle bundleWithPath:[MGLMapView resourceBundlePath]] pathForResource:name ofType:extension inDirectory:directory];
 
     NSAssert(path, @"Resource not found in application.");
 
     return path;
+}
+
++ (NSString *)resourceBundlePath
+{
+    NSString *resourceBundlePath = [[NSBundle mainBundle] pathForResource:@"MapboxGL" ofType:@"bundle"];
+
+    if ( ! resourceBundlePath)
+    {
+        resourceBundlePath = [[NSBundle mainBundle] bundlePath];
+    }
+
+    return resourceBundlePath;
 }
 
 - (void)swap

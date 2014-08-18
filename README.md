@@ -8,27 +8,49 @@ This project is Cocoa API bindings for [`mapbox-gl-native`](https://github.com/m
 
 ## Installation
 
-To use this library in your app directly, follow these steps. Everything you need is in `./dist`. You can also make use of [CocoaPods](http://cocoapods.org) by pointing at the `MapboxGL.podspec` file in the root of the repository (the library has not yet been added to the CocaoPods specs repository). 
+To use this library in your app directly, follow these steps. Everything you need is in `./dist`. You can also make use of [CocoaPods](http://cocoapods.org) by pointing at the `MapboxGL.podspec` file in the root of the repository (the library has not yet been added to the CocoaPods specs repository). 
 
  * Copy the contents of `./dist` into your project. 
  * Add header files in `Headers` to your project. 
  * Add `MapboxGL.bundle` to your app target's *Copy Bundle Resources* build phase. 
  * Add `libMapboxGL.a` to your project's linked libraries. 
- * Add `MapboxGL.mm` to your project's compiled sources (this is a stub file to trigger Objective-C++ compilation). 
  * Add the following dependent Cocoa frameworks to your project's linked libraries: 
+   - `CoreGraphics.framework`
    - `CoreLocation.framework`
    - `GLKit.framework`
+   - `OpenGLES.framework`
+   - `UIKit.framework`
+   - `libc++.dylib`
    - `libz.dylib`
  * Get a Mapbox API access token on [your account page](https://mapbox.com/account/apps). 
  * Import the necessary headers (like `MGLMapView.h`) into your project and use the APIs. 
 
 ```objective-c
 MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)
-                                            accessToken:@"<token>"];
+                                            accessToken:@"<access token string>"];
+
 [mapView setCenterCoordinate:CLLocationCoordinate2DMake(28.369334, -80.743779) 
                    zoomLevel:13 
                     animated:NO];
+
+[mapView useBundledStyleNamed:@"outdoors"];
+
 [self.view addSubview:mapView];
+```
+
+Swift works, too: 
+
+```swift
+let mapView = MGLMapView(frame: CGRect(x: 0, y: 0, width: 400, height: 400),
+                         accessToken: "<access token string>")
+
+mapView.setCenterCoordinate(CLLocationCoordinate2DMake(46.049900, -122.095678),
+        zoomLevel: 12,
+        animated: false)
+
+mapView.useBundledStyleNamed("outdoors")
+
+view.addSubview(mapView)
 ```
 
 ## Development
@@ -50,24 +72,16 @@ Tests are in `./test` and make use of the [KIF](https://github.com/kif-framework
 
 ## Styling
 
-See the [style spec](https://www.mapbox.com/mapbox-gl-style-spec/) for more information on the styling language. Contained within the `MapboxGL.bundle` assets is a `style.js`, which describes the entire default style bundled with the framework. 
+See the [online style reference](https://www.mapbox.com/mapbox-gl-style-spec/) for the latest documentation. Contained within the `MapboxGL.bundle` assets are a couple of starter styles in JSON format. 
 
-The styling language is a cascading language similar to CSS. It can be described in native code with Mapbox GL Cocoa such that the following style layer adjustments are possible: 
-
-```objective-c
-NSDictionary *buildingStyle = @{ @"stroke" : @{ @"type"  : MGLStyleValueTypeColor,
-                                                @"value" : [UIColor purpleColor] } };
-
-[self setStyleDescription:buildingStyle forLayer:@"buildings" inClass:@"default"];
-```
-
-By default, layer properties changes are updated instantly on the map. However, a transition animation duration can optionally be specified to animate the change between number, number pair, and even color property types. 
+The Cocoa programmatic styling API is currently under renovation per [#31](https://github.com/mapbox/mapbox-gl-cocoa/issues/31). In the meantime, just edit the stylesheet manually. 
 
 ## Related Projects
 
  * https://github.com/mapbox/mapbox-gl-native
  * https://github.com/mapbox/mapbox-gl-js
  * https://github.com/mapbox/mapbox-gl-style-spec
+ * https://github.com/mapbox/mapbox-gl-js
  * https://github.com/mapbox/vector-tile-spec
 
 ## Other notes

@@ -140,16 +140,16 @@
     if ( ! [self red:&r green:&g blue:&b alpha:&a])
         return 0;
 
-    r = MIN(MAX(r, 0.0f), 1.0f);
-    g = MIN(MAX(g, 0.0f), 1.0f);
-    b = MIN(MAX(b, 0.0f), 1.0f);
+    r = fminf(fmaxf(r, 0.0f), 1.0f);
+    g = fminf(fmaxf(g, 0.0f), 1.0f);
+    b = fminf(fmaxf(b, 0.0f), 1.0f);
 
     return (((int)roundf(r * 255)) << 16) | (((int)roundf(g * 255)) << 8) | (((int)roundf(b * 255)));
 }
 
 - (NSString *)hexStringFromColor
 {
-	return [NSString stringWithFormat:@"%0.6lX", self.rgbHex];
+	return [NSString stringWithFormat:@"%0.6X", (unsigned int)(self.rgbHex)];
 }
 
 + (UIColor *)colorWithHexString:(NSString *)hexString

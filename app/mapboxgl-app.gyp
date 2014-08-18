@@ -29,16 +29,15 @@
         'mac_bundle_resources': [
           '<!@(find ./img -type f)',
           '<!@(find ../mapbox-gl-cocoa/Resources -type f)',
-          '<(SHARED_INTERMEDIATE_DIR)/bin/style.min.js',
           '../spec/reference/v4.json'
         ],
         'link_settings': {
           'libraries': [
-            '$(SDKROOT)/System/Library/Frameworks/UIKit.framework',
-            '$(SDKROOT)/System/Library/Frameworks/OpenGLES.framework',
-            '$(SDKROOT)/System/Library/Frameworks/GLKit.framework',
+            '$(SDKROOT)/System/Library/Frameworks/CoreGraphics.framework',
             '$(SDKROOT)/System/Library/Frameworks/CoreLocation.framework',
-            '$(SDKROOT)/System/Library/Frameworks/CoreGraphics.framework'
+            '$(SDKROOT)/System/Library/Frameworks/GLKit.framework',
+            '$(SDKROOT)/System/Library/Frameworks/OpenGLES.framework',
+            '$(SDKROOT)/System/Library/Frameworks/UIKit.framework'
           ],
         },
         'xcode_settings': {
@@ -66,6 +65,7 @@
           }
         },
         "dependencies": [
+            "../../../mapboxgl.gyp:bundle_styles",
             "../../../mapboxgl.gyp:mapboxgl-ios"
         ]
     }
