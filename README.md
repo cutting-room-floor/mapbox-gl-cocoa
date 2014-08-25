@@ -59,7 +59,7 @@ If you'd like to contribute to this project, go instead to [Mapbox GL native](ht
 
 ## Packaging
 
-This library, when standalone, makes use of static inclusion of [Mapbox GL](https://github.com/mapbox/mapbox-gl-native), the underlying C++ library. To package a version for release, run `./pkg/package.sh` while this project is checked out inside of Mapbox GL. This will update the contents of `./dist`. 
+This library, when standalone, makes use of static inclusion of [Mapbox GL](https://github.com/mapbox/mapbox-gl-native), the underlying C++ library. To package a version for release, run `./pkg/package.sh` while this project is checked out inside of Mapbox GL. This will update the contents of `./dist`. This includes [`versions.txt`](./dist/versions.txt), which stores the hashes that the static library was built from. 
 
 ## Testing
 
