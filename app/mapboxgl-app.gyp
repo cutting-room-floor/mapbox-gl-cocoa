@@ -19,6 +19,7 @@
             '<!@(find ../mapbox-gl-cocoa -type f -name "*.mm")',
             "../../../common/settings_nsuserdefaults.hpp",
             "../../../common/settings_nsuserdefaults.mm",
+            "../../../common/platform_nsstring.mm",
             "../../../common/foundation_request.h",
             "../../../common/foundation_request.mm",
             "../../../common/nslog_log.hpp",
