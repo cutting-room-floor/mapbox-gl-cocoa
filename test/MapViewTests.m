@@ -105,7 +105,7 @@
 - (void)testPan {
     CLLocationCoordinate2D centerCoordinate = tester.mapView.centerCoordinate;
 
-    [tester.mapView dragFromPoint:CGPointMake(10, 10) toPoint:CGPointMake(50, 50)];
+    [tester.mapView dragFromPoint:CGPointMake(10, 10) toPoint:CGPointMake(300, 300) steps:10];
 
     XCTAssertTrue(tester.mapView.centerCoordinate.latitude > centerCoordinate.latitude);
     XCTAssertTrue(tester.mapView.centerCoordinate.longitude < centerCoordinate.longitude);
@@ -115,7 +115,7 @@
     tester.mapView.scrollEnabled = NO;
     CLLocationCoordinate2D centerCoordinate = tester.mapView.centerCoordinate;
 
-    [tester.mapView dragFromPoint:CGPointMake(10, 10) toPoint:CGPointMake(50, 50)];
+    [tester.mapView dragFromPoint:CGPointMake(10, 10) toPoint:CGPointMake(300, 300) steps:10];
 
     __KIFAssertEqual(centerCoordinate.latitude, tester.mapView.centerCoordinate.latitude);
     __KIFAssertEqual(centerCoordinate.longitude, tester.mapView.centerCoordinate.longitude);
