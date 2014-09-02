@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mapbox/mapbox-gl-cocoa.svg)](https://travis-ci.org/mapbox/mapbox-gl-cocoa)
 
-This project is Cocoa API bindings for [`mapbox-gl-native`](https://github.com/mapbox/mapbox-gl-native). Use or edit this project to get access to Mapbox vector maps and dynamic OpenGL-based styling in your iOS apps by using `MGLMapView`. 
+This project is Cocoa API bindings for [`mapbox-gl-native`](https://github.com/mapbox/mapbox-gl-native). Use or edit this project to get access to vector maps (via [Mapbox Vector Tiles](https://www.mapbox.com/blog/vector-tiles)) and dynamic OpenGL-based styling in your iOS apps by using `MGLMapView`. 
 
 ![](https://raw.githubusercontent.com/mapbox/mapbox-gl-cocoa/master/pkg/screenshot.png)
 
