@@ -71,6 +71,18 @@
 *   The default value of this property is `YES`. */
 @property(nonatomic, getter=isRotateEnabled) BOOL rotateEnabled;
 
+/** A Boolean value indicating whether to show a small logo in the corner of the map view. Defaults to `YES`. */
+@property (nonatomic, assign) BOOL showLogoBug;
+
+/** @name Attributing Map Data */
+
+/** Whether to hide map data attribution for the map view.
+*
+*   If this is set to NO, a small disclosure button will be added to the lower-right of the map view, allowing the user to tap it to display a modal view showing map data attribution info. The modal presentation uses a page curl animation to reveal the attribution info under the map view.
+*
+*   The default value is NO, meaning that attribution info will be shown. Please ensure that the terms & conditions of any map data used in your application are satisfied before setting this value to YES. */
+@property (nonatomic, assign) BOOL hideAttribution;
+
 #pragma mark - Accessing the Delegate
 
 /** @name Accessing the Delegate */
