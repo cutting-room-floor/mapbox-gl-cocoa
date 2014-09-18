@@ -173,12 +173,24 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 
 - (void)locateUser
 {
-    if ([CLLocationManager instancesRespondToSelector:@selector(requestWhenInUseAuthorization)])
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied)
     {
-        [_locationManager requestWhenInUseAuthorization];
+        [[[UIAlertView alloc] initWithTitle:@"Authorization Denied"
+                                    message:@"Please enable location services for this app in Privacy settings."
+                                   delegate:nil
+                          cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
     }
-
-    [self.locationManager startUpdatingLocation];
+    else
+    {
+        if ([CLLocationManager instancesRespondToSelector:@selector(requestWhenInUseAuthorization)])
+        {
+            [_locationManager requestWhenInUseAuthorization];
+        }
+        else
+        {
+            [self.locationManager startUpdatingLocation];
+        }
+    }
 }
 
 #pragma mark - Destruction
@@ -199,9 +211,20 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    if (status == kCLAuthorizationStatusAuthorized || status == kCLAuthorizationStatusAuthorizedWhenInUse)
+    switch (status)
     {
-        [manager startUpdatingLocation];
+        case kCLAuthorizationStatusAuthorized:
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+#endif
+        {
+            [manager startUpdatingLocation];
+            break;
+        }
+        default:
+        {
+            NSLog(@"user location permissions not authorized");
+        }
     }
 }
 
