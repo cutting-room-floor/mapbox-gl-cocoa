@@ -173,6 +173,11 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 
 - (void)locateUser
 {
+    if ([CLLocationManager instancesRespondToSelector:@selector(requestWhenInUseAuthorization)])
+    {
+        [_locationManager requestWhenInUseAuthorization];
+    }
+
     [self.locationManager startUpdatingLocation];
 }
 
@@ -191,6 +196,14 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 }
 
 #pragma mark - User location
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    if (status == kCLAuthorizationStatusAuthorized || status == kCLAuthorizationStatusAuthorizedWhenInUse)
+    {
+        [manager startUpdatingLocation];
+    }
+}
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"

@@ -43,5 +43,7 @@
 	</array>
 	<key>NSHumanReadableCopyright</key>
 	<string>(c) 2014 Mapbox</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The map will be centered on the user&apos;s location.</string>
 </dict>
 </plist>
