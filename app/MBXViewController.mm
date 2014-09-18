@@ -225,7 +225,6 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
         }
         default:
         {
-            NSLog(@"user location permissions not authorized");
         }
     }
 }
