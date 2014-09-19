@@ -14,8 +14,8 @@
 		DD043364196DBBD500E6F39D /* MGLTViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD043360196DBBD500E6F39D /* MGLTViewController.m */; };
 		DD043366196DBBE000E6F39D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DD043365196DBBE000E6F39D /* main.m */; };
 		DD1A9EA8199BEA0D007BC651 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD1A9EA7199BEA0D007BC651 /* libc++.dylib */; };
-		DD8A7909196DC03E00FAD883 /* libMapboxGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8A7906196DC03E00FAD883 /* libMapboxGL.a */; };
-		DD8A790A196DC03E00FAD883 /* MapboxGL.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DD8A7907196DC03E00FAD883 /* MapboxGL.bundle */; };
+		DD61240819CCF06E006845B1 /* libMapboxGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD61240619CCF06E006845B1 /* libMapboxGL.a */; };
+		DD61240919CCF06E006845B1 /* MapboxGL.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DD61240719CCF06E006845B1 /* MapboxGL.bundle */; };
 		DD8A790D196DC0A900FAD883 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8A790C196DC0A900FAD883 /* libz.dylib */; };
 		DD8A790F196DC0AD00FAD883 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8A790E196DC0AD00FAD883 /* GLKit.framework */; };
 		DD8A7911196DC0BB00FAD883 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8A7910196DC0BB00FAD883 /* CoreLocation.framework */; };
@@ -85,14 +85,14 @@
 		DD043365196DBBE000E6F39D /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = SOURCE_ROOT; };
 		DD043367196DBCC200E6F39D /* App-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "App-Info.plist"; sourceTree = SOURCE_ROOT; };
 		DD1A9EA7199BEA0D007BC651 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
-		DD8A7900196DC03E00FAD883 /* MGLMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGLMapView.h; path = ../dist/Headers/MGLMapView.h; sourceTree = SOURCE_ROOT; };
-		DD8A7901196DC03E00FAD883 /* MGLStyleFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGLStyleFunctionValue.h; path = ../dist/Headers/MGLStyleFunctionValue.h; sourceTree = SOURCE_ROOT; };
-		DD8A7902196DC03E00FAD883 /* MGLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MGLTypes.h; path = ../dist/Headers/MGLTypes.h; sourceTree = SOURCE_ROOT; };
-		DD8A7903196DC03E00FAD883 /* NSArray+MGLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+MGLAdditions.h"; path = "../dist/Headers/NSArray+MGLAdditions.h"; sourceTree = SOURCE_ROOT; };
-		DD8A7904196DC03E00FAD883 /* NSDictionary+MGLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+MGLAdditions.h"; path = "../dist/Headers/NSDictionary+MGLAdditions.h"; sourceTree = SOURCE_ROOT; };
-		DD8A7905196DC03E00FAD883 /* UIColor+MGLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+MGLAdditions.h"; path = "../dist/Headers/UIColor+MGLAdditions.h"; sourceTree = SOURCE_ROOT; };
-		DD8A7906196DC03E00FAD883 /* libMapboxGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMapboxGL.a; path = ../dist/libMapboxGL.a; sourceTree = SOURCE_ROOT; };
-		DD8A7907196DC03E00FAD883 /* MapboxGL.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = MapboxGL.bundle; path = ../dist/MapboxGL.bundle; sourceTree = SOURCE_ROOT; };
+		DD61240019CCF06E006845B1 /* MGLMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGLMapView.h; sourceTree = "<group>"; };
+		DD61240119CCF06E006845B1 /* MGLStyleFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGLStyleFunctionValue.h; sourceTree = "<group>"; };
+		DD61240219CCF06E006845B1 /* MGLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGLTypes.h; sourceTree = "<group>"; };
+		DD61240319CCF06E006845B1 /* NSArray+MGLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+MGLAdditions.h"; sourceTree = "<group>"; };
+		DD61240419CCF06E006845B1 /* NSDictionary+MGLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+MGLAdditions.h"; sourceTree = "<group>"; };
+		DD61240519CCF06E006845B1 /* UIColor+MGLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+MGLAdditions.h"; sourceTree = "<group>"; };
+		DD61240619CCF06E006845B1 /* libMapboxGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMapboxGL.a; path = ../../dist/static/libMapboxGL.a; sourceTree = "<group>"; };
+		DD61240719CCF06E006845B1 /* MapboxGL.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = MapboxGL.bundle; path = ../../dist/static/MapboxGL.bundle; sourceTree = "<group>"; };
 		DD8A790C196DC0A900FAD883 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		DD8A790E196DC0AD00FAD883 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		DD8A7910196DC0BB00FAD883 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -116,7 +116,7 @@
 				DD043327196DB9BC00E6F39D /* Foundation.framework in Frameworks */,
 				DD8A790F196DC0AD00FAD883 /* GLKit.framework in Frameworks */,
 				DD04332B196DB9BC00E6F39D /* UIKit.framework in Frameworks */,
-				DD8A7909196DC03E00FAD883 /* libMapboxGL.a in Frameworks */,
+				DD61240819CCF06E006845B1 /* libMapboxGL.a in Frameworks */,
 				DD1A9EA8199BEA0D007BC651 /* libc++.dylib in Frameworks */,
 				DD8A790D196DC0A900FAD883 /* libz.dylib in Frameworks */,
 			);
@@ -194,28 +194,28 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		DD6123FF19CCF06E006845B1 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				DD61240019CCF06E006845B1 /* MGLMapView.h */,
+				DD61240119CCF06E006845B1 /* MGLStyleFunctionValue.h */,
+				DD61240219CCF06E006845B1 /* MGLTypes.h */,
+				DD61240319CCF06E006845B1 /* NSArray+MGLAdditions.h */,
+				DD61240419CCF06E006845B1 /* NSDictionary+MGLAdditions.h */,
+				DD61240519CCF06E006845B1 /* UIColor+MGLAdditions.h */,
+			);
+			name = Headers;
+			path = ../../dist/static/Headers;
+			sourceTree = "<group>";
+		};
 		DD8A77AD196DBFDA00FAD883 /* GL Library */ = {
 			isa = PBXGroup;
 			children = (
-				DD8A78FF196DC03E00FAD883 /* Headers */,
-				DD8A7906196DC03E00FAD883 /* libMapboxGL.a */,
-				DD8A7907196DC03E00FAD883 /* MapboxGL.bundle */,
+				DD6123FF19CCF06E006845B1 /* Headers */,
+				DD61240619CCF06E006845B1 /* libMapboxGL.a */,
+				DD61240719CCF06E006845B1 /* MapboxGL.bundle */,
 			);
 			name = "GL Library";
-			sourceTree = "<group>";
-		};
-		DD8A78FF196DC03E00FAD883 /* Headers */ = {
-			isa = PBXGroup;
-			children = (
-				DD8A7900196DC03E00FAD883 /* MGLMapView.h */,
-				DD8A7901196DC03E00FAD883 /* MGLStyleFunctionValue.h */,
-				DD8A7902196DC03E00FAD883 /* MGLTypes.h */,
-				DD8A7903196DC03E00FAD883 /* NSArray+MGLAdditions.h */,
-				DD8A7904196DC03E00FAD883 /* NSDictionary+MGLAdditions.h */,
-				DD8A7905196DC03E00FAD883 /* UIColor+MGLAdditions.h */,
-			);
-			name = Headers;
-			path = ../../dist/Headers;
 			sourceTree = "<group>";
 		};
 		DDBD0139196DC38D0033959E /* Tests */ = {
@@ -381,7 +381,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD8A790A196DC03E00FAD883 /* MapboxGL.bundle in Resources */,
+				DD61240919CCF06E006845B1 /* MapboxGL.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -519,6 +519,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../dist,
+					"/Users/incanus/Documents/Projects/Mapbox/gl-native/ios/mapbox-gl-cocoa/dist/static",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -548,6 +549,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../dist,
+					"/Users/incanus/Documents/Projects/Mapbox/gl-native/ios/mapbox-gl-cocoa/dist/static",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
