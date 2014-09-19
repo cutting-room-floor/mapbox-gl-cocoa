@@ -1372,12 +1372,9 @@ MBGLView *mbglView = nullptr;
 
 + (NSString *)resourceBundlePath
 {
-    NSString *resourceBundlePath = [[NSBundle mainBundle] pathForResource:@"MapboxGL" ofType:@"bundle"];
+    NSString *resourceBundlePath = [[NSBundle bundleForClass:[MGLMapView class]] pathForResource:@"MapboxGL" ofType:@"bundle"];
 
-    if ( ! resourceBundlePath)
-    {
-        resourceBundlePath = [[NSBundle mainBundle] bundlePath];
-    }
+    if ( ! resourceBundlePath) resourceBundlePath = [[NSBundle mainBundle] bundlePath];
 
     return resourceBundlePath;
 }

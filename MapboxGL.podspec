@@ -16,17 +16,17 @@ Pod::Spec.new do |m|
   m.platform              = :ios
   m.ios.deployment_target = '7.0'
 
-  m.source_files = 'dist/Headers/*.h'
+  m.source_files = 'dist/static/Headers/*.h'
 
   m.requires_arc = true
 
-  m.resource_bundle = { 'MapboxGL' => 'dist/MapboxGL.bundle/*' }
+  m.resource_bundle = { 'MapboxGL' => 'dist/static/MapboxGL.bundle/*' }
 
   m.frameworks = 'CoreLocation', 'Foundation', 'GLKit', 'UIKit'
 
   m.libraries = 'MapboxGL', 'c++', 'z'
 
-  m.vendored_libraries = 'dist/libMapboxGL.a'
+  m.vendored_libraries = 'dist/static/libMapboxGL.a'
 
   m.xcconfig = { 'OTHER_CPLUSPLUSFLAGS' => '-std=gnu++11 -stdlib=libc++' }
 
