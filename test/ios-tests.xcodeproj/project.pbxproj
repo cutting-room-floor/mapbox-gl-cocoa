@@ -518,8 +518,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					../dist,
-					"/Users/incanus/Documents/Projects/Mapbox/gl-native/ios/mapbox-gl-cocoa/dist/static",
+					../dist/static,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -548,8 +547,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					../dist,
-					"/Users/incanus/Documents/Projects/Mapbox/gl-native/ios/mapbox-gl-cocoa/dist/static",
+					../dist/static,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
