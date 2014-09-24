@@ -24,6 +24,12 @@
 	<string>0.0.1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>(c) 2014 Mapbox</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The map will be centered on the user's location.</string>
+	<key>UILaunchStoryboardName</key>
+	<string>Default</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
@@ -41,9 +47,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSHumanReadableCopyright</key>
-	<string>(c) 2014 Mapbox</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>The map will be centered on the user&apos;s location.</string>
 </dict>
 </plist>
