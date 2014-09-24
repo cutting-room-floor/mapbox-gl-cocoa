@@ -196,6 +196,7 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
         if ([CLLocationManager instancesRespondToSelector:@selector(requestWhenInUseAuthorization)])
         {
             [_locationManager requestWhenInUseAuthorization];
+            [self.locationManager startUpdatingLocation];
         }
         else
 #endif
