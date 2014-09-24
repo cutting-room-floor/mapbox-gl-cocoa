@@ -1,6 +1,5 @@
 #import "MGLMapView.h"
 
-#import "foundation_request.h"
 #import "nslog_log.hpp"
 
 #import <GLKit/GLKit.h>
@@ -1393,6 +1392,12 @@ class MBGLView : public mbgl::View
     public:
         MBGLView(MGLMapView *nativeView) : nativeView(nativeView) {}
         virtual ~MBGLView() {}
+
+
+    void notify()
+    {
+        // no-op
+    }
 
     void notify_map_change(mbgl::MapChange change, mbgl::timestamp delay = 0)
     {
