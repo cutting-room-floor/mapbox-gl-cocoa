@@ -21,6 +21,7 @@
             "../../../common/settings_nsuserdefaults.mm",
             "../../../common/platform_nsstring.mm",
             "../../../common/http_request_baton_cocoa.mm",
+            "../../../common/ios.mm",
             "../../../common/nslog_log.hpp",
             "../../../common/nslog_log.mm",
         ],

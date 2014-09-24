@@ -119,8 +119,6 @@ MBGLView *mbglView = nullptr;
 
 - (void)setStyleJSON:(NSString *)styleJSON
 {
-    mbglMap->stop();
-
     if ( ! styleJSON)
     {
         if ( ! [@(mbglMap->getAccessToken().c_str()) length])
