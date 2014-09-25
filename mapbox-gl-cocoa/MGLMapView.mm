@@ -1421,6 +1421,11 @@ class MBGLView : public mbgl::View
         [EAGLContext setCurrentContext:nativeView.context];
     }
 
+    void make_inactive()
+    {
+        [EAGLContext setCurrentContext:nil];
+    }
+
     void swap()
     {
         [nativeView performSelectorOnMainThread:@selector(swap)
