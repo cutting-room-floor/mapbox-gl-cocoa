@@ -7,6 +7,7 @@
 
 #include <mbgl/mbgl.hpp>
 #include <mbgl/platform/platform.hpp>
+#include "Reachability.h"
 
 #import "MGLTypes.h"
 #import "MGLStyleFunctionValue.h"
@@ -175,6 +176,15 @@ MBGLView *mbglView = nullptr;
     mbglMap = new mbgl::Map(*mbglView);
     mbglMap->resize(self.bounds.size.width, self.bounds.size.height, _glView.contentScaleFactor, _glView.drawableWidth, _glView.drawableHeight);
 
+    // Notify map object when network reachability status changes.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reachabilityChanged:)
+                                                 name:kReachabilityChangedNotification
+                                               object:nil];
+
+    Reachability* reachability = [Reachability reachabilityForInternetConnection];
+    [reachability startNotifier];
+
     // setup logo bug
     //
     _logoBug = [[UIImageView alloc] initWithImage:[MGLMapView resourceImageNamed:@"mapbox.png"]];
@@ -255,6 +265,12 @@ MBGLView *mbglView = nullptr;
     _regionChangeDelegateQueue.maxConcurrentOperationCount = 1;
 
     return YES;
+}
+
+-(void)reachabilityChanged:(NSNotification*)notification
+{
+    Reachability *reachability = [notification object];
+    mbglMap->setReachability([reachability isReachable]);
 }
 
 - (void)dealloc
