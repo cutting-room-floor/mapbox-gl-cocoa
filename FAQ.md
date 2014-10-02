@@ -4,7 +4,7 @@ Mapbox GL is a completely new renderer technology which will eventually replace 
 
 ### When will Mapbox GL be released? 
 
-The library is [open source](https://github.com/mapbox/mapbox-gl-cooca) right now, but an official, production-recommended release will come later in 2014. 
+The library is [open source](https://github.com/mapbox/mapbox-gl-cocoa) right now, but an official, production-recommended release will come later in 2014. 
 
 ### What iOS versions will be supported? 
 
