@@ -1,0 +1,3 @@
+[submodule "test/KIF"]
+	path = test/KIF
+	url = https://github.com/mapbox/KIF.git

@@ -1,12 +1,13 @@
 #import "MGLMapView.h"
 
-#import "foundation_request.h"
+#import "nslog_log.hpp"
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
 
-#include <llmr/llmr.hpp>
-#include <llmr/platform/platform.hpp>
+#include <mbgl/mbgl.hpp>
+#include <mbgl/platform/platform.hpp>
+#include "Reachability.h"
 
 #import "MGLTypes.h"
 #import "MGLStyleFunctionValue.h"
@@ -30,17 +31,20 @@ extern NSString *const MGLStyleValueFunctionAllowed;
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *glView;
+@property (nonatomic) NSOperationQueue *regionChangeDelegateQueue;
 @property (nonatomic) UIImageView *compass;
 @property (nonatomic) UIImageView *logoBug;
 @property (nonatomic) UIButton *attributionButton;
 @property (nonatomic) UIPanGestureRecognizer *pan;
 @property (nonatomic) UIPinchGestureRecognizer *pinch;
 @property (nonatomic) UIRotationGestureRecognizer *rotate;
+@property (nonatomic) UILongPressGestureRecognizer *quickZoom;
 @property (nonatomic, readonly) NSDictionary *allowedStyleTypes;
 @property (nonatomic) CGPoint centerPoint;
 @property (nonatomic) CGFloat scale;
 @property (nonatomic) CGFloat angle;
 @property (nonatomic) CGFloat quickZoomStart;
+@property (nonatomic, getter=isAnimatingGesture) BOOL animatingGesture;
 
 @end
 
@@ -64,50 +68,96 @@ extern NSString *const MGLStyleValueFunctionAllowed;
 
 @dynamic debugActive;
 
-class LLMRView;
+class MBGLView;
 
-llmr::Map *llmrMap = nullptr;
-LLMRView *llmrView = nullptr;
+mbgl::Map *mbglMap = nullptr;
+MBGLView *mbglView = nullptr;
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame styleJSON:(NSString *)styleJSON accessToken:(NSString *)accessToken
 {
     self = [super initWithFrame:frame];
 
-    if (self) return [self commonInit];
+    if (self && [self commonInit])
+    {
+        if (accessToken) [self setAccessToken:accessToken];
 
-    return nil;
+        if (styleJSON || accessToken)
+        {
+            // If style is set directly, pass it on. If not, if we have an access
+            // token, we can pass nil and use the default style.
+            //
+            [self setStyleJSON:styleJSON];
+        }
+    }
+
+    return self;
 }
 
-- (id)initWithCoder:(NSCoder *)decoder
+- (instancetype)initWithFrame:(CGRect)frame accessToken:(NSString *)accessToken
+{
+    return [self initWithFrame:frame styleJSON:nil accessToken:accessToken];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder
 {
     self = [super initWithCoder:decoder];
 
-    if (self) return [self commonInit];
+    if (self && [self commonInit])
+    {
+        return self;
+    }
 
     return nil;
 }
 
-- (NSString *)defaultStyleJSON
+- (void)setAccessToken:(NSString *)accessToken
 {
-    NSString *path = [MGLMapView pathForBundleResourceNamed:@"style.min" ofType:@"js"];
-
-    NSString *json = [NSString stringWithContentsOfFile:path encoding:[NSString defaultCStringEncoding] error:nil];
-
-    return json;
+    if (accessToken)
+    {
+        mbglMap->setAccessToken((std::string)[accessToken cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    }
 }
 
-- (id)commonInit
+- (void)setStyleJSON:(NSString *)styleJSON
 {
+    if ( ! styleJSON)
+    {
+        if ( ! [@(mbglMap->getAccessToken().c_str()) length])
+        {
+            [NSException raise:@"invalid access token"
+                        format:@"default map style requires a Mapbox API access token"];
+        }
+
+        [self useBundledStyleNamed:@"bright"];
+    }
+    else
+    {
+        mbglMap->setStyleJSON((std::string)[styleJSON cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    }
+
+    mbglMap->start();
+}
+
+- (BOOL)commonInit
+{
+    // set logging backend
+    //
+    mbgl::Log::Set<mbgl::NSLogBackend>();
+
     // create context
     //
     _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 
     if ( ! _context)
     {
-        NSLog(@"Failed to create OpenGL ES context");
+        mbgl::Log::Error(mbgl::Event::Setup, "Failed to create OpenGL ES context");
 
-        return nil;
+        return NO;
     }
+
+    // setup accessibility
+    //
+    self.accessibilityLabel = @"Map";
 
     // create GL view
     //
@@ -120,15 +170,25 @@ LLMRView *llmrView = nullptr;
     [_glView bindDrawable];
     [self addSubview:_glView];
 
-    // setup llmr map
+    // setup mbgl map
     //
-    llmrView = new LLMRView(self);
-    llmrMap = new llmr::Map(*llmrView);
-    llmrMap->resize(self.bounds.size.width, self.bounds.size.height, _glView.contentScaleFactor, _glView.drawableWidth, _glView.drawableHeight);
+    mbglView = new MBGLView(self);
+    mbglMap = new mbgl::Map(*mbglView);
+    mbglMap->resize(self.bounds.size.width, self.bounds.size.height, _glView.contentScaleFactor, _glView.drawableWidth, _glView.drawableHeight);
+
+    // Notify map object when network reachability status changes.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reachabilityChanged:)
+                                                 name:kReachabilityChangedNotification
+                                               object:nil];
+
+    Reachability* reachability = [Reachability reachabilityForInternetConnection];
+    [reachability startNotifier];
 
     // setup logo bug
     //
     _logoBug = [[UIImageView alloc] initWithImage:[MGLMapView resourceImageNamed:@"mapbox.png"]];
+    _logoBug.accessibilityLabel = @"Mapbox logo";
     _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
     _logoBug.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_logoBug];
@@ -136,6 +196,7 @@ LLMRView *llmrView = nullptr;
     // setup attribution
     //
     _attributionButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+    _attributionButton.accessibilityLabel = @"Attribution info";
     [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
     _attributionButton.frame = CGRectMake(self.bounds.size.width - _attributionButton.bounds.size.width - 8, self.bounds.size.height - _attributionButton.bounds.size.height - 8, _attributionButton.bounds.size.width, _attributionButton.bounds.size.height);
     _attributionButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -144,6 +205,7 @@ LLMRView *llmrView = nullptr;
     // setup compass
     //
     _compass = [[UIImageView alloc] initWithImage:[MGLMapView resourceImageNamed:@"Compass.png"]];
+    _compass.accessibilityLabel = @"Compass";
     UIImage *compassImage = [MGLMapView resourceImageNamed:@"Compass.png"];
     _compass.frame = CGRectMake(0, 0, compassImage.size.width, compassImage.size.height);
     _compass.alpha = 0;
@@ -182,10 +244,10 @@ LLMRView *llmrView = nullptr;
 
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
     {
-        UILongPressGestureRecognizer *quickZoom = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleQuickZoomGesture:)];
-        quickZoom.numberOfTapsRequired = 1;
-        quickZoom.minimumPressDuration = 0.25;
-        [self addGestureRecognizer:quickZoom];
+        _quickZoom = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleQuickZoomGesture:)];
+        _quickZoom.numberOfTapsRequired = 1;
+        _quickZoom.minimumPressDuration = 0.25;
+        [self addGestureRecognizer:_quickZoom];
     }
 
     // observe app activity
@@ -193,29 +255,40 @@ LLMRView *llmrView = nullptr;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
 
-    // start it up
+    // set initial position
     //
-    llmrMap->setStyleJSON((std::string)[[self defaultStyleJSON] cStringUsingEncoding:[NSString defaultCStringEncoding]]);
-    llmrMap->setLonLatZoom(0, 0, llmrMap->getMinZoom());
-    llmrMap->start();
+    mbglMap->setLonLatZoom(0, 0, mbglMap->getMinZoom());
 
-    return self;
+    // setup change delegate queue
+    //
+    _regionChangeDelegateQueue = [NSOperationQueue new];
+    _regionChangeDelegateQueue.maxConcurrentOperationCount = 1;
+
+    return YES;
+}
+
+-(void)reachabilityChanged:(NSNotification*)notification
+{
+    Reachability *reachability = [notification object];
+    mbglMap->setReachability([reachability isReachable]);
 }
 
 - (void)dealloc
 {
+    [_regionChangeDelegateQueue cancelAllOperations];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    if (llmrMap)
+    if (mbglMap)
     {
-        delete llmrMap;
-        llmrMap = nullptr;
+        delete mbglMap;
+        mbglMap = nullptr;
     }
 
-    if (llmrView)
+    if (mbglView)
     {
-        delete llmrView;
-        llmrView = nullptr;
+        delete mbglView;
+        mbglView = nullptr;
     }
 
     if ([[EAGLContext currentContext] isEqual:_context])
@@ -339,14 +412,24 @@ LLMRView *llmrView = nullptr;
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    llmrMap->resize(rect.size.width, rect.size.height, view.contentScaleFactor, view.drawableWidth, view.drawableHeight);
+    mbglMap->resize(rect.size.width, rect.size.height, view.contentScaleFactor, view.drawableWidth, view.drawableHeight);
 }
 
 - (void)layoutSubviews
 {
-    llmrMap->update();
+    mbglMap->update();
 
     [super layoutSubviews];
+}
+
++ (CGFloat)degreesToRadians:(CGFloat)degrees
+{
+    return degrees * M_PI / 180;
+}
+
++ (CGFloat)radiansToDegrees:(CGFloat)radians
+{
+    return radians * 180 / M_PI;
 }
 
 #pragma clang diagnostic push
@@ -354,7 +437,7 @@ LLMRView *llmrView = nullptr;
 
 - (void)appDidBackground:(NSNotification *)notification
 {
-    llmrMap->stop();
+    mbglMap->stop();
 
     [self.glView deleteDrawable];
 }
@@ -363,7 +446,7 @@ LLMRView *llmrView = nullptr;
 {
     [self.glView bindDrawable];
 
-    llmrMap->start();
+    mbglMap->start();
 }
 
 - (void)handleCompassTapGesture:(id)sender
@@ -377,7 +460,7 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isScrollEnabled) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (pan.state == UIGestureRecognizerStateBegan)
     {
@@ -388,25 +471,42 @@ LLMRView *llmrView = nullptr;
         CGPoint delta = CGPointMake([pan translationInView:pan.view].x - self.centerPoint.x,
                                     [pan translationInView:pan.view].y - self.centerPoint.y);
 
-        llmrMap->moveBy(delta.x, delta.y);
+        mbglMap->moveBy(delta.x, delta.y);
 
         self.centerPoint = CGPointMake(self.centerPoint.x + delta.x, self.centerPoint.y + delta.y);
     }
-    else if (pan.state == UIGestureRecognizerStateEnded)
+    else if (pan.state == UIGestureRecognizerStateEnded || pan.state == UIGestureRecognizerStateCancelled)
     {
-        CGFloat ease = 0.25;
-
         CGPoint velocity = [pan velocityInView:pan.view];
-        velocity.x = velocity.x * ease;
-        velocity.y = velocity.y * ease;
+        CGFloat duration = 0;
 
-        CGFloat speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-        CGFloat deceleration = 2500;
-        CGFloat duration = speed / (deceleration * ease);
+        if ( ! CGPointEqualToPoint(velocity, CGPointZero))
+        {
+            CGFloat ease = 0.25;
+
+            velocity.x = velocity.x * ease;
+            velocity.y = velocity.y * ease;
+
+            CGFloat speed = sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+            CGFloat deceleration = 2500;
+            duration = speed / (deceleration * ease);
+        }
 
         CGPoint offset = CGPointMake(velocity.x * duration / 2, velocity.y * duration / 2);
 
-        llmrMap->moveBy(offset.x, offset.y, duration);
+        mbglMap->moveBy(offset.x, offset.y, duration);
+
+        if (duration)
+        {
+            self.animatingGesture = YES;
+
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
+            {
+                self.animatingGesture = NO;
+
+                [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+            });
+        }
     }
 }
 
@@ -414,29 +514,31 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    if (llmrMap->getZoom() <= llmrMap->getMinZoom() && pinch.scale < 1) return;
+    if (mbglMap->getZoom() <= mbglMap->getMinZoom() && pinch.scale < 1) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (pinch.state == UIGestureRecognizerStateBegan)
     {
-        llmrMap->startScaling();
+        mbglMap->startScaling();
 
-        self.scale = llmrMap->getScale();
+        self.scale = mbglMap->getScale();
     }
     else if (pinch.state == UIGestureRecognizerStateChanged)
     {
         CGFloat newScale = self.scale * pinch.scale;
 
-        if (log2(newScale) < llmrMap->getMinZoom()) return;
+        if (log2(newScale) < mbglMap->getMinZoom()) return;
 
-        double scale = llmrMap->getScale();
+        double scale = mbglMap->getScale();
 
-        llmrMap->scaleBy(newScale / scale, [pinch locationInView:pinch.view].x, [pinch locationInView:pinch.view].y);
+        mbglMap->scaleBy(newScale / scale, [pinch locationInView:pinch.view].x, [pinch locationInView:pinch.view].y);
     }
     else if (pinch.state == UIGestureRecognizerStateEnded || pinch.state == UIGestureRecognizerStateCancelled)
     {
-        llmrMap->stopScaling();
+        mbglMap->stopScaling();
+
+        [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -444,23 +546,27 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isRotateEnabled) return;
 
-    if ( ! llmrMap->canRotate()) return;
+    if ( ! mbglMap->canRotate()) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (rotate.state == UIGestureRecognizerStateBegan)
     {
-        llmrMap->startRotating();
+        mbglMap->startRotating();
 
-        self.angle = llmrMap->getAngle();
+        self.angle = [MGLMapView degreesToRadians:mbglMap->getBearing()] * -1;
     }
     else if (rotate.state == UIGestureRecognizerStateChanged)
     {
-        llmrMap->setAngle(self.angle + rotate.rotation, [rotate locationInView:rotate.view].x, [rotate locationInView:rotate.view].y);
+        mbglMap->setBearing([MGLMapView radiansToDegrees:(self.angle + rotate.rotation)] * -1,
+                            [rotate locationInView:rotate.view].x,
+                            [rotate locationInView:rotate.view].y);
     }
     else if (rotate.state == UIGestureRecognizerStateEnded || rotate.state == UIGestureRecognizerStateCancelled)
     {
-        llmrMap->stopRotating();
+        mbglMap->stopRotating();
+
+        [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -468,11 +574,22 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (doubleTap.state == UIGestureRecognizerStateEnded)
     {
-        llmrMap->scaleBy(2, [doubleTap locationInView:doubleTap.view].x, [doubleTap locationInView:doubleTap.view].y, 0.3);
+        CGFloat duration = 0.3;
+
+        mbglMap->scaleBy(2, [doubleTap locationInView:doubleTap.view].x, [doubleTap locationInView:doubleTap.view].y, duration);
+
+        self.animatingGesture = YES;
+
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
+        {
+            self.animatingGesture = NO;
+
+            [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+        });
     }
 }
 
@@ -480,13 +597,24 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    if (llmrMap->getZoom() == llmrMap->getMinZoom()) return;
+    if (mbglMap->getZoom() == mbglMap->getMinZoom()) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (twoFingerTap.state == UIGestureRecognizerStateEnded)
     {
-        llmrMap->scaleBy(0.5, [twoFingerTap locationInView:twoFingerTap.view].x, [twoFingerTap locationInView:twoFingerTap.view].y, 0.3);
+        CGFloat duration = 0.3;
+
+        mbglMap->scaleBy(0.5, [twoFingerTap locationInView:twoFingerTap.view].x, [twoFingerTap locationInView:twoFingerTap.view].y, duration);
+
+        self.animatingGesture = YES;
+
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
+        {
+            self.animatingGesture = NO;
+
+            [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+        });
     }
 }
 
@@ -494,11 +622,11 @@ LLMRView *llmrView = nullptr;
 {
     if ( ! self.isZoomEnabled) return;
 
-    llmrMap->cancelTransitions();
+    mbglMap->cancelTransitions();
 
     if (quickZoom.state == UIGestureRecognizerStateBegan)
     {
-        self.scale = llmrMap->getScale();
+        self.scale = mbglMap->getScale();
 
         self.quickZoomStart = [quickZoom locationInView:quickZoom.view].y;
     }
@@ -508,9 +636,13 @@ LLMRView *llmrView = nullptr;
 
         CGFloat newZoom = log2f(self.scale) + (distance / 100);
 
-        if (newZoom < llmrMap->getMinZoom()) return;
+        if (newZoom < mbglMap->getMinZoom()) return;
 
-        llmrMap->scaleBy(powf(2, newZoom) / llmrMap->getScale(), self.bounds.size.width / 2, self.bounds.size.height / 2);
+        mbglMap->scaleBy(powf(2, newZoom) / mbglMap->getScale(), self.bounds.size.width / 2, self.bounds.size.height / 2);
+    }
+    else if (quickZoom.state == UIGestureRecognizerStateEnded || quickZoom.state == UIGestureRecognizerStateCancelled)
+    {
+        [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
     }
 }
 
@@ -544,17 +676,17 @@ LLMRView *llmrView = nullptr;
 
 - (void)setDebugActive:(BOOL)debugActive
 {
-    llmrMap->setDebug(debugActive);
+    mbglMap->setDebug(debugActive);
 }
 
 - (BOOL)isDebugActive
 {
-    return llmrMap->getDebug();
+    return mbglMap->getDebug();
 }
 
 - (void)resetNorth
 {
-    llmrMap->resetNorth();
+    mbglMap->resetNorth();
 
     [UIView animateWithDuration:0.25
                      animations:^(void)
@@ -576,42 +708,19 @@ LLMRView *llmrView = nullptr;
 
 - (void)resetPosition
 {
-    llmrMap->resetPosition();
+    mbglMap->resetPosition();
 }
 
 - (void)toggleDebug
 {
-    llmrMap->toggleDebug();
-}
-
-- (void)toggleStyle
-{
-    NSArray *styles = [self getAllStyleClasses];
-
-    if ([[styles valueForKeyPath:@"name"] containsObject:@"default"])
-    {
-        NSUInteger appliedStyleCount = [[styles filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"applied = YES"]] count];
-        NSUInteger newAppliedStyleCount = (appliedStyleCount == [styles count] ? 1 : appliedStyleCount + 1);
-
-        NSMutableArray *appliedStyles = [NSMutableArray array];
-
-        for (NSUInteger i = 0; i < [styles count]; i++)
-        {
-            if (i < newAppliedStyleCount)
-            {
-                [appliedStyles addObject:[styles valueForKeyPath:@"name"][i]];
-            }
-        }
-
-        [self setAppliedStyleClasses:appliedStyles transitionDuration:300];
-    }
+    mbglMap->toggleDebug();
 }
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
 {
     double duration = (animated ? 0.3 : 0);
 
-    llmrMap->setLonLat(coordinate.longitude, coordinate.latitude, duration);
+    mbglMap->setLonLat(coordinate.longitude, coordinate.latitude, duration);
 }
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate
@@ -622,7 +731,7 @@ LLMRView *llmrView = nullptr;
 - (CLLocationCoordinate2D)centerCoordinate
 {
     double lon, lat;
-    llmrMap->getLonLat(lon, lat);
+    mbglMap->getLonLat(lon, lat);
 
     return CLLocationCoordinate2DMake(lat, lon);
 }
@@ -631,19 +740,19 @@ LLMRView *llmrView = nullptr;
 {
     double duration = (animated ? 0.3 : 0);
 
-    llmrMap->setLonLatZoom(centerCoordinate.longitude, centerCoordinate.latitude, zoomLevel, duration);
+    mbglMap->setLonLatZoom(centerCoordinate.longitude, centerCoordinate.latitude, zoomLevel, duration);
 }
 
 - (double)zoomLevel
 {
-    return llmrMap->getZoom();
+    return mbglMap->getZoom();
 }
 
 - (void)setZoomLevel:(double)zoomLevel animated:(BOOL)animated
 {
     double duration = (animated ? 0.3 : 0);
 
-    llmrMap->setZoom(zoomLevel, duration);
+    mbglMap->setZoom(zoomLevel, duration);
 }
 
 - (void)setZoomLevel:(double)zoomLevel
@@ -653,9 +762,7 @@ LLMRView *llmrView = nullptr;
 
 - (CLLocationDirection)direction
 {
-    double direction = llmrMap->getAngle();
-
-    direction *= 180 / M_PI;
+    double direction = mbglMap->getBearing() * -1;
 
     while (direction > 360) direction -= 360;
     while (direction < 0) direction += 360;
@@ -667,9 +774,7 @@ LLMRView *llmrView = nullptr;
 {
     double duration = (animated ? 0.3 : 0);
 
-    direction *= M_PI / 180;
-
-    llmrMap->setAngle(direction, duration);
+    mbglMap->setBearing(direction * -1, duration);
 }
 
 - (void)setDirection:(CLLocationDirection)direction
@@ -679,7 +784,7 @@ LLMRView *llmrView = nullptr;
 
 - (NSDictionary *)getRawStyle
 {
-    const std::string styleJSON = llmrMap->getStyleJSON();
+    const std::string styleJSON = mbglMap->getStyleJSON();
 
     return [NSJSONSerialization JSONObjectWithData:[@(styleJSON.c_str()) dataUsingEncoding:[NSString defaultCStringEncoding]] options:0 error:nil];
 }
@@ -688,32 +793,62 @@ LLMRView *llmrView = nullptr;
 {
     NSData *data = [NSJSONSerialization dataWithJSONObject:style options:0 error:nil];
 
-    llmrMap->setStyleJSON([[[NSString alloc] initWithData:data encoding:[NSString defaultCStringEncoding]] cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    mbglMap->setStyleJSON([[[NSString alloc] initWithData:data encoding:[NSString defaultCStringEncoding]] cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+}
+
+- (NSArray *)bundledStyleNames
+{
+    NSMutableArray *styleNames = [NSMutableArray array];
+
+    NSString *styleFoldersPath = [[MGLMapView resourceBundlePath] stringByAppendingString:@"/styles"];
+
+    NSArray *styleFolders = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:styleFoldersPath error:nil];
+
+    for (NSString *styleFolder in styleFolders)
+    {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/%@/style.json", styleFoldersPath, styleFolder]])
+        {
+            [styleNames addObject:styleFolder];
+        }
+    }
+
+    return [NSArray arrayWithArray:styleNames];
+}
+
+- (void)useBundledStyleNamed:(NSString *)styleName
+{
+    NSString *path = [MGLMapView pathForBundleResourceNamed:@"style"
+                                                     ofType:@"json"
+                                                inDirectory:[NSString stringWithFormat:@"styles/%@", styleName]];
+
+    NSAssert(path, @"Invalid bundled style name specified.");
+
+    mbglMap->setStyleURL(std::string("file://" + std::string([path cStringUsingEncoding:[NSString defaultCStringEncoding]])));
 }
 
 - (NSArray *)getStyleOrderedLayerNames
 {
-    return [[self getRawStyle] valueForKeyPath:@"structure.name"];
+    return [[self getRawStyle] valueForKeyPath:@"layers.id"];
 }
 
 - (void)setStyleOrderedLayerNames:(NSArray *)orderedLayerNames
 {
-    NSDictionary *style = [self getRawStyle];
-    NSDictionary *oldStructure = style[@"structure"];
-    NSMutableDictionary *newStructure = [NSMutableDictionary dictionary];
+    NSMutableDictionary *style = [[self getRawStyle] deepMutableCopy];
+    NSArray *oldLayers = style[@"layers"];
+    NSMutableArray *newLayers = [NSMutableArray array];
 
-    if ([orderedLayerNames count] != [[oldStructure valueForKeyPath:@"name"] count])
+    if ([orderedLayerNames count] != [[oldLayers valueForKeyPath:@"id"] count])
     {
         [NSException raise:@"invalid layer count"
                     format:@"new layer count (%lu) should equal existing layer count (%lu)",
                         (unsigned long)[orderedLayerNames count],
-                        (unsigned long)[[oldStructure valueForKeyPath:@"name"] count]];
+                        (unsigned long)[[oldLayers valueForKeyPath:@"id"] count]];
     }
     else
     {
         for (NSString *newLayerName in orderedLayerNames)
         {
-            if ( ! [[oldStructure valueForKeyPath:@"name"] containsObject:newLayerName])
+            if ( ! [[oldLayers valueForKeyPath:@"id"] containsObject:newLayerName])
             {
                 [NSException raise:@"invalid layer name"
                             format:@"layer name %@ unknown",
@@ -721,42 +856,22 @@ LLMRView *llmrView = nullptr;
             }
             else
             {
-                newStructure[newLayerName] = oldStructure[newLayerName];
+                NSDictionary *newLayer = [oldLayers objectAtIndex:[[oldLayers valueForKeyPath:@"id"] indexOfObject:newLayerName]];
+                [newLayers addObject:newLayer];
             }
         }
     }
 
-    [style setValue:newStructure forKey:@"structure"];
+    [style setValue:newLayers forKey:@"layers"];
 
     [self setRawStyle:style];
-}
-
-- (NSArray *)getAllStyleClasses
-{
-    NSMutableArray *returnArray = [NSMutableArray array];
-
-    NSArray *classNames = [[self getRawStyle] valueForKeyPath:@"classes.name"];
-
-    std::set<std::string> appliedClasses = llmrMap->getAppliedClasses();
-
-    for (NSString *className in classNames)
-    {
-        auto applied_it = appliedClasses.find([className cStringUsingEncoding:[NSString defaultCStringEncoding]]);
-
-        BOOL applied = (applied_it != appliedClasses.end());
-
-        [returnArray addObject:@{ @"name"    : className,
-                                  @"applied" : @(applied) }];
-    }
-
-    return returnArray;
 }
 
 - (NSArray *)getAppliedStyleClasses
 {
     NSMutableArray *returnArray = [NSMutableArray array];
 
-    std::set<std::string> appliedClasses = llmrMap->getAppliedClasses();
+    const std::vector<std::string> &appliedClasses = mbglMap->getAppliedClasses();
 
     for (auto class_it = appliedClasses.begin(); class_it != appliedClasses.end(); class_it++)
     {
@@ -773,24 +888,15 @@ LLMRView *llmrView = nullptr;
 
 - (void)setAppliedStyleClasses:(NSArray *)appliedClasses transitionDuration:(NSTimeInterval)transitionDuration
 {
-    NSArray *currentClasses = [self getAllStyleClasses];
-
-    std::set<std::string> newAppliedClasses;
+    std::vector<std::string> newAppliedClasses;
 
     for (NSString *appliedClass in appliedClasses)
     {
-        if ( ! [[currentClasses valueForKeyPath:@"name"] containsObject:appliedClass])
-        {
-            [NSException raise:@"invalid class name"
-                        format:@"class name %@ unknown",
-                            appliedClass];
-        }
-
         newAppliedClasses.insert(newAppliedClasses.end(), [appliedClass cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
 
-    llmrMap->setDefaultTransitionDuration(transitionDuration);
-    llmrMap->setAppliedClasses(newAppliedClasses);
+    mbglMap->setDefaultTransitionDuration(transitionDuration);
+    mbglMap->setAppliedClasses(newAppliedClasses);
 }
 
 - (NSString *)getKeyTypeForLayer:(NSString *)layerName
@@ -1071,13 +1177,13 @@ LLMRView *llmrView = nullptr;
         }
     }
 
-    NSMutableDictionary *style = [[self getRawStyle] deepMutableCopy];
-
-    NSUInteger classIndex = [[[self getAllStyleClasses] valueForKey:@"name"] indexOfObject:className];
-
-    style[@"classes"][classIndex][@"layers"][layerName] = convertedStyle;
-
-    [self setRawStyle:style];
+//    NSMutableDictionary *style = [[self getRawStyle] deepMutableCopy];
+//
+//    NSUInteger classIndex = [[[self getAllStyleClasses] valueForKey:@"name"] indexOfObject:className];
+//
+//    style[@"classes"][classIndex][@"layers"][layerName] = convertedStyle;
+//
+//    [self setRawStyle:style];
 }
 
 - (NSDictionary *)allowedStyleTypes
@@ -1124,31 +1230,136 @@ LLMRView *llmrView = nullptr;
     return MGLStyleAllowedTypes;
 }
 
-- (void)notifyMapChange
+- (void)unsuspendRegionChangeDelegateQueue
 {
-    double lon, lat, zoom;
-    llmrMap->getLonLatZoom(lon, lat, zoom);
-    while (lon > 180) lon -= 360;
-    while (lon <= -180) lon += 360;
+    @synchronized (self.regionChangeDelegateQueue)
+    {
+        [self.regionChangeDelegateQueue setSuspended:NO];
+    }
+}
 
-    double angle = llmrMap->getAngle();
-    angle *= 180 / M_PI;
-    while (angle >= 360) angle -= 360;
-    while (angle < 0) angle += 360;
+- (void)notifyMapChange:(NSNumber *)change
+{
+    switch ([change unsignedIntegerValue])
+    {
+        case mbgl::MapChangeRegionWillChange:
+        case mbgl::MapChangeRegionWillChangeAnimated:
+        {
+            BOOL animated = ([change unsignedIntegerValue] == mbgl::MapChangeRegionWillChangeAnimated);
 
-//    NSLog(@"lat: %f, lon: %f, zoom: %f, angle: %f", lat, lon, zoom, angle);
+            @synchronized (self.regionChangeDelegateQueue)
+            {
+                if ([self.regionChangeDelegateQueue operationCount] == 0)
+                {
+                    if ([self.delegate respondsToSelector:@selector(mapView:regionWillChangeAnimated:)])
+                    {
+                        [self.delegate mapView:self regionWillChangeAnimated:animated];
+                    }
+                }
 
-    self.compass.transform = CGAffineTransformMakeRotation(llmrMap->getAngle());
+                [self.regionChangeDelegateQueue setSuspended:YES];
 
-    if (llmrMap->getAngle() && self.compass.alpha < 1)
+                if ([self.regionChangeDelegateQueue operationCount] == 0)
+                {
+                    [self.regionChangeDelegateQueue addOperationWithBlock:^(void)
+                    {
+                        dispatch_async(dispatch_get_main_queue(), ^(void)
+                        {
+                            if ([self.delegate respondsToSelector:@selector(mapView:regionDidChangeAnimated:)])
+                            {
+                                [self.delegate mapView:self regionDidChangeAnimated:animated];
+                            }
+                        });
+                    }];
+                }
+            }
+            break;
+        }
+        case mbgl::MapChangeRegionDidChange:
+        case mbgl::MapChangeRegionDidChangeAnimated:
+        {
+            [self updateCompass];
+
+            if (self.pan.state       == UIGestureRecognizerStateChanged ||
+                self.pinch.state     == UIGestureRecognizerStateChanged ||
+                self.rotate.state    == UIGestureRecognizerStateChanged ||
+                self.quickZoom.state == UIGestureRecognizerStateChanged) return;
+
+            if (self.isAnimatingGesture) return;
+
+            [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(unsuspendRegionChangeDelegateQueue) object:nil];
+            [self performSelector:@selector(unsuspendRegionChangeDelegateQueue) withObject:nil afterDelay:0];
+
+            break;
+        }
+        case mbgl::MapChangeWillStartLoadingMap:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewWillStartLoadingMap:)])
+            {
+                [self.delegate mapViewWillStartLoadingMap:self];
+            }
+            break;
+        }
+        case mbgl::MapChangeDidFinishLoadingMap:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewDidFinishLoadingMap:)])
+            {
+                [self.delegate mapViewDidFinishLoadingMap:self];
+            }
+            break;
+        }
+        case mbgl::MapChangeDidFailLoadingMap:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewDidFailLoadingMap:withError::)])
+            {
+                [self.delegate mapViewDidFailLoadingMap:self withError:nil];
+            }
+            break;
+        }
+        case mbgl::MapChangeWillStartRenderingMap:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewWillStartRenderingMap:)])
+            {
+                [self.delegate mapViewWillStartRenderingMap:self];
+            }
+            break;
+        }
+        case mbgl::MapChangeDidFinishRenderingMap:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewDidFinishRenderingMap:fullyRendered:)])
+            {
+                [self.delegate mapViewDidFinishRenderingMap:self fullyRendered:NO];
+            }
+            break;
+        }
+        case mbgl::MapChangeDidFinishRenderingMapFullyRendered:
+        {
+            if ([self.delegate respondsToSelector:@selector(mapViewDidFinishRenderingMap:fullyRendered:)])
+            {
+                [self.delegate mapViewDidFinishRenderingMap:self fullyRendered:YES];
+            }
+            break;
+        }
+    }
+}
+
+- (void)updateCompass
+{
+    double degrees = mbglMap->getBearing() * -1;
+    while (degrees >= 360) degrees -= 360;
+    while (degrees < 0) degrees += 360;
+
+    self.compass.transform = CGAffineTransformMakeRotation([MGLMapView degreesToRadians:degrees]);
+
+    if (mbglMap->getBearing() && self.compass.alpha < 1)
     {
         [UIView animateWithDuration:0.25
                               delay:0
                             options:UIViewAnimationOptionBeginFromCurrentState
                          animations:^(void)
-                         {
-                             self.compass.alpha = 1;
-                         }
+        {
+            self.compass.alpha = 1;
+        }
                          completion:nil];
     }
 }
@@ -1156,53 +1367,74 @@ LLMRView *llmrView = nullptr;
 + (UIImage *)resourceImageNamed:(NSString *)imageName
 {
     if ( ! [[imageName pathExtension] length])
+    {
         imageName = [imageName stringByAppendingString:@".png"];
+    }
 
-    return [UIImage imageWithContentsOfFile:[MGLMapView pathForBundleResourceNamed:imageName ofType:nil]];
+    return [UIImage imageWithContentsOfFile:[MGLMapView pathForBundleResourceNamed:imageName ofType:nil inDirectory:@""]];
 }
 
-+ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension
++ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension inDirectory:(NSString *)directory
 {
-    NSString *path;
-
-    NSString *resourceBundlePath = [[NSBundle mainBundle] pathForResource:@"MapboxGL"
-                                                                   ofType:@"bundle"];
-
-    if (resourceBundlePath)
-    {
-        path = [[NSBundle bundleWithPath:resourceBundlePath] pathForResource:name
-                                                                      ofType:extension];
-    }
-    else
-    {
-        path = [[NSBundle mainBundle] pathForResource:name ofType:extension];
-    }
+    NSString *path = [[NSBundle bundleWithPath:[MGLMapView resourceBundlePath]] pathForResource:name ofType:extension inDirectory:directory];
 
     NSAssert(path, @"Resource not found in application.");
 
     return path;
 }
 
++ (NSString *)resourceBundlePath
+{
+    NSString *resourceBundlePath = [[NSBundle bundleForClass:[MGLMapView class]] pathForResource:@"MapboxGL" ofType:@"bundle"];
+
+    if ( ! resourceBundlePath) resourceBundlePath = [[NSBundle mainBundle] bundlePath];
+
+    return resourceBundlePath;
+}
+
 - (void)swap
 {
-    if (llmrMap->needsSwap())
+    if (mbglMap->needsSwap())
     {
         [self.glView display];
-        llmrMap->swapped();
+        mbglMap->swapped();
     }
 }
 
-class LLMRView : public llmr::View
+class MBGLView : public mbgl::View
 {
     public:
-        LLMRView(MGLMapView *nativeView) : nativeView(nativeView) {}
-        virtual ~LLMRView() {
+        MBGLView(MGLMapView *nativeView) : nativeView(nativeView) {}
+        virtual ~MBGLView() {
             map->terminate();
         }
 
-    void notify_map_change()
+
+    void notify()
     {
-        [nativeView performSelectorOnMainThread:@selector(notifyMapChange) withObject:nil waitUntilDone:NO];
+        // no-op
+    }
+
+    void notify_map_change(mbgl::MapChange change, mbgl::timestamp delay = 0)
+    {
+        if (delay)
+        {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay)), dispatch_get_main_queue(), ^(void)
+            {
+                [nativeView performSelector:@selector(notifyMapChange:)
+                                 withObject:@(change)
+                                 afterDelay:0];
+            });
+        }
+        else
+        {
+            dispatch_async(dispatch_get_main_queue(), ^(void)
+            {
+                [nativeView performSelector:@selector(notifyMapChange:)
+                                 withObject:@(change)
+                                 afterDelay:0];
+            });
+        }
     }
 
     void make_active()
@@ -1220,7 +1452,14 @@ class LLMRView : public llmr::View
 
     void swap()
     {
-        [nativeView performSelectorOnMainThread:@selector(swap) withObject:nil waitUntilDone:NO];
+        [nativeView performSelectorOnMainThread:@selector(swap)
+                                     withObject:nil
+                                  waitUntilDone:NO];
+    }
+
+    unsigned int root_fbo()
+    {
+        return 1;
     }
 
     private:
