@@ -39,8 +39,8 @@
             '$(SDKROOT)/System/Library/Frameworks/CoreLocation.framework',
             '$(SDKROOT)/System/Library/Frameworks/GLKit.framework',
             '$(SDKROOT)/System/Library/Frameworks/OpenGLES.framework',
-            '$(SDKROOT)/System/Library/Frameworks/UIKit.framework',
             '$(SDKROOT)/System/Library/Frameworks/SystemConfiguration.framework',
+            '$(SDKROOT)/System/Library/Frameworks/UIKit.framework'
           ],
         },
         'xcode_settings': {
