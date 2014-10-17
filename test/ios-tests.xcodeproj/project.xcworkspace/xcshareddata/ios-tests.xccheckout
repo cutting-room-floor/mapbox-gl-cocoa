@@ -11,25 +11,25 @@
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>10265E242415D473A6A613214DB7AC3EE3D43F93</key>
-		<string>https://github.com/kif-framework/KIF.git</string>
+		<string>https://github.com/mapbox/KIF.git</string>
 		<key>7E68CB584078A487C0535CC191D3B7551EEE2095</key>
 		<string>github.com:mapbox/mapbox-gl-native.git</string>
 		<key>FC967DACF69B3B67E6F2E9FBE56B64B73B118AFF</key>
-		<string>ssh://github.com/mapbox/mapbox-gl-cocoa.git</string>
+		<string>github.com:mapbox/mapbox-gl-cocoa.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>test/ios-tests.xcodeproj/project.xcworkspace</string>
+	<string>test/ios-tests.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>10265E242415D473A6A613214DB7AC3EE3D43F93</key>
-		<string>../../../test/KIF</string>
+		<string>../../..test/KIF/</string>
 		<key>7E68CB584078A487C0535CC191D3B7551EEE2095</key>
-		<string>../../../..</string>
+		<string>../../../../..</string>
 		<key>FC967DACF69B3B67E6F2E9FBE56B64B73B118AFF</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/mapbox/mapbox-gl-cocoa.git</string>
+	<string>github.com:mapbox/mapbox-gl-cocoa.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
@@ -42,7 +42,7 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>7E68CB584078A487C0535CC191D3B7551EEE2095</string>
 			<key>IDESourceControlWCCName</key>
-			<string></string>
+			<string>..</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>

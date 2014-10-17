@@ -19,6 +19,8 @@
 		DD8A790D196DC0A900FAD883 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8A790C196DC0A900FAD883 /* libz.dylib */; };
 		DD8A790F196DC0AD00FAD883 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8A790E196DC0AD00FAD883 /* GLKit.framework */; };
 		DD8A7911196DC0BB00FAD883 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD8A7910196DC0BB00FAD883 /* CoreLocation.framework */; };
+		DD96917919F1C08400729E7D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD96917819F1C08400729E7D /* libsqlite3.dylib */; };
+		DD96918119F1C09200729E7D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD96918019F1C09200729E7D /* SystemConfiguration.framework */; };
 		DDBD0154196DC3D70033959E /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDBD0153196DC3D70033959E /* XCTest.framework */; };
 		DDBD0155196DC3D70033959E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD043326196DB9BC00E6F39D /* Foundation.framework */; };
 		DDBD0156196DC3D70033959E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD04332A196DB9BC00E6F39D /* UIKit.framework */; };
@@ -96,6 +98,8 @@
 		DD8A790C196DC0A900FAD883 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		DD8A790E196DC0AD00FAD883 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		DD8A7910196DC0BB00FAD883 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		DD96917819F1C08400729E7D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		DD96918019F1C09200729E7D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		DDBD013A196DC3AE0033959E /* KIF.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KIF.xcodeproj; path = KIF/KIF.xcodeproj; sourceTree = SOURCE_ROOT; };
 		DDBD0152196DC3D70033959E /* Test Bundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Test Bundle.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDBD0153196DC3D70033959E /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -115,9 +119,11 @@
 				DD8A7911196DC0BB00FAD883 /* CoreLocation.framework in Frameworks */,
 				DD043327196DB9BC00E6F39D /* Foundation.framework in Frameworks */,
 				DD8A790F196DC0AD00FAD883 /* GLKit.framework in Frameworks */,
+				DD96918119F1C09200729E7D /* SystemConfiguration.framework in Frameworks */,
 				DD04332B196DB9BC00E6F39D /* UIKit.framework in Frameworks */,
 				DD61240819CCF06E006845B1 /* libMapboxGL.a in Frameworks */,
 				DD1A9EA8199BEA0D007BC651 /* libc++.dylib in Frameworks */,
+				DD96917919F1C08400729E7D /* libsqlite3.dylib in Frameworks */,
 				DD8A790D196DC0A900FAD883 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -159,6 +165,8 @@
 		DD043325196DB9BC00E6F39D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DD96918019F1C09200729E7D /* SystemConfiguration.framework */,
+				DD96917819F1C08400729E7D /* libsqlite3.dylib */,
 				DD043328196DB9BC00E6F39D /* CoreGraphics.framework */,
 				DD8A7910196DC0BB00FAD883 /* CoreLocation.framework */,
 				DD043326196DB9BC00E6F39D /* Foundation.framework */,
