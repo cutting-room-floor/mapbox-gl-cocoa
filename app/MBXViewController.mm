@@ -195,14 +195,22 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
         if ([CLLocationManager instancesRespondToSelector:@selector(requestWhenInUseAuthorization)])
         {
-            [_locationManager requestWhenInUseAuthorization];
-            [self.locationManager startUpdatingLocation];
+            if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse)
+            {
+                [self.locationManager startUpdatingLocation];
+            }
+            else
+            {
+                [_locationManager requestWhenInUseAuthorization];
+            }
         }
         else
-#endif
         {
             [self.locationManager startUpdatingLocation];
         }
+#else
+        [self.locationManager startUpdatingLocation];
+#endif
     }
 }
 
