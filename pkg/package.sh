@@ -89,7 +89,7 @@ lipo -create ./build/lib${NAME}-device.a \
              ./build/lib${NAME}-simulator.a \
              -o $OUTPUT/static/lib${NAME}.a
 
-if [[ `xcodebuild -showsdks | grep -c iphoneos8.0` == 0 ]]; then
+if [[ `xcodebuild -showsdks | grep -c iphoneos8` == 0 ]]; then
     echo "Skipping framework build since no iOS 8 SDK present."
     exit
 fi
