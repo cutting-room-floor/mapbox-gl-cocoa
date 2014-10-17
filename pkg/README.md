@@ -13,8 +13,10 @@ To use this library in your app directly, follow these steps. You can also make 
    - `CoreLocation.framework`
    - `GLKit.framework`
    - `OpenGLES.framework`
+   - `SystemConfiguration.framework`
    - `UIKit.framework`
    - `libc++.dylib`
+   - `libsqlite3.dylib`
    - `libz.dylib`
  * Get a Mapbox API access token on [your account page](https://mapbox.com/account/apps). 
  * Import the necessary headers (`#import "MGLMapView.h"`) into your project and use the APIs per the [example usage](../README.md#example-usage). 
