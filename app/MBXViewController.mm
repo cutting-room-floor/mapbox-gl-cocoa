@@ -61,9 +61,6 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
     [self restoreState:nil];
 
     [self setupDebugUI];
-
-    self.locationManager = [CLLocationManager new];
-    self.locationManager.delegate = self;
 }
 
 #pragma clang diagnostic push
@@ -183,6 +180,12 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 
 - (void)locateUser
 {
+    if ( ! self.locationManager)
+    {
+        self.locationManager = [CLLocationManager new];
+        self.locationManager.delegate = self;
+    }
+
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied)
     {
         [[[UIAlertView alloc] initWithTitle:@"Authorization Denied"
