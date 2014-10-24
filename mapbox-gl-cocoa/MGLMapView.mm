@@ -1,13 +1,13 @@
 #import "MGLMapView.h"
 
-#import "nslog_log.hpp"
+#import <mbgl/platform/darwin/log_nslog.hpp>
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
 
 #include <mbgl/mbgl.hpp>
 #include <mbgl/platform/platform.hpp>
-#include "Reachability.h"
+#include <mbgl/platform/darwin/reachability.h>
 
 #import "MGLTypes.h"
 #import "MGLStyleFunctionValue.h"
@@ -1404,7 +1404,7 @@ MBGLView *mbglView = nullptr;
 class MBGLView : public mbgl::View
 {
     public:
-        MBGLView(MGLMapView *nativeView) : nativeView(nativeView) {}
+        MBGLView(MGLMapView *nativeView_) : nativeView(nativeView_) {}
         virtual ~MBGLView() {}
 
 
@@ -1438,6 +1438,11 @@ class MBGLView : public mbgl::View
     void make_active()
     {
         [EAGLContext setCurrentContext:nativeView.context];
+    }
+
+    void make_inactive()
+    {
+        [EAGLContext setCurrentContext:nil];
     }
 
     void swap()
