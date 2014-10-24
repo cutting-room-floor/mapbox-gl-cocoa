@@ -16,6 +16,7 @@ NAME="MapboxGL"
 PARENT="../../.."
 OUTPUT="../dist"
 SOURCES="../mapbox-gl-cocoa"
+SDK="8.1"
 
 echo "Cleaning..."
 rm -rfv $OUTPUT
@@ -48,7 +49,7 @@ cp -rv $PARENT/styles $OUTPUT/static/${NAME}.bundle/styles
 # Run GYP to generate mapbox-gl-cocoa Xcode project.
 # NOTE: the above command also creates the dependent $PARENT/mapboxgl.xcodeproj.
 #
-../../../deps/run_gyp ./mapbox-gl-cocoa.gyp --depth=. --generator-output=. -f xcode
+../../../deps/run_gyp ./mapbox-gl-cocoa.gyp -I../../../config-ios.gypi --depth=. --generator-output=. -f xcode
 
 #
 # Build Cocoa lib for sim & device.
@@ -65,32 +66,16 @@ xcodebuild -project $PARENT/mapboxgl.xcodeproj -target mapboxgl-ios -configurati
 #
 # Combine into one lib each for sim & device.
 #
-libtool -static -o ./build/lib${NAME}-simulator.a \
+libtool -static -o $OUTPUT/static/lib${NAME}.a \
                    build/Release-iphonesimulator/lib${NAME}.a \
-                   $PARENT/build/Release-iphonesimulator/lib*.a \
-                   $PARENT/mapnik-packaging/osx/out/build-cpp11-libcpp-i386-iphonesimulator/lib/libpng.a \
-                   $PARENT/mapnik-packaging/osx/out/build-cpp11-libcpp-x86_64-iphonesimulator64/lib/libpng.a \
-                   $PARENT/mapnik-packaging/osx/out/build-cpp11-libcpp-i386-iphonesimulator/lib/libuv.a \
-                   $PARENT/mapnik-packaging/osx/out/build-cpp11-libcpp-x86_64-iphonesimulator64/lib/libuv.a
-libtool -static -o ./build/lib${NAME}-device.a \
                    build/Release-iphoneos/lib${NAME}.a \
+                   $PARENT/build/Release-iphonesimulator/lib*.a \
                    $PARENT/build/Release-iphoneos/lib*.a \
-                   $PARENT/mapnik-packaging/osx/out/build-cpp11-libcpp-armv7-iphoneos/lib/libpng.a \
-                   $PARENT/mapnik-packaging/osx/out/build-cpp11-libcpp-armv7s-iphoneoss/lib/libpng.a \
-                   $PARENT/mapnik-packaging/osx/out/build-cpp11-libcpp-arm64-iphoneos64/lib/libpng.a \
-                   $PARENT/mapnik-packaging/osx/out/build-cpp11-libcpp-armv7-iphoneos/lib/libuv.a \
-                   $PARENT/mapnik-packaging/osx/out/build-cpp11-libcpp-armv7s-iphoneoss/lib/libuv.a \
-                   $PARENT/mapnik-packaging/osx/out/build-cpp11-libcpp-arm64-iphoneos64/lib/libuv.a
+                   `find $PARENT/mason_packages/ios-${SDK} -type f -name libpng.a` \
+                   `find $PARENT/mason_packages/ios-${SDK} -type f -name libuv.a`
 
-#
-# Combine into one final lib for all platforms.
-#
-lipo -create ./build/lib${NAME}-device.a \
-             ./build/lib${NAME}-simulator.a \
-             -o $OUTPUT/static/lib${NAME}.a
-
-if [[ `xcodebuild -showsdks | grep -c iphoneos8` == 0 ]]; then
-    echo "Skipping framework build since no iOS 8 SDK present."
+if [[ `xcodebuild -showsdks | grep -c iphoneos${SDK}` == 0 ]]; then
+    echo "Skipping framework build since no iOS ${SDK} SDK present."
     exit
 fi
 
