@@ -56,6 +56,7 @@
           'Release': {
             'xcode_settings': {
               'CODE_SIGN_IDENTITY': 'iPhone Distribution',
+              'ARCHS': [ "armv7", "armv7s", "arm64", "i386", "x86_64" ],
             }
           }
         },
