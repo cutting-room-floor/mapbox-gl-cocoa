@@ -35,7 +35,7 @@ MGLMapView *mapView = [[MGLMapView alloc] initWithFrame:CGRectMake(0, 0, 400, 40
 let mapView = MGLMapView(frame: CGRect(x: 0, y: 0, width: 400, height: 400),
                          accessToken: "<access token string>")
 
-mapView.setCenterCoordinate(CLLocationCoordinate2DMake(46.049900, -122.095678),
+mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: 46.049900, longitude: -122.095678),
         zoomLevel: 12,
         animated: false)
 
