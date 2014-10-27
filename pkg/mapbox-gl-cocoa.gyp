@@ -10,7 +10,8 @@
       'TARGETED_DEVICE_FAMILY': '1,2',
       'GCC_VERSION': 'com.apple.compilers.llvm.clang.1_0',
       'CLANG_ENABLE_OBJC_ARC': 'YES',
-      'OTHER_LDFLAGS!': [ '-lpthread', '-ldl', '-lz' ]
+      'OTHER_LDFLAGS!': [ '-lpthread', '-ldl', '-lz' ],
+      'COMBINE_HIDPI_IMAGES': 'NO'
     },
     'link_settings': {
       'libraries': [
