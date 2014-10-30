@@ -29,8 +29,6 @@
           'ldflags': [
             '<@(sqlite3_ldflags)',
             '<@(sqlite3_static_libs)',
-            '<@(png_ldflags)',
-            '<@(png_static_libs)',
             '<@(uv_ldflags)',
             '<@(uv_static_libs)',
           ]
