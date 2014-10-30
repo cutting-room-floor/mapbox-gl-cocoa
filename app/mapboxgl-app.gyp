@@ -25,6 +25,16 @@
           '<!@(find ./img -type f)',
           '<!@(find ../mapbox-gl-cocoa/Resources -type f)',
         ],
+        'variables' : {
+          'ldflags': [
+            '<@(sqlite3_ldflags)',
+            '<@(sqlite3_static_libs)',
+            '<@(png_ldflags)',
+            '<@(png_static_libs)',
+            '<@(uv_ldflags)',
+            '<@(uv_static_libs)',
+          ]
+        },
         'link_settings': {
           'libraries': [
             '$(SDKROOT)/System/Library/Frameworks/CoreGraphics.framework',
@@ -45,8 +55,9 @@
           'TARGETED_DEVICE_FAMILY': '1,2',
           'GCC_VERSION': 'com.apple.compilers.llvm.clang.1_0',
           'COMBINE_HIDPI_IMAGES': 'NO', # don't merge @2x.png images into .tiff files
-          'CLANG_ENABLE_OBJC_ARC': 'YES'
-        },
+          'CLANG_ENABLE_OBJC_ARC': 'YES',
+          'OTHER_LDFLAGS': [ '<@(ldflags)' ],
+      },
         'configurations': {
           'Debug': {
             'xcode_settings': {
@@ -62,7 +73,7 @@
         },
         'dependencies': [
             '../../../mapboxgl.gyp:bundle_styles',
-            '../../../mapboxgl.gyp:mbgl',
+            '../../../mapboxgl.gyp:mbgl-core',
             '../../../mapboxgl.gyp:mbgl-ios',
         ]
     }
