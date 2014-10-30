@@ -16,7 +16,7 @@ before_install:
     - mv .mbgl mbgl
     - cd mbgl
     - make setup
-    - make iproj-cli
+    - make build/ios/mapbox-gl-cocoa/app/mapboxgl-app.xcodeproj
     - cd ios/mapbox-gl-cocoa/pkg
     - ./package.sh
     - cd ..

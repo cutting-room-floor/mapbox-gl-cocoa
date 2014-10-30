@@ -2,7 +2,7 @@
 
 #import "MGLMapView.h"
 
-#import "settings_nsuserdefaults.hpp"
+#import <mbgl/platform/darwin/settings_nsuserdefaults.hpp>
 
 #import <CoreLocation/CoreLocation.h>
 
