@@ -128,7 +128,7 @@ MBGLView *mbglView = nullptr;
                         format:@"default map style requires a Mapbox API access token"];
         }
 
-        [self useBundledStyleNamed:@"bright"];
+        [self useBundledStyleNamed:@"bright-v6"];
     }
     else
     {
@@ -817,9 +817,9 @@ MBGLView *mbglView = nullptr;
 
 - (void)useBundledStyleNamed:(NSString *)styleName
 {
-    NSString *path = [MGLMapView pathForBundleResourceNamed:@"style"
+    NSString *path = [MGLMapView pathForBundleResourceNamed:styleName
                                                      ofType:@"json"
-                                                inDirectory:[NSString stringWithFormat:@"styles/%@", styleName]];
+                                                inDirectory:@"styles"];
 
     NSAssert(path, @"Invalid bundled style name specified.");
 
