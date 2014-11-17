@@ -10,7 +10,9 @@ This project is Cocoa API bindings for [`mapbox-gl-native`](https://github.com/m
 
 See [`./dist/README.md`](./dist/README.md) for installation instructions. Everything you need is in `./dist`. Mapbox GL is provided prebuilt as both a static library, headers folder, and resource bundle (iOS 7+), and as a dynamic framework (iOS 8+). 
 
-You can also make use of [CocoaPods](http://cocoapods.org) by pointing at the `MapboxGL.podspec` file in the root of the repository (the library has not yet been added to the CocoaPods specs repository). 
+You can also make use of [CocoaPods](http://cocoapods.org) by adding this line to your Podfile (the library has not yet been added to the CocoaPods specs repository):
+
+``pod "MapboxGL", :git => "https://github.com/mapbox/mapbox-gl-cocoa.git"``
 
 ## Example usage
 
