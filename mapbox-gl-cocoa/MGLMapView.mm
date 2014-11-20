@@ -170,6 +170,21 @@ MBGLView *mbglView = nullptr;
     [_glView bindDrawable];
     [self addSubview:_glView];
 
+
+    // load extensions
+    //
+    const std::string extensions = (char *)glGetString(GL_EXTENSIONS);
+    {
+        using namespace mbgl;
+
+        if (extensions.find("GL_OES_vertex_array_object") != std::string::npos) {
+            gl::BindVertexArray = glBindVertexArrayOES;
+            gl::DeleteVertexArrays = glDeleteVertexArraysOES;
+            gl::GenVertexArrays = glGenVertexArraysOES;
+            gl::IsVertexArray = glIsVertexArrayOES;
+        }
+    }
+
     // setup mbgl map
     //
     mbglView = new MBGLView(self);
