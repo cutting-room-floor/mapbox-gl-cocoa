@@ -561,8 +561,6 @@ MBGLView *mbglView = nullptr;
 {
     if ( ! self.isRotateEnabled) return;
 
-    if ( ! mbglMap->canRotate()) return;
-
     mbglMap->cancelTransitions();
 
     if (rotate.state == UIGestureRecognizerStateBegan)
