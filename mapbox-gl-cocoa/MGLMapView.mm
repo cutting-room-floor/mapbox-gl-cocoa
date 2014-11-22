@@ -711,9 +711,9 @@ MBGLView *mbglView = nullptr;
 
 - (void)resetNorth
 {
-    mbglMap->resetNorth();
+    mbglMap->setBearing(0, MGLAnimationDuration);
 
-    [UIView animateWithDuration:0.25
+    [UIView animateWithDuration:MGLAnimationDuration
                      animations:^(void)
                      {
                          self.compass.transform = CGAffineTransformIdentity;
@@ -722,7 +722,7 @@ MBGLView *mbglView = nullptr;
                      {
                          if (finished)
                          {
-                             [UIView animateWithDuration:0.25
+                             [UIView animateWithDuration:MGLAnimationDuration
                                               animations:^(void)
                                               {
                                                   self.compass.alpha = 0;
