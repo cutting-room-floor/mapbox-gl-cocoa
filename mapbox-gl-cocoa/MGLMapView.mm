@@ -27,6 +27,8 @@ extern NSString *const MGLStyleKeyBackground;
 
 extern NSString *const MGLStyleValueFunctionAllowed;
 
+#pragma mark - Private -
+
 @interface MGLMapView () <UIGestureRecognizerDelegate, GLKViewDelegate>
 
 @property (nonatomic) EAGLContext *context;
@@ -65,6 +67,8 @@ extern NSString *const MGLStyleValueFunctionAllowed;
 @end
 
 @implementation MGLMapView
+
+#pragma mark - Setup -
 
 @dynamic debugActive;
 
@@ -312,6 +316,8 @@ MBGLView *mbglView = nullptr;
     }
 }
 
+#pragma mark - Layout -
+
 - (void)setFrame:(CGRect)frame
 {
     [super setFrame:frame];
@@ -437,6 +443,8 @@ MBGLView *mbglView = nullptr;
     [super layoutSubviews];
 }
 
+#pragma mark - Conversions -
+
 + (CGFloat)degreesToRadians:(CGFloat)degrees
 {
     return degrees * M_PI / 180;
@@ -446,6 +454,8 @@ MBGLView *mbglView = nullptr;
 {
     return radians * 180 / M_PI;
 }
+
+#pragma mark - Life Cycle -
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
@@ -463,6 +473,8 @@ MBGLView *mbglView = nullptr;
 
     mbglMap->start();
 }
+
+#pragma mark - Gestures -
 
 - (void)handleCompassTapGesture:(id)sender
 {
@@ -666,6 +678,8 @@ MBGLView *mbglView = nullptr;
     return ([validSimultaneousGestures containsObject:gestureRecognizer] && [validSimultaneousGestures containsObject:otherGestureRecognizer]);
 }
 
+#pragma mark - Settings -
+
 - (void)tintColorDidChange
 {
     for (UIView *subview in self.subviews)
@@ -794,6 +808,8 @@ MBGLView *mbglView = nullptr;
 {
     [self setDirection:direction animated:NO];
 }
+
+#pragma mark - Styling -
 
 - (NSDictionary *)getRawStyle
 {
@@ -1242,6 +1258,8 @@ MBGLView *mbglView = nullptr;
 
     return MGLStyleAllowedTypes;
 }
+
+#pragma mark - Utility -
 
 - (void)unsuspendRegionChangeDelegateQueue
 {
