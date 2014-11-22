@@ -27,6 +27,8 @@ extern NSString *const MGLStyleKeyBackground;
 
 extern NSString *const MGLStyleValueFunctionAllowed;
 
+NSTimeInterval const MGLAnimationDuration = 0.3;
+
 #pragma mark - Private -
 
 @interface MGLMapView () <UIGestureRecognizerDelegate, GLKViewDelegate>
@@ -603,13 +605,11 @@ MBGLView *mbglView = nullptr;
 
     if (doubleTap.state == UIGestureRecognizerStateEnded)
     {
-        CGFloat duration = 0.3;
-
-        mbglMap->scaleBy(2, [doubleTap locationInView:doubleTap.view].x, [doubleTap locationInView:doubleTap.view].y, duration);
+        mbglMap->scaleBy(2, [doubleTap locationInView:doubleTap.view].x, [doubleTap locationInView:doubleTap.view].y, MGLAnimationDuration);
 
         self.animatingGesture = YES;
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(MGLAnimationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
         {
             self.animatingGesture = NO;
 
@@ -628,13 +628,11 @@ MBGLView *mbglView = nullptr;
 
     if (twoFingerTap.state == UIGestureRecognizerStateEnded)
     {
-        CGFloat duration = 0.3;
-
-        mbglMap->scaleBy(0.5, [twoFingerTap locationInView:twoFingerTap.view].x, [twoFingerTap locationInView:twoFingerTap.view].y, duration);
+        mbglMap->scaleBy(0.5, [twoFingerTap locationInView:twoFingerTap.view].x, [twoFingerTap locationInView:twoFingerTap.view].y, MGLAnimationDuration);
 
         self.animatingGesture = YES;
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(MGLAnimationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
         {
             self.animatingGesture = NO;
 
@@ -745,7 +743,7 @@ MBGLView *mbglView = nullptr;
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
 {
-    double duration = (animated ? 0.3 : 0);
+    double duration = (animated ? MGLAnimationDuration : 0);
 
     mbglMap->setLonLat(coordinate.longitude, coordinate.latitude, duration);
 }
@@ -765,7 +763,7 @@ MBGLView *mbglView = nullptr;
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(double)zoomLevel animated:(BOOL)animated
 {
-    double duration = (animated ? 0.3 : 0);
+    double duration = (animated ? MGLAnimationDuration : 0);
 
     mbglMap->setLonLatZoom(centerCoordinate.longitude, centerCoordinate.latitude, zoomLevel, duration);
 }
@@ -777,7 +775,7 @@ MBGLView *mbglView = nullptr;
 
 - (void)setZoomLevel:(double)zoomLevel animated:(BOOL)animated
 {
-    double duration = (animated ? 0.3 : 0);
+    double duration = (animated ? MGLAnimationDuration : 0);
 
     mbglMap->setZoom(zoomLevel, duration);
 }
@@ -799,7 +797,7 @@ MBGLView *mbglView = nullptr;
 
 - (void)setDirection:(CLLocationDirection)direction animated:(BOOL)animated
 {
-    double duration = (animated ? 0.3 : 0);
+    double duration = (animated ? MGLAnimationDuration : 0);
 
     mbglMap->setBearing(direction * -1, duration);
 }
