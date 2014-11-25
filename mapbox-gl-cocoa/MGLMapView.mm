@@ -1297,9 +1297,9 @@ MBGLView *mbglView = nullptr;
 
                 if ([self.regionChangeDelegateQueue operationCount] == 0)
                 {
-                    [self.regionChangeDelegateQueue addOperationWithBlock:^(void)
+                    [self.regionChangeDelegateQueue addOperationWithBlock:^
                     {
-                        dispatch_async(dispatch_get_main_queue(), ^(void)
+                        dispatch_async(dispatch_get_main_queue(), ^
                         {
                             if ([self.delegate respondsToSelector:@selector(mapView:regionDidChangeAnimated:)])
                             {
@@ -1389,13 +1389,13 @@ MBGLView *mbglView = nullptr;
 
     if (mbglMap->getBearing() && self.compass.alpha < 1)
     {
-        [UIView animateWithDuration:0.25
+        [UIView animateWithDuration:MGLAnimationDuration
                               delay:0
                             options:UIViewAnimationOptionBeginFromCurrentState
-                         animations:^(void)
-        {
-            self.compass.alpha = 1;
-        }
+                         animations:^
+                         {
+                             self.compass.alpha = 1;
+                         }
                          completion:nil];
     }
 }
@@ -1462,7 +1462,7 @@ class MBGLView : public mbgl::View
         }
         else
         {
-            dispatch_async(dispatch_get_main_queue(), ^(void)
+            dispatch_async(dispatch_get_main_queue(), ^
             {
                 [nativeView performSelector:@selector(notifyMapChange:)
                                  withObject:@(change)
