@@ -480,7 +480,7 @@ MBGLView *mbglView = nullptr;
 
 - (void)handleCompassTapGesture:(id)sender
 {
-    [self resetNorth];
+    [self resetNorthAnimated:YES];
 }
 
 #pragma clang diagnostic pop
@@ -711,10 +711,17 @@ MBGLView *mbglView = nullptr;
 
 - (void)resetNorth
 {
-    mbglMap->setBearing(0, MGLAnimationDuration);
+    [self resetNorthAnimated:YES];
+}
 
-    [UIView animateWithDuration:MGLAnimationDuration
-                     animations:^(void)
+- (void)resetNorthAnimated:(BOOL)animated
+{
+    double duration = (animated ? MGLAnimationDuration : 0);
+
+    mbglMap->setBearing(0, duration);
+
+    [UIView animateWithDuration:duration
+                     animations:^
                      {
                          self.compass.transform = CGAffineTransformIdentity;
                      }
@@ -723,7 +730,7 @@ MBGLView *mbglView = nullptr;
                          if (finished)
                          {
                              [UIView animateWithDuration:MGLAnimationDuration
-                                              animations:^(void)
+                                              animations:^
                                               {
                                                   self.compass.alpha = 0;
                                               }];
