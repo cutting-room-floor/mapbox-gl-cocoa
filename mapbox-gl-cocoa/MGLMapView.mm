@@ -594,7 +594,7 @@ MBGLView *mbglView = nullptr;
 
         // constrain to +/-30 degrees when merely rotating like Apple does
         //
-        if ( ! self.isRotationAllowed && self.pinch.state != UIGestureRecognizerStateChanged && self.quickZoom.state != UIGestureRecognizerStateChanged)
+        if ( ! self.isRotationAllowed && fabsf(self.pinch.scale) < 10)
         {
             newDegrees = fminf(newDegrees,  30);
             newDegrees = fmaxf(newDegrees, -30);
@@ -1306,15 +1306,6 @@ MBGLView *mbglView = nullptr;
 
 - (BOOL)isRotationAllowed
 {
-    // allow (eventually corrected, if necessary) free rotation during zoom gestures
-    //
-    if ((self.pinch.state == UIGestureRecognizerStateChanged || self.quickZoom.state == UIGestureRecognizerStateChanged) && self.rotate.state != UIGestureRecognizerStateChanged)
-    {
-        return YES;
-    }
-
-    // disallow rotation at low zooms
-    //
     return (self.zoomLevel > 3);
 }
 
@@ -1322,11 +1313,9 @@ MBGLView *mbglView = nullptr;
 //
 - (void)unrotateIfNeededAnimated:(BOOL)animated
 {
-    // don't worry about it in the midst of gestures
+    // don't worry about it in the midst of pinch or rotate gestures
     //
-    if (self.pinch.state     == UIGestureRecognizerStateChanged ||
-        self.rotate.state    == UIGestureRecognizerStateChanged ||
-        self.quickZoom.state == UIGestureRecognizerStateChanged) return;
+    if (self.pinch.state  == UIGestureRecognizerStateChanged || self.rotate.state == UIGestureRecognizerStateChanged) return;
 
     // but otherwise, do
     //
