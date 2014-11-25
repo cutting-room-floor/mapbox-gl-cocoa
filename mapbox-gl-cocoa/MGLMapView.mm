@@ -532,13 +532,12 @@ MBGLView *mbglView = nullptr;
 
             __weak MGLMapView *weakSelf = self;
 
-            [self performInterfaceAction:^
+            [self animateWithDelay:duration animations:^
             {
                 weakSelf.animatingGesture = NO;
 
                 [weakSelf notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
-            }
-                                    afterDelay:duration];
+            }];
         }
     }
 }
@@ -629,15 +628,14 @@ MBGLView *mbglView = nullptr;
 
         __weak MGLMapView *weakSelf = self;
 
-        [self performInterfaceAction:^
+        [self animateWithDelay:MGLAnimationDuration animations:^
         {
             weakSelf.animatingGesture = NO;
 
             [weakSelf unrotateIfNeededAnimated:YES];
 
             [weakSelf notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
-        }
-                                afterDelay:MGLAnimationDuration];
+        }];
     }
 }
 
@@ -657,15 +655,14 @@ MBGLView *mbglView = nullptr;
 
         __weak MGLMapView *weakSelf = self;
 
-        [self performInterfaceAction:^
+        [self animateWithDelay:MGLAnimationDuration animations:^
         {
             weakSelf.animatingGesture = NO;
 
             [weakSelf unrotateIfNeededAnimated:YES];
 
             [weakSelf notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
-        }
-                                afterDelay:MGLAnimationDuration];
+        }];
     }
 }
 
@@ -1302,9 +1299,9 @@ MBGLView *mbglView = nullptr;
 
 #pragma mark - Utility -
 
-- (void)performInterfaceAction:(dispatch_block_t)actionBlock afterDelay:(NSTimeInterval)delay
+- (void)animateWithDelay:(NSTimeInterval)delay animations:(void (^)(void))animations
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), actionBlock);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), animations);
 }
 
 - (BOOL)isRotationAllowed
@@ -1343,20 +1340,18 @@ MBGLView *mbglView = nullptr;
 
             __weak MGLMapView *weakSelf = self;
 
-            [self performInterfaceAction:^
+            [self animateWithDelay:0.1 animations:^
             {
                 [weakSelf resetNorthAnimated:YES];
 
-                [self performInterfaceAction:^
+                [self animateWithDelay:MGLAnimationDuration animations:^
                 {
                     weakSelf.userInteractionEnabled = YES;
 
                     self.animatingGesture = NO;
-                }
-                                  afterDelay:MGLAnimationDuration];
+                }];
 
-            }
-                              afterDelay:0.1];
+            }];
         }
         else
         {
