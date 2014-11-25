@@ -49,6 +49,7 @@ NSTimeInterval const MGLAnimationDuration = 0.3;
 @property (nonatomic) CGFloat angle;
 @property (nonatomic) CGFloat quickZoomStart;
 @property (nonatomic, getter=isAnimatingGesture) BOOL animatingGesture;
+@property (nonatomic, readonly, getter=isRotationAllowed) BOOL rotationAllowed;
 
 @end
 
@@ -529,12 +530,15 @@ MBGLView *mbglView = nullptr;
         {
             self.animatingGesture = YES;
 
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
-            {
-                self.animatingGesture = NO;
+            __weak MGLMapView *weakSelf = self;
 
-                [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
-            });
+            [self performInterfaceAction:^
+            {
+                weakSelf.animatingGesture = NO;
+
+                [weakSelf notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+            }
+                                    afterDelay:duration];
         }
     }
 }
@@ -567,6 +571,8 @@ MBGLView *mbglView = nullptr;
     {
         mbglMap->stopScaling();
 
+        [self unrotateIfNeededAnimated:YES];
+
         [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
     }
 }
@@ -585,13 +591,25 @@ MBGLView *mbglView = nullptr;
     }
     else if (rotate.state == UIGestureRecognizerStateChanged)
     {
-        mbglMap->setBearing([MGLMapView radiansToDegrees:(self.angle + rotate.rotation)] * -1,
+        CGFloat newDegrees = [MGLMapView radiansToDegrees:(self.angle + rotate.rotation)] * -1;
+
+        // constrain to +/-30 degrees when merely rotating like Apple does
+        //
+        if ( ! self.isRotationAllowed && self.pinch.state != UIGestureRecognizerStateChanged && self.quickZoom.state != UIGestureRecognizerStateChanged)
+        {
+            newDegrees = fminf(newDegrees,  30);
+            newDegrees = fmaxf(newDegrees, -30);
+        }
+
+        mbglMap->setBearing(newDegrees,
                             [rotate locationInView:rotate.view].x,
                             [rotate locationInView:rotate.view].y);
     }
     else if (rotate.state == UIGestureRecognizerStateEnded || rotate.state == UIGestureRecognizerStateCancelled)
     {
         mbglMap->stopRotating();
+
+        [self unrotateIfNeededAnimated:YES];
 
         [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
     }
@@ -609,12 +627,17 @@ MBGLView *mbglView = nullptr;
 
         self.animatingGesture = YES;
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(MGLAnimationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
-        {
-            self.animatingGesture = NO;
+        __weak MGLMapView *weakSelf = self;
 
-            [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
-        });
+        [self performInterfaceAction:^
+        {
+            weakSelf.animatingGesture = NO;
+
+            [weakSelf unrotateIfNeededAnimated:YES];
+
+            [weakSelf notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+        }
+                                afterDelay:MGLAnimationDuration];
     }
 }
 
@@ -632,12 +655,17 @@ MBGLView *mbglView = nullptr;
 
         self.animatingGesture = YES;
 
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(MGLAnimationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void)
-        {
-            self.animatingGesture = NO;
+        __weak MGLMapView *weakSelf = self;
 
-            [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
-        });
+        [self performInterfaceAction:^
+        {
+            weakSelf.animatingGesture = NO;
+
+            [weakSelf unrotateIfNeededAnimated:YES];
+
+            [weakSelf notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
+        }
+                                afterDelay:MGLAnimationDuration];
     }
 }
 
@@ -665,6 +693,8 @@ MBGLView *mbglView = nullptr;
     }
     else if (quickZoom.state == UIGestureRecognizerStateEnded || quickZoom.state == UIGestureRecognizerStateCancelled)
     {
+        [self unrotateIfNeededAnimated:YES];
+
         [self notifyMapChange:@(mbgl::MapChangeRegionDidChangeAnimated)];
     }
 }
@@ -773,6 +803,8 @@ MBGLView *mbglView = nullptr;
     double duration = (animated ? MGLAnimationDuration : 0);
 
     mbglMap->setLonLatZoom(centerCoordinate.longitude, centerCoordinate.latitude, zoomLevel, duration);
+
+    [self unrotateIfNeededAnimated:animated];
 }
 
 - (double)zoomLevel
@@ -785,6 +817,8 @@ MBGLView *mbglView = nullptr;
     double duration = (animated ? MGLAnimationDuration : 0);
 
     mbglMap->setZoom(zoomLevel, duration);
+
+    [self unrotateIfNeededAnimated:animated];
 }
 
 - (void)setZoomLevel:(double)zoomLevel
@@ -804,6 +838,8 @@ MBGLView *mbglView = nullptr;
 
 - (void)setDirection:(CLLocationDirection)direction animated:(BOOL)animated
 {
+    if ( ! animated && ! self.rotationAllowed) return;
+
     double duration = (animated ? MGLAnimationDuration : 0);
 
     mbglMap->setBearing(direction * -1, duration);
@@ -1266,6 +1302,69 @@ MBGLView *mbglView = nullptr;
 
 #pragma mark - Utility -
 
+- (void)performInterfaceAction:(dispatch_block_t)actionBlock afterDelay:(NSTimeInterval)delay
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), actionBlock);
+}
+
+- (BOOL)isRotationAllowed
+{
+    // allow (eventually corrected, if necessary) free rotation during zoom gestures
+    //
+    if ((self.pinch.state == UIGestureRecognizerStateChanged || self.quickZoom.state == UIGestureRecognizerStateChanged) && self.rotate.state != UIGestureRecognizerStateChanged)
+    {
+        return YES;
+    }
+
+    // disallow rotation at low zooms
+    //
+    return (self.zoomLevel > 3);
+}
+
+// correct rotations to north as needed
+//
+- (void)unrotateIfNeededAnimated:(BOOL)animated
+{
+    // don't worry about it in the midst of gestures
+    //
+    if (self.pinch.state     == UIGestureRecognizerStateChanged ||
+        self.rotate.state    == UIGestureRecognizerStateChanged ||
+        self.quickZoom.state == UIGestureRecognizerStateChanged) return;
+
+    // but otherwise, do
+    //
+    if (self.direction != 0 && ! self.isRotationAllowed)
+    {
+        if (animated)
+        {
+            self.animatingGesture = YES;
+
+            self.userInteractionEnabled = NO;
+
+            __weak MGLMapView *weakSelf = self;
+
+            [self performInterfaceAction:^
+            {
+                [weakSelf resetNorthAnimated:YES];
+
+                [self performInterfaceAction:^
+                {
+                    weakSelf.userInteractionEnabled = YES;
+
+                    self.animatingGesture = NO;
+                }
+                                  afterDelay:MGLAnimationDuration];
+
+            }
+                              afterDelay:0.1];
+        }
+        else
+        {
+            [self resetNorthAnimated:NO];
+        }
+    }
+}
+
 - (void)unsuspendRegionChangeDelegateQueue
 {
     @synchronized (self.regionChangeDelegateQueue)
@@ -1453,11 +1552,13 @@ class MBGLView : public mbgl::View
     {
         if (delay)
         {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay)), dispatch_get_main_queue(), ^(void)
+            __weak MGLMapView *weakNativeView = nativeView;
+
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
             {
-                [nativeView performSelector:@selector(notifyMapChange:)
-                                 withObject:@(change)
-                                 afterDelay:0];
+                [weakNativeView performSelector:@selector(notifyMapChange:)
+                                     withObject:@(change)
+                                     afterDelay:0];
             });
         }
         else
