@@ -139,9 +139,16 @@ MBGLView *mbglView = nullptr;
     }
     else
     {
+        if ([@(mbglMap->getStyleJSON().c_str()) length]) mbglMap->stop();
         mbglMap->setStyleJSON((std::string)[styleJSON cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+        mbglMap->start();
     }
+}
 
+- (void)setStyleURL:(NSString *)filePathURL
+{
+    if ([@(mbglMap->getStyleJSON().c_str()) length]) mbglMap->stop();
+    mbglMap->setStyleURL(std::string("file://") + [filePathURL UTF8String]);
     mbglMap->start();
 }
 
@@ -860,26 +867,16 @@ MBGLView *mbglView = nullptr;
 {
     NSData *data = [NSJSONSerialization dataWithJSONObject:style options:0 error:nil];
 
-    mbglMap->setStyleJSON([[[NSString alloc] initWithData:data encoding:[NSString defaultCStringEncoding]] cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    [self setStyleJSON:[[NSString alloc] initWithData:data encoding:[NSString defaultCStringEncoding]]];
 }
 
 - (NSArray *)bundledStyleNames
 {
-    NSMutableArray *styleNames = [NSMutableArray array];
+    NSString *stylesPath = [[MGLMapView resourceBundlePath] stringByAppendingString:@"/styles"];
 
-    NSString *styleFoldersPath = [[MGLMapView resourceBundlePath] stringByAppendingString:@"/styles"];
+    NSArray *styleNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:stylesPath error:nil];
 
-    NSArray *styleFolders = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:styleFoldersPath error:nil];
-
-    for (NSString *styleFolder in styleFolders)
-    {
-        if ([[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithFormat:@"%@/%@/style.json", styleFoldersPath, styleFolder]])
-        {
-            [styleNames addObject:styleFolder];
-        }
-    }
-
-    return [NSArray arrayWithArray:styleNames];
+    return styleNames;
 }
 
 - (void)useBundledStyleNamed:(NSString *)styleName
@@ -890,7 +887,7 @@ MBGLView *mbglView = nullptr;
 
     NSAssert(path, @"Invalid bundled style name specified.");
 
-    mbglMap->setStyleURL(std::string("file://" + std::string([path cStringUsingEncoding:[NSString defaultCStringEncoding]])));
+    [self setStyleURL:path];
 }
 
 - (NSArray *)getStyleOrderedLayerNames
