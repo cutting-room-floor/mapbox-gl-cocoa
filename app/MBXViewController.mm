@@ -6,11 +6,18 @@
 
 #import <CoreLocation/CoreLocation.h>
 
-@interface MBXViewController () <CLLocationManagerDelegate>
+static UIColor *const kTintColor = [UIColor colorWithRed:0.120 green:0.550 blue:0.670 alpha:1.000];
+
+static NSDictionary *const kStyles = @{
+    @"bright-v6":    @"Bright",
+    @"basic-v6":     @"Basic",
+    @"outdoors-v6":  @"Outdoors",
+    @"satellite-v6": @"Satellite"
+};
+
+@interface MBXViewController () <UIActionSheetDelegate, CLLocationManagerDelegate>
 
 @property (nonatomic) MGLMapView *mapView;
-@property (nonatomic) BOOL debug;
-@property (nonatomic) UIView *palette;
 @property (nonatomic) CLLocationManager *locationManager;
 
 @end
@@ -57,10 +64,29 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 
     self.mapView.viewControllerForLayoutGuides = self;
 
+    self.view.tintColor = kTintColor;
+    self.navigationController.navigationBar.tintColor = kTintColor;
+    self.mapView.tintColor = kTintColor;
+
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings.png"]
+                                                                             style:UIBarButtonItemStylePlain
+                                                                            target:self
+                                                                            action:@selector(showSettings)];
+
+    UIButton *titleButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [titleButton setFrame:CGRectMake(0, 0, 120, 40)];
+    [titleButton setTitle:[[kStyles allValues] firstObject] forState:UIControlStateNormal];
+    [titleButton setTitleColor:kTintColor forState:UIControlStateNormal];
+    [titleButton addTarget:self action:@selector(cycleStyles) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.titleView = titleButton;
+
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"locateUser.png"]
+                                                                              style:UIBarButtonItemStylePlain
+                                                                             target:self
+                                                                             action:@selector(locateUser)];
+
     settings = new mbgl::Settings_NSUserDefaults();
     [self restoreState:nil];
-
-    [self setupDebugUI];
 }
 
 #pragma clang diagnostic push
@@ -91,91 +117,60 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 
 #pragma clang diagnostic pop
 
-- (void)setupDebugUI
-{
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTapGesture:)];
-    singleTap.numberOfTapsRequired = 1;
-    [self.mapView addGestureRecognizer:singleTap];
-
-    NSArray *selectorNames = @[ @"unrotate", @"resetPosition", @"toggleDebug", @"locateUser" ];
-    CGFloat buttonSize  = 20;
-    CGFloat bufferSize  = 10;
-    CGFloat alpha       = 0.75;
-    CGFloat paletteWidth  = buttonSize + (2 * bufferSize);
-    CGFloat paletteHeight = [selectorNames count] * (buttonSize + bufferSize) + bufferSize;
-    self.palette = [[UIView alloc] initWithFrame:CGRectMake(self.view.bounds.size.width - paletteWidth,
-                                                            (self.view.bounds.size.height - paletteHeight) / 2,
-                                                            paletteWidth,
-                                                            paletteHeight)];
-    self.palette.backgroundColor = [UIColor colorWithWhite:0 alpha:alpha];
-    self.palette.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-    self.palette.layer.cornerRadius = bufferSize;
-    [self.view addSubview:self.palette];
-    for (NSString *selectorName in selectorNames)
-    {
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        button.frame = CGRectMake(bufferSize,
-                                  ([selectorNames indexOfObject:selectorName] * (buttonSize + bufferSize)) + bufferSize,
-                                  buttonSize,
-                                  buttonSize);
-        [button setImage:[UIImage imageNamed:[selectorName stringByAppendingString:@".png"]] forState:UIControlStateNormal];
-        [button addTarget:self action:NSSelectorFromString(selectorName) forControlEvents:UIControlEventTouchUpInside];
-        [self.palette addSubview:button];
-    }
-}
-
 - (NSUInteger)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskAll;
 }
 
-#pragma mark - Debugging UI
+#pragma mark - Actions
 
-- (void)handleSingleTapGesture:(UITapGestureRecognizer *)singleTap
+- (void)showSettings
 {
-    if (singleTap.state == UIGestureRecognizerStateEnded)
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Map Settings"
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancel"
+                                         destructiveButtonTitle:nil
+                                              otherButtonTitles:@"Reset North", @"Reset Position", @"Toggle Debug", nil];
+
+    [sheet showFromBarButtonItem:self.navigationItem.leftBarButtonItem animated:YES];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == actionSheet.firstOtherButtonIndex)
     {
-        [self togglePalette];
+        [self.mapView resetNorth];
+    }
+    else if (buttonIndex == actionSheet.firstOtherButtonIndex + 1)
+    {
+        [self.mapView resetPosition];
+    }
+    else if (buttonIndex == actionSheet.firstOtherButtonIndex + 2)
+    {
+        [self.mapView toggleDebug];
     }
 }
 
-- (void)togglePalette
+- (void)cycleStyles
 {
-    if (self.palette.alpha < 1)
-    {
-        self.palette.userInteractionEnabled = YES;
+    UIButton *titleButton = (UIButton *)self.navigationItem.titleView;
 
-        [UIView animateWithDuration:0.25 animations:^(void)
-        {
-            self.palette.alpha = 1;
-        }];
+    NSString *styleName = [titleButton titleForState:UIControlStateNormal];
+
+    if ( ! styleName)
+    {
+        styleName = [[kStyles allKeys] firstObject];
     }
     else
     {
-        self.palette.userInteractionEnabled = NO;
-
-        [UIView animateWithDuration:0.25 animations:^(void)
-        {
-            self.palette.alpha = 0;
-        }];
+        NSUInteger index = [[kStyles allValues] indexOfObject:styleName] + 1;
+        if (index == [[kStyles allKeys] count]) index = 0;
+        styleName = [[kStyles allKeys] objectAtIndex:index];
     }
-}
 
-- (void)unrotate
-{
-    [self.mapView resetNorth];
-}
+    [self.mapView useBundledStyleNamed:styleName];
 
-- (void)resetPosition
-{
-    [self.mapView resetPosition];
-}
-
-- (void)toggleDebug
-{
-    [self.mapView toggleDebug];
-
-    self.debug = ! self.debug;
+    [titleButton setTitle:kStyles[styleName] forState:UIControlStateNormal];
 }
 
 - (void)locateUser
@@ -231,7 +226,7 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
     }
 }
 
-#pragma mark - User location
+#pragma mark - Location
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
