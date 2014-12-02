@@ -56,7 +56,7 @@ cp -v $PARENT/styles/sprites/*.png $PARENT/styles/sprites/*.json $OUTPUT/static/
 # Run GYP to generate mapbox-gl-cocoa Xcode project.
 # NOTE: the above command also creates the dependent $PARENT/mapboxgl.xcodeproj.
 #
-../../../deps/run_gyp ./mapbox-gl-cocoa.gyp -I../../../config-ios.gypi --depth=. --generator-output=. -f xcode
+../../../deps/run_gyp ./mapbox-gl-cocoa.gyp -I../../../config-ios.gypi -Dplatform=ios --depth=. --generator-output=. -f xcode
 
 #
 # Build Cocoa lib for sim & device.
