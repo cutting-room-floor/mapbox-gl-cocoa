@@ -41,9 +41,16 @@ cd ../.. && git log | head -1 | awk '{ print $2 }' >> $VERSIONS && cd $OLDPWD
 # complications between faked GYP bundles-as-executables, device build 
 # dependencies, and code signing. 
 #
+if [[ ! -d $PARENT/styles/styles || ! -d $PARENT/styles/sprites ]]; then
+    echo "gl-styles structure changed; aborting"
+    exit 1
+fi
 mkdir -pv $OUTPUT/static/$NAME.bundle
 cp -v $SOURCES/Resources/* $OUTPUT/static/${NAME}.bundle
-cp -rv $PARENT/styles $OUTPUT/static/${NAME}.bundle/styles
+mkdir -pv $OUTPUT/static/$NAME.bundle/styles/styles
+cp -v $PARENT/styles/styles/* $OUTPUT/static/${NAME}.bundle/styles/styles
+mkdir -pv $OUTPUT/static/$NAME.bundle/styles/sprites
+cp -v $PARENT/styles/sprites/*.png $PARENT/styles/sprites/*.json $OUTPUT/static/$NAME.bundle/styles/sprites
 
 #
 # Run GYP to generate mapbox-gl-cocoa Xcode project.
