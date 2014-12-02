@@ -1,6 +1,13 @@
 {
   'target_defaults': {
     'product_name': 'MapboxGL',
+    'variables' : {
+      'ldflags': [
+        '<@(sqlite3_ldflags)',
+        '<@(uv_ldflags)',
+        '<@(zlib_ldflags)',
+      ]
+    },
     'xcode_settings': {
       'SDKROOT': 'iphoneos',
       'SUPPORTED_PLATFORMS':['iphonesimulator','iphoneos'],
@@ -10,7 +17,8 @@
       'TARGETED_DEVICE_FAMILY': '1,2',
       'GCC_VERSION': 'com.apple.compilers.llvm.clang.1_0',
       'CLANG_ENABLE_OBJC_ARC': 'YES',
-      'OTHER_LDFLAGS!': [ '-lpthread', '-ldl', '-lz' ],
+      'OTHER_CPLUSPLUSFLAGS': [ '<@(uv_cflags)' ],
+      'OTHER_LDFLAGS!': [ '-lpthread', '-ldl', '-lz', '<@(ldflags)' ],
       'COMBINE_HIDPI_IMAGES': 'NO'
     },
     'link_settings': {
@@ -59,7 +67,7 @@
         }
       ],
       'dependencies': [
-          '../../../mapboxgl.gyp:mapboxgl-ios'
+          '../../../mapboxgl.gyp:mbgl-ios'
       ],
       'xcode_settings': {
         'IPHONEOS_DEPLOYMENT_TARGET':'7.0'
@@ -98,7 +106,7 @@
         ],
       },
       'dependencies': [
-          '../../../mapboxgl.gyp:mapboxgl-ios'
+          '../../../mapboxgl.gyp:mbgl-ios'
       ],
       'xcode_settings': {
         'IPHONEOS_DEPLOYMENT_TARGET':'8.0',
