@@ -20,8 +20,9 @@
         '<!@(find ../mapbox-gl-cocoa -type f -name "*.h")',
         '<!@(find ../mapbox-gl-cocoa -type f -name "*.m")',
         '<!@(find ../mapbox-gl-cocoa -type f -name "*.mm")',
-        '../../../platform/darwin/settings_nsuserdefaults.mm',
-        '../../../platform/darwin/Reachability.m',
+        '<!@(find ../../../include/mbgl/platform/darwin -type f)',
+        '<!@(find ../../../platform/darwin -type f)',
+        '<!@(find ../../../platform/ios -type f)'
       ],
       'product_extension': 'app',
       'mac_bundle': 1,

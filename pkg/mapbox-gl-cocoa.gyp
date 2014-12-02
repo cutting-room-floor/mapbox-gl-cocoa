@@ -46,13 +46,9 @@
         '<!@(find ../mapbox-gl-cocoa -type f -name "MGLStyleFunctionValue.*")',
         '<!@(find ../mapbox-gl-cocoa -type f -name "MGLTypes.*")',
         '<!@(find ../mapbox-gl-cocoa -type f -name "*+MGLAdditions.*")',
-        '../../../common/platform_nsstring.mm',
-        '../../../common/Reachability.h',
-        '../../../common/Reachability.m',
-        '../../../common/http_request_baton_cocoa.mm',
-        '../../../common/ios.mm',
-        '../../../common/nslog_log.hpp',
-        '../../../common/nslog_log.mm'
+        '<!@(find ../../../include/mbgl/platform/darwin -type f)',
+        '<!@(find ../../../platform/darwin -type f)',
+        '<!@(find ../../../platform/ios -type f)'
       ],
       'copies': [
         {
@@ -77,13 +73,9 @@
         '<!@(find ../mapbox-gl-cocoa -type f -name "MGLStyleFunctionValue.*")',
         '<!@(find ../mapbox-gl-cocoa -type f -name "MGLTypes.*")',
         '<!@(find ../mapbox-gl-cocoa -type f -name "*+MGLAdditions.*")',
-        '../../../common/platform_nsstring.mm',
-        '../../../common/Reachability.h',
-        '../../../common/Reachability.m',
-        '../../../common/http_request_baton_cocoa.mm',
-        '../../../common/ios.mm',
-        '../../../common/nslog_log.hpp',
-        '../../../common/nslog_log.mm'
+        '<!@(find ../../../include/mbgl/platform/darwin -type f)',
+        '<!@(find ../../../platform/darwin -type f)',
+        '<!@(find ../../../platform/ios -type f)'
       ],
       'mac_bundle': 1,
       'mac_bundle_resources': [
