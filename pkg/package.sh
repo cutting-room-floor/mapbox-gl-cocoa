@@ -42,7 +42,7 @@ cd ../.. && git log | head -1 | awk '{ print $2 }' >> $VERSIONS && cd $OLDPWD
 # dependencies, and code signing. 
 #
 if [[ ! -d $PARENT/styles/styles || ! -d $PARENT/styles/sprites ]]; then
-    echo "gl-styles structure changed; aborting"
+    echo "Bundled gl-styles structure changed; aborting"
     exit 1
 fi
 mkdir -pv $OUTPUT/static/$NAME.bundle
@@ -58,17 +58,28 @@ cp -v $PARENT/styles/sprites/*.png $PARENT/styles/sprites/*.json $OUTPUT/static/
 #
 ../../../deps/run_gyp ./mapbox-gl-cocoa.gyp -I../../../config-ios.gypi -Dplatform=ios --depth=. --generator-output=. -f xcode
 
+function check_build {
+    if [[ $? != 0 ]]; then
+        echo "Failed to build $1; aborting"
+        exit 1
+    fi
+}
+
 #
 # Build Cocoa lib for sim & device.
 #
 xcodebuild -project ./mapbox-gl-cocoa.xcodeproj -target mapbox-library -configuration Release -sdk iphonesimulator${SDK} ONLY_ACTIVE_ARCH=NO
+check_build "gl-cocoa#static for simulator"
 xcodebuild -project ./mapbox-gl-cocoa.xcodeproj -target mapbox-library -configuration Release -sdk iphoneos${SDK}
+check_build "gl-cocoa#static for device"
 
 #
 # Build C++ lib for sim & device.
 #
-xcodebuild -project $PARENT/mapboxgl.xcodeproj -target mapboxgl-ios -configuration Release -sdk iphonesimulator${SDK} ONLY_ACTIVE_ARCH=NO
-xcodebuild -project $PARENT/mapboxgl.xcodeproj -target mapboxgl-ios -configuration Release -sdk iphoneos${SDK}
+xcodebuild -project $PARENT/mapboxgl.xcodeproj -target mbgl-ios -configuration Release -sdk iphonesimulator${SDK} ONLY_ACTIVE_ARCH=NO
+check_build "gl-native#static for simulator"
+xcodebuild -project $PARENT/mapboxgl.xcodeproj -target mbgl-ios -configuration Release -sdk iphoneos${SDK}
+check_build "gl-native#static for device"
 
 #
 # Combine into one lib each for sim & device.
@@ -82,7 +93,7 @@ libtool -static -o $OUTPUT/static/lib${NAME}.a \
                    `find $PARENT/mason_packages/ios-${SDK} -type f -name libuv.a`
 
 if [[ `xcodebuild -showsdks | grep -c iphoneos${SDK}` == 0 ]]; then
-    echo "Skipping framework build since no iOS ${SDK} SDK present."
+    echo "Skipping framework build since no iOS ${SDK} SDK present"
     exit
 fi
 
@@ -90,7 +101,9 @@ fi
 # Build framework for sim & device.
 #
 xcodebuild -project ./mapbox-gl-cocoa.xcodeproj -target mapbox-framework -configuration Release -sdk iphonesimulator${SDK} ONLY_ACTIVE_ARCH=NO
+check_build "gl-cocoa#dynamic for simulator"
 xcodebuild -project ./mapbox-gl-cocoa.xcodeproj -target mapbox-framework -configuration Release -sdk iphoneos${SDK}
+check_build "gl-cocoa#dynamic for device"
 
 #
 # Combine into one framework for all platforms.
