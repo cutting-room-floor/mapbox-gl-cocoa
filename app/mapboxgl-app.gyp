@@ -58,6 +58,7 @@
         'GCC_VERSION': 'com.apple.compilers.llvm.clang.1_0',
         'COMBINE_HIDPI_IMAGES': 'NO', # don't merge @2x.png images into .tiff files
         'CLANG_ENABLE_OBJC_ARC': 'YES',
+        'OTHER_CPLUSPLUSFLAGS': [ '<@(uv_cflags)' ],
         'OTHER_LDFLAGS': [ '<@(ldflags)' ],
       },
       'configurations': {
