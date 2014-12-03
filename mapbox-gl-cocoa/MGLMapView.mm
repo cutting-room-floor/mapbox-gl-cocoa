@@ -8,6 +8,7 @@
 #include <mbgl/mbgl.hpp>
 #include <mbgl/platform/platform.hpp>
 #include <mbgl/platform/darwin/reachability.h>
+#include <mbgl/platform/default/caching_http_file_source.hpp>
 
 #import "MGLTypes.h"
 #import "MGLStyleFunctionValue.h"
@@ -202,7 +203,8 @@ MBGLView *mbglView = nullptr;
     // setup mbgl map
     //
     mbglView = new MBGLView(self);
-    mbglMap = new mbgl::Map(*mbglView);
+    mbgl::CachingHTTPFileSource fileSource(mbgl::platform::defaultCacheDatabase());
+    mbglMap = new mbgl::Map(*mbglView, fileSource);
     mbglMap->resize(self.bounds.size.width, self.bounds.size.height, _glView.contentScaleFactor, _glView.drawableWidth, _glView.drawableHeight);
 
     // Notify map object when network reachability status changes.
