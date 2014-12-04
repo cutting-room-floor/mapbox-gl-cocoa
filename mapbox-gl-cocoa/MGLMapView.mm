@@ -80,6 +80,7 @@ class MBGLView;
 
 mbgl::Map *mbglMap = nullptr;
 MBGLView *mbglView = nullptr;
+mbgl::FileSource *mbglFileSource = nullptr;
 
 - (instancetype)initWithFrame:(CGRect)frame styleJSON:(NSString *)styleJSON accessToken:(NSString *)accessToken
 {
@@ -203,8 +204,8 @@ MBGLView *mbglView = nullptr;
     // setup mbgl map
     //
     mbglView = new MBGLView(self);
-    mbgl::CachingHTTPFileSource fileSource(mbgl::platform::defaultCacheDatabase());
-    mbglMap = new mbgl::Map(*mbglView, fileSource);
+    mbglFileSource = new mbgl::CachingHTTPFileSource(mbgl::platform::defaultCacheDatabase());
+    mbglMap = new mbgl::Map(*mbglView, *mbglFileSource);
     mbglMap->resize(self.bounds.size.width, self.bounds.size.height, _glView.contentScaleFactor, _glView.drawableWidth, _glView.drawableHeight);
 
     // Notify map object when network reachability status changes.
@@ -322,6 +323,12 @@ MBGLView *mbglView = nullptr;
     {
         delete mbglView;
         mbglView = nullptr;
+    }
+
+    if (mbglFileSource)
+    {
+        delete mbglFileSource;
+        mbglFileSource = nullptr;
     }
 
     if ([[EAGLContext currentContext] isEqual:_context])
