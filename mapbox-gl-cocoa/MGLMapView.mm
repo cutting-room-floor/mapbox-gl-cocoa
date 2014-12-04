@@ -81,7 +81,7 @@ class MBGLView;
 
 mbgl::Map *mbglMap = nullptr;
 MBGLView *mbglView = nullptr;
-mbgl::FileSource *mbglFileSource = nullptr;
+mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 
 - (instancetype)initWithFrame:(CGRect)frame styleJSON:(NSString *)styleJSON accessToken:(NSString *)accessToken
 {
@@ -305,7 +305,7 @@ mbgl::FileSource *mbglFileSource = nullptr;
 -(void)reachabilityChanged:(NSNotification*)notification
 {
     Reachability *reachability = [notification object];
-    mbglMap->setReachability([reachability isReachable]);
+    mbglFileSource->setReachability([reachability isReachable]);
 }
 
 - (void)dealloc
