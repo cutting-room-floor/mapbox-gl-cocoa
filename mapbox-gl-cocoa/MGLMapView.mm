@@ -332,12 +332,6 @@ mbgl::FileSource *mbglFileSource = nullptr;
         mbglView = nullptr;
     }
 
-    if (mbglFileSource)
-    {
-        delete mbglFileSource;
-        mbglFileSource = nullptr;
-    }
-
     if ([[EAGLContext currentContext] isEqual:_context])
     {
         [EAGLContext setCurrentContext:nil];
