@@ -1,6 +1,7 @@
 #import "MGLMapView.h"
 
 #import <mbgl/platform/darwin/log_nslog.hpp>
+#import <mbgl/platform/gl.hpp>
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
@@ -8,7 +9,7 @@
 #include <mbgl/mbgl.hpp>
 #include <mbgl/platform/platform.hpp>
 #include <mbgl/platform/darwin/reachability.h>
-#include <mbgl/platform/default/caching_http_file_source.hpp>
+#include <mbgl/storage/caching_http_file_source.hpp>
 
 #import "MGLTypes.h"
 #import "MGLStyleFunctionValue.h"
@@ -317,6 +318,12 @@ mbgl::FileSource *mbglFileSource = nullptr;
     {
         delete mbglMap;
         mbglMap = nullptr;
+    }
+
+    if (mbglFileSource)
+    {
+        delete mbglFileSource;
+        mbglFileSource = nullptr;
     }
 
     if (mbglView)
