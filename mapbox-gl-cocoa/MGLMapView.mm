@@ -124,7 +124,7 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 {
     if (accessToken)
     {
-        mbglMap->setAccessToken((std::string)[accessToken cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+        mbglFileSource->setAccessToken((std::string)[accessToken cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
 }
 
@@ -132,12 +132,6 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 {
     if ( ! styleJSON)
     {
-        if ( ! [@(mbglMap->getAccessToken().c_str()) length])
-        {
-            [NSException raise:@"invalid access token"
-                        format:@"default map style requires a Mapbox API access token"];
-        }
-
         [self useBundledStyleNamed:@"bright-v6"];
     }
     else
