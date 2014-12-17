@@ -145,7 +145,7 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 - (void)setStyleURL:(NSString *)filePathURL
 {
     if ([@(mbglMap->getStyleJSON().c_str()) length]) mbglMap->stop();
-    mbglMap->setStyleURL(std::string("file://") + [filePathURL UTF8String]);
+    mbglMap->setStyleURL(std::string("asset://") + [filePathURL UTF8String]);
     mbglMap->start();
 }
 
@@ -887,13 +887,7 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 
 - (void)useBundledStyleNamed:(NSString *)styleName
 {
-    NSString *path = [MGLMapView pathForBundleResourceNamed:styleName
-                                                     ofType:@"json"
-                                                inDirectory:@"styles"];
-
-    NSAssert(path, @"Invalid bundled style name specified.");
-
-    [self setStyleURL:path];
+    [self setStyleURL:[NSString stringWithFormat:@"styles/%@.json", styleName]];
 }
 
 - (NSArray *)getStyleOrderedLayerNames
