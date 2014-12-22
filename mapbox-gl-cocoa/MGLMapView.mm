@@ -181,20 +181,18 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
     [_glView bindDrawable];
     [self addSubview:_glView];
 
-
-    // load extensions
-    //
-    const std::string extensions = (char *)glGetString(GL_EXTENSIONS);
-    {
-        using namespace mbgl;
-
-        if (extensions.find("GL_OES_vertex_array_object") != std::string::npos) {
-            gl::BindVertexArray = glBindVertexArrayOES;
-            gl::DeleteVertexArrays = glDeleteVertexArraysOES;
-            gl::GenVertexArrays = glGenVertexArraysOES;
-            gl::IsVertexArray = glIsVertexArrayOES;
+    mbgl::gl::InitializeExtensions([](const char * name) {
+        static CFBundleRef framework = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.opengles"));
+        if (!framework) {
+            throw std::runtime_error("Failed to load OpenGL framework.");
         }
-    }
+
+        CFStringRef str = CFStringCreateWithCString(kCFAllocatorDefault, name, kCFStringEncodingASCII);
+        void* symbol = CFBundleGetFunctionPointerForName(framework, str);
+        CFRelease(name);
+
+        return reinterpret_cast<mbgl::gl::glProc>(symbol);
+    });
 
     // setup mbgl map
     //
