@@ -1529,7 +1529,7 @@ class MBGLView : public mbgl::View
         // no-op
     }
 
-    void notify_map_change(mbgl::MapChange change, mbgl::timestamp delay = 0)
+    void notifyMapChange(mbgl::MapChange change, mbgl::timestamp delay = 0)
     {
         if (delay)
         {
@@ -1553,12 +1553,12 @@ class MBGLView : public mbgl::View
         }
     }
 
-    void make_active()
+    void activate()
     {
         [EAGLContext setCurrentContext:nativeView.context];
     }
 
-    void make_inactive()
+    void deactivate()
     {
         [EAGLContext setCurrentContext:nil];
     }
@@ -1568,11 +1568,6 @@ class MBGLView : public mbgl::View
         [nativeView performSelectorOnMainThread:@selector(swap)
                                      withObject:nil
                                   waitUntilDone:NO];
-    }
-
-    unsigned int root_fbo()
-    {
-        return 1;
     }
 
     private:
