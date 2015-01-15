@@ -935,7 +935,7 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 {
     NSMutableArray *returnArray = [NSMutableArray array];
 
-    const std::vector<std::string> &appliedClasses = mbglMap->getAppliedClasses();
+    const std::vector<std::string> &appliedClasses = mbglMap->getClasses();
 
     for (auto class_it = appliedClasses.begin(); class_it != appliedClasses.end(); class_it++)
     {
@@ -960,7 +960,7 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
     }
 
     mbglMap->setDefaultTransitionDuration(transitionDuration);
-    mbglMap->setAppliedClasses(newAppliedClasses);
+    mbglMap->setClasses(newAppliedClasses);
 }
 
 - (NSString *)getKeyTypeForLayer:(NSString *)layerName
