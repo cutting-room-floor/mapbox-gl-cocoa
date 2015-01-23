@@ -1,6 +1,6 @@
 #import "MBXViewController.h"
 
-#import "MGLMapView.h"
+#import <mbgl/platform/ios/MGLMapView.h>
 
 #import <mbgl/platform/darwin/settings_nsuserdefaults.hpp>
 

@@ -63,7 +63,7 @@
         }
       ],
       'dependencies': [
-          '../../../mapboxgl.gyp:mapboxgl-ios'
+          '../../../mbgl.gyp:mapboxgl-ios'
       ],
       'xcode_settings': {
         'IPHONEOS_DEPLOYMENT_TARGET':'7.0'
@@ -106,7 +106,7 @@
         ],
       },
       'dependencies': [
-          '../../../mapboxgl.gyp:mapboxgl-ios'
+          '../../../mbgl.gyp:mapboxgl-ios'
       ],
       'xcode_settings': {
         'IPHONEOS_DEPLOYMENT_TARGET':'8.0',
