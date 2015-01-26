@@ -232,7 +232,7 @@ mbgl::Settings_NSUserDefaults *settings = nullptr;
 {
     switch (status)
     {
-        case kCLAuthorizationStatusAuthorized:
+        case kCLAuthorizationStatusAuthorizedAlways:
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
         case kCLAuthorizationStatusAuthorizedWhenInUse:
 #endif
