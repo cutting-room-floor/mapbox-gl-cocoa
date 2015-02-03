@@ -537,7 +537,7 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 
         CGPoint offset = CGPointMake(velocity.x * duration / 2, velocity.y * duration / 2);
 
-        mbglMap->moveBy(offset.x, offset.y, duration);
+        mbglMap->moveBy(offset.x, offset.y, std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float, std::chrono::seconds::period>(duration)));
 
         if (duration)
         {
@@ -635,7 +635,7 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 
     if (doubleTap.state == UIGestureRecognizerStateEnded)
     {
-        mbglMap->scaleBy(2, [doubleTap locationInView:doubleTap.view].x, [doubleTap locationInView:doubleTap.view].y, MGLAnimationDuration);
+        mbglMap->scaleBy(2, [doubleTap locationInView:doubleTap.view].x, [doubleTap locationInView:doubleTap.view].y, std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float, std::chrono::seconds::period>(MGLAnimationDuration)));
 
         self.animatingGesture = YES;
 
@@ -662,7 +662,7 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 
     if (twoFingerTap.state == UIGestureRecognizerStateEnded)
     {
-        mbglMap->scaleBy(0.5, [twoFingerTap locationInView:twoFingerTap.view].x, [twoFingerTap locationInView:twoFingerTap.view].y, MGLAnimationDuration);
+        mbglMap->scaleBy(0.5, [twoFingerTap locationInView:twoFingerTap.view].x, [twoFingerTap locationInView:twoFingerTap.view].y, std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float, std::chrono::seconds::period>(MGLAnimationDuration)));
 
         self.animatingGesture = YES;
 
@@ -756,9 +756,9 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 
 - (void)resetNorthAnimated:(BOOL)animated
 {
-    double duration = (animated ? MGLAnimationDuration : 0);
+    CGFloat duration = (animated ? MGLAnimationDuration : 0);
 
-    mbglMap->setBearing(0, duration);
+    mbglMap->setBearing(0, std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float, std::chrono::seconds::period>(duration)));
 
     [UIView animateWithDuration:duration
                      animations:^
@@ -790,9 +790,9 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)coordinate animated:(BOOL)animated
 {
-    double duration = (animated ? MGLAnimationDuration : 0);
+    CGFloat duration = (animated ? MGLAnimationDuration : 0);
 
-    mbglMap->setLonLat(coordinate.longitude, coordinate.latitude, duration);
+    mbglMap->setLonLat(coordinate.longitude, coordinate.latitude, std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float, std::chrono::seconds::period>(duration)));
 }
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate
@@ -810,9 +810,9 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate zoomLevel:(double)zoomLevel animated:(BOOL)animated
 {
-    double duration = (animated ? MGLAnimationDuration : 0);
+    CGFloat duration = (animated ? MGLAnimationDuration : 0);
 
-    mbglMap->setLonLatZoom(centerCoordinate.longitude, centerCoordinate.latitude, zoomLevel, duration);
+    mbglMap->setLonLatZoom(centerCoordinate.longitude, centerCoordinate.latitude, zoomLevel, std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float, std::chrono::seconds::period>(duration)));
 
     [self unrotateIfNeededAnimated:animated];
 }
@@ -824,9 +824,9 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 
 - (void)setZoomLevel:(double)zoomLevel animated:(BOOL)animated
 {
-    double duration = (animated ? MGLAnimationDuration : 0);
+    CGFloat duration = (animated ? MGLAnimationDuration : 0);
 
-    mbglMap->setZoom(zoomLevel, duration);
+    mbglMap->setZoom(zoomLevel, std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float, std::chrono::seconds::period>(duration)));
 
     [self unrotateIfNeededAnimated:animated];
 }
@@ -850,9 +850,9 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 {
     if ( ! animated && ! self.rotationAllowed) return;
 
-    double duration = (animated ? MGLAnimationDuration : 0);
+    CGFloat duration = (animated ? MGLAnimationDuration : 0);
 
-    mbglMap->setBearing(direction * -1, duration);
+    mbglMap->setBearing(direction * -1, std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float, std::chrono::seconds::period>(duration)));
 }
 
 - (void)setDirection:(CLLocationDirection)direction
@@ -959,7 +959,7 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
         newAppliedClasses.insert(newAppliedClasses.end(), [appliedClass cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
 
-    mbglMap->setDefaultTransitionDuration(transitionDuration);
+    mbglMap->setDefaultTransitionDuration(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float, std::chrono::seconds::period>(transitionDuration)));
     mbglMap->setClasses(newAppliedClasses);
 }
 
@@ -1529,13 +1529,13 @@ class MBGLView : public mbgl::View
         // no-op
     }
 
-    void notifyMapChange(mbgl::MapChange change, mbgl::timestamp delay = 0)
+    void notifyMapChange(mbgl::MapChange change, std::chrono::steady_clock::duration delay = std::chrono::steady_clock::duration::zero())
     {
-        if (delay)
+        if (delay != std::chrono::steady_clock::duration::zero())
         {
             __weak MGLMapView *weakNativeView = nativeView;
 
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, std::chrono::duration_cast<std::chrono::nanoseconds>(delay).count()), dispatch_get_main_queue(), ^
             {
                 [weakNativeView performSelector:@selector(notifyMapChange:)
                                      withObject:@(change)
