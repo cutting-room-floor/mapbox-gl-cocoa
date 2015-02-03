@@ -1196,6 +1196,8 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 
 - (void)setStyleDescription:(NSDictionary *)styleDescription forLayer:(NSString *)layerName inClass:(NSString *)className
 {
+#pragma unused(className)
+
     NSMutableDictionary *convertedStyle = [NSMutableDictionary dictionary];
 
     for (NSString *key in [styleDescription allKeys])
