@@ -1,6 +1,13 @@
 {
   'target_defaults': {
     'product_name': 'MapboxGL',
+    'variables' : {
+      'ldflags': [
+        '<@(sqlite3_ldflags)',
+        '<@(uv_ldflags)',
+        '<@(zlib_ldflags)',
+      ]
+    },
     'xcode_settings': {
       'SDKROOT': 'iphoneos',
       'SUPPORTED_PLATFORMS':['iphonesimulator','iphoneos'],
@@ -10,7 +17,8 @@
       'TARGETED_DEVICE_FAMILY': '1,2',
       'GCC_VERSION': 'com.apple.compilers.llvm.clang.1_0',
       'CLANG_ENABLE_OBJC_ARC': 'YES',
-      'OTHER_LDFLAGS!': [ '-lpthread', '-ldl', '-lz' ],
+      'OTHER_CPLUSPLUSFLAGS': [ '<@(uv_cflags)' ],
+      'OTHER_LDFLAGS!': [ '-lpthread', '-ldl', '-lz', '<@(ldflags)' ],
       'COMBINE_HIDPI_IMAGES': 'NO'
     },
     'link_settings': {
@@ -46,13 +54,9 @@
         '<!@(find ../mapbox-gl-cocoa -type f -name "MGLStyleFunctionValue.*")',
         '<!@(find ../mapbox-gl-cocoa -type f -name "MGLTypes.*")',
         '<!@(find ../mapbox-gl-cocoa -type f -name "*+MGLAdditions.*")',
-        '../../../common/platform_nsstring.mm',
-        '../../../common/Reachability.h',
-        '../../../common/Reachability.m',
-        '../../../common/http_request_baton_cocoa.mm',
-        '../../../common/ios.mm',
-        '../../../common/nslog_log.hpp',
-        '../../../common/nslog_log.mm'
+        '<!@(find ../../../include/mbgl/platform/darwin -type f)',
+        '<!@(find ../../../platform/darwin -type f)',
+        '<!@(find ../../../platform/ios -type f)'
       ],
       'copies': [
         {
@@ -63,7 +67,7 @@
         }
       ],
       'dependencies': [
-          '../../../mapboxgl.gyp:mapboxgl-ios'
+          '../../../mapboxgl.gyp:mbgl-ios'
       ],
       'xcode_settings': {
         'IPHONEOS_DEPLOYMENT_TARGET':'7.0'
@@ -77,13 +81,9 @@
         '<!@(find ../mapbox-gl-cocoa -type f -name "MGLStyleFunctionValue.*")',
         '<!@(find ../mapbox-gl-cocoa -type f -name "MGLTypes.*")',
         '<!@(find ../mapbox-gl-cocoa -type f -name "*+MGLAdditions.*")',
-        '../../../common/platform_nsstring.mm',
-        '../../../common/Reachability.h',
-        '../../../common/Reachability.m',
-        '../../../common/http_request_baton_cocoa.mm',
-        '../../../common/ios.mm',
-        '../../../common/nslog_log.hpp',
-        '../../../common/nslog_log.mm'
+        '<!@(find ../../../include/mbgl/platform/darwin -type f)',
+        '<!@(find ../../../platform/darwin -type f)',
+        '<!@(find ../../../platform/ios -type f)'
       ],
       'mac_bundle': 1,
       'mac_bundle_resources': [
@@ -106,7 +106,7 @@
         ],
       },
       'dependencies': [
-          '../../../mapboxgl.gyp:mapboxgl-ios'
+          '../../../mapboxgl.gyp:mbgl-ios'
       ],
       'xcode_settings': {
         'IPHONEOS_DEPLOYMENT_TARGET':'8.0',
