@@ -22,9 +22,9 @@ Pod::Spec.new do |m|
 
   m.resource_bundle = { 'MapboxGL' => 'dist/static/MapboxGL.bundle/*' }
 
-  m.frameworks = 'CoreLocation', 'Foundation', 'GLKit', 'UIKit'
+  m.frameworks = 'CoreLocation', 'Foundation', 'GLKit', 'SystemConfiguration', 'UIKit'
 
-  m.libraries = 'MapboxGL', 'c++', 'z'
+  m.libraries = 'MapboxGL', 'c++', 'sqlite3', 'z'
 
   m.vendored_libraries = 'dist/static/libMapboxGL.a'
 
