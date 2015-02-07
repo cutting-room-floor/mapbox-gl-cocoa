@@ -9,7 +9,9 @@
 #include <mbgl/mbgl.hpp>
 #include <mbgl/platform/platform.hpp>
 #include <mbgl/platform/darwin/reachability.h>
-#include <mbgl/storage/caching_http_file_source.hpp>
+#include <mbgl/storage/default_file_source.hpp>
+#include <mbgl/storage/default/sqlite_cache.hpp>
+#include <mbgl/storage/network_status.hpp>
 
 #import "MGLTypes.h"
 #import "MGLStyleFunctionValue.h"
@@ -79,14 +81,10 @@ NSTimeInterval const MGLAnimationDuration = 0.3;
 
 class MBGLView;
 
-std::chrono::steady_clock::duration secondsAsDuration(float duration)
-{
-    return std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float, std::chrono::seconds::period>(duration));
-}
-
 mbgl::Map *mbglMap = nullptr;
 MBGLView *mbglView = nullptr;
-mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
+mbgl::SQLiteCache *mbglFileCache = nullptr;
+mbgl::DefaultFileSource *mbglFileSource = nullptr;
 
 - (instancetype)initWithFrame:(CGRect)frame styleJSON:(NSString *)styleJSON accessToken:(NSString *)accessToken
 {
@@ -129,7 +127,7 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
 {
     if (accessToken)
     {
-        mbglFileSource->setAccessToken((std::string)[accessToken cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+        mbglMap->setAccessToken((std::string)[accessToken cStringUsingEncoding:[NSString defaultCStringEncoding]]);
     }
 }
 
@@ -204,7 +202,8 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
     // setup mbgl map
     //
     mbglView = new MBGLView(self);
-    mbglFileSource = new mbgl::CachingHTTPFileSource(mbgl::platform::defaultCacheDatabase());
+    mbglFileCache  = new mbgl::SQLiteCache(defaultCacheDatabase());
+    mbglFileSource = new mbgl::DefaultFileSource(mbglFileCache);
     mbglMap = new mbgl::Map(*mbglView, *mbglFileSource);
     mbglMap->resize(self.bounds.size.width, self.bounds.size.height, _glView.contentScaleFactor, _glView.drawableWidth, _glView.drawableHeight);
 
@@ -301,10 +300,12 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
     return YES;
 }
 
--(void)reachabilityChanged:(NSNotification*)notification
+- (void)reachabilityChanged:(NSNotification*)notification
 {
     Reachability *reachability = [notification object];
-    mbglFileSource->setReachability([reachability isReachable]);
+    if ([reachability isReachable]) {
+        mbgl::NetworkStatus::Reachable();
+    }
 }
 
 - (void)dealloc
@@ -1522,6 +1523,31 @@ mbgl::CachingHTTPFileSource *mbglFileSource = nullptr;
         [self.glView display];
         mbglMap->swapped();
     }
+}
+
+std::chrono::steady_clock::duration secondsAsDuration(float duration)
+{
+    return std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float,
+        std::chrono::seconds::period>(duration));
+}
+
+const std::string &defaultCacheDatabase()
+{
+    static const std::string path = []() -> std::string
+    {
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        if ([paths count])
+        {
+            // Disable the cache if we don't have a location to write.
+            return "";
+        }
+
+        NSString *libraryDirectory = [paths objectAtIndex:0];
+
+        return [[libraryDirectory stringByAppendingPathComponent:@"cache.db"] UTF8String];
+    }();
+
+    return path;
 }
 
 class MBGLView : public mbgl::View
