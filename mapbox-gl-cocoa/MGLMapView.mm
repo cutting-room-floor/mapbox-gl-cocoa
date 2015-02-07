@@ -1536,7 +1536,8 @@ const std::string &defaultCacheDatabase()
     static const std::string path = []() -> std::string
     {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-        if ([paths count])
+
+        if ([paths count] == 0)
         {
             // Disable the cache if we don't have a location to write.
             return "";
