@@ -1,0 +1,1 @@
+This repository is obsolete. iOS bindings & related work for Mapbox GL has moved upstream to [`gl-native`](https://github.com/mapbox/mapbox-gl-native), so please open your issue there and tag with `iOS`. 
